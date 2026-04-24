@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIZZA⚡OFFICIAL — The Open Pizza Database</title>
+  <meta name="description" content="The open pizza database. No ads. No algorithms. Just pizza. Built on ATProto.">
+  <meta property="og:title" content="PIZZA⚡OFFICIAL">
+  <meta property="og:description" content="The open pizza database. ATProto-native. No ads. No algorithms.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+
+    :root {
+      --black:  #0d0800;
+      --black2: #110e08;
+      --black3: #1a1000;
+      --red:    #FF3B30;
+      --cream:  #F5F0E8;
+      --gold:   #D4A847;
+      --muted:  #5a4a30;
+      --border: #2a1f00;
+      --mono:   'IBM Plex Mono', monospace;
+    }
+
+    body {
+      background: var(--black);
+      font-family: var(--mono);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scanlines — subtle texture over everything */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px
+      );
+    }
+
+    /* ── Page states ─────────────────────────────────────────── */
+    .page { display: none; }
+    .page.active { display: flex; }
+
+    /* ── LOADING STATE ──────────────────────────────────────── */
+    #page-loading {
+      height: 100vh;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+    }
+
+    .loading-logo {
+      font-size: clamp(28px, 7vw, 52px);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1;
+      animation: fadeUp 0.6s ease both;
+    }
+    .loading-logo .bolt { color: var(--red); }
+
+    .loading-line {
+      width: 200px; height: 1px;
+      background: var(--border); overflow: hidden;
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+    .loading-fill {
+      height: 100%; background: var(--red); width: 0%;
+      animation: loadBar 1.4s 0.3s ease forwards;
+    }
+
+    @keyframes loadBar { to { width: 100%; } }
+
+    .loading-msg {
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      animation: fadeUp 0.6s 0.25s ease both;
+      min-height: 14px;
+    }
+
+    /* ── AUTH STATE (logged out) ─────────────────────────────── */
+    #page-auth {
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+    }
+
+    .auth-inner {
+      width: 100%; max-width: 440px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0;
+    }
+
+    /* Hero logo */
+    .hero-logo {
+      font-size: clamp(36px, 10vw, 72px);
+      font-weight: 700; letter-spacing: -0.03em; line-height: 1;
+      text-align: center; margin-bottom: 12px;
+      animation: fadeUp 0.5s ease both;
+    }
+    .hero-logo .bolt { color: var(--red); }
+
+    .hero-tag {
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      text-align: center; margin-bottom: 56px;
+      animation: fadeUp 0.5s 0.08s ease both;
+    }
+
+    /* Login card */
+    .login-card {
+      width: 100%;
+      background: var(--black2);
+      border: 1px solid var(--border);
+      padding: 28px;
+      animation: fadeUp 0.5s 0.16s ease both;
+    }
+
+    .login-label {
+      font-size: 9px; color: var(--muted);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .handle-row {
+      display: flex; gap: 8px; margin-bottom: 8px;
+    }
+
+    .handle-input {
+      flex: 1;
+      background: var(--black3); border: 1px solid var(--border);
+      color: var(--cream); font-family: var(--mono); font-size: 13px;
+      padding: 10px 12px; outline: none;
+      transition: border-color 0.15s;
+    }
+    .handle-input::placeholder { color: var(--muted); }
+    .handle-input:focus { border-color: var(--red); }
+
+    .signin-btn {
+      background: transparent; border: 1px solid var(--red);
+      color: var(--red); font-family: var(--mono); font-size: 11px;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 10px 18px; cursor: pointer; white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .signin-btn:hover  { background: var(--red); color: var(--black); }
+    .signin-btn:active { transform: scale(0.98); }
+    .signin-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .login-hint {
+      font-size: 10px; color: var(--muted);
+      margin-bottom: 20px; line-height: 1.5;
+    }
+
+    .login-error {
+      font-size: 11px; color: var(--red);
+      margin-top: 8px; min-height: 16px;
+      display: none;
+    }
+
+    .divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    .bluesky-note {
+      font-size: 10px; color: var(--muted); line-height: 1.7;
+    }
+
+    .bluesky-note a {
+      color: var(--cream); text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .bluesky-note a:hover { border-color: var(--cream); }
+
+    /* Footer links */
+    .auth-footer {
+      margin-top: 28px;
+      display: flex; gap: 20px;
+      font-size: 10px; color: var(--muted);
+      animation: fadeUp 0.5s 0.24s ease both;
+    }
+    .auth-footer a {
+      color: var(--muted); text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.15s;
+    }
+    .auth-footer a:hover { color: var(--cream); }
+
+    /* Corner tag */
+    .corner-tag {
+      position: fixed; bottom: 20px; right: 20px;
+      font-size: 9px; color: var(--border);
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    /* ── USER STATE (logged in) ──────────────────────────────── */
+    #page-user {
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Top nav */
+    .user-nav {
+      height: 52px;
+      background: var(--black2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; flex-shrink: 0;
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    .nav-logo {
+      font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+      text-decoration: none; color: var(--cream);
+    }
+    .nav-logo .bolt { color: var(--red); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 4px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      padding: 6px 10px;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+
+    .nav-signout {
+      font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); background: none; border: none;
+      font-family: var(--mono); cursor: pointer; padding: 6px 10px;
+      transition: color 0.15s;
+    }
+    .nav-signout:hover { color: var(--red); }
+
+    /* User body */
+    .user-body {
+      flex: 1;
+      max-width: 800px; width: 100%;
+      margin: 0 auto; padding: 40px 24px;
+    }
+
+    /* User card */
+    .user-card {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .user-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--black3); border: 1px solid var(--border);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-avatar-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: var(--muted);
+    }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-handle {
+      font-size: 16px; font-weight: 700;
+      color: var(--cream); margin-bottom: 4px;
+    }
+
+    .role-badge {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 2px;
+    }
+    .role-guest       { background: var(--black3); color: var(--muted); border: 1px solid var(--border); }
+    .role-contributor { background: #0d1a04; color: #639922; border: 1px solid #1a3308; }
+    .role-admin       { background: #1a0505; color: var(--red); border: 1px solid #3a0a0a; }
+
+    /* Quick action cards */
+    .action-section-label {
+      font-size: 9px; color: var(--muted);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px; margin-bottom: 32px;
+    }
+
+    .action-card {
+      background: var(--black2); border: 1px solid var(--border);
+      padding: 18px 20px; cursor: pointer; text-decoration: none;
+      display: block; transition: border-color 0.15s, background 0.15s;
+      animation: fadeUp 0.4s ease both;
+    }
+    .action-card:hover { border-color: var(--red); background: var(--black3); }
+    .action-card:active { transform: scale(0.99); }
+
+    .action-icon { font-size: 16px; margin-bottom: 10px; display: block; }
+    .action-title {
+      font-size: 13px; font-weight: 700; color: var(--cream);
+      margin-bottom: 4px;
+    }
+    .action-sub {
+      font-size: 10px; color: var(--muted); line-height: 1.5;
+    }
+
+    /* Contributor apply section */
+    .apply-banner {
+      background: var(--black2); border: 1px solid var(--border);
+      border-left: 3px solid var(--red); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .apply-text { flex: 1; }
+    .apply-title { font-size: 12px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
+    .apply-sub { font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+    .apply-btn {
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 8px 16px; background: transparent;
+      border: 1px solid var(--red); color: var(--red);
+      cursor: pointer; white-space: nowrap; text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .apply-btn:hover { background: var(--red); color: var(--black); }
+
+    .pending-banner {
+      background: var(--black2); border: 1px solid #2a1f00;
+      border-left: 3px solid var(--gold); padding: 14px 20px;
+      font-size: 11px; color: var(--muted); line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .handle-row { flex-direction: column; }
+      .signin-btn { width: 100%; }
+      .user-nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── STATE: Loading ─────────────────────────────────────── -->
+  <div id="page-loading" class="page active">
+    <div class="loading-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</div>
+    <div class="loading-line"><div class="loading-fill"></div></div>
+    <div class="loading-msg" id="loadingMsg">Initializing</div>
+  </div>
+
+  <!-- ── STATE: Auth (logged out) ──────────────────────────── -->
+  <div id="page-auth" class="page">
+    <div class="auth-inner">
+      <div class="hero-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</div>
+      <div class="hero-tag">The open pizza database · ATProto-native</div>
+
+      <div class="login-card">
+        <div class="login-label">Sign in with Bluesky</div>
+
+        <div class="handle-row">
+          <input
+            type="text"
+            class="handle-input"
+            id="handleInput"
+            placeholder="you.bsky.social"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          >
+          <button class="signin-btn" id="signinBtn" onclick="doSignIn()">
+            Sign In
+          </button>
+        </div>
+
+        <div class="login-hint">
+          Your Bluesky handle — with or without the @.
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+
+        <hr class="divider">
+
+        <div class="bluesky-note">
+          PIZZA⚡OFFICIAL uses your Bluesky account for identity.
+          No password is shared with us — you authorize directly with Bluesky.
+          <br><br>
+          Don't have Bluesky? <a href="https://bsky.app" target="_blank" rel="noopener">Create a free account →</a>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        <a href="/database.html">Browse database</a>
+        <a href="/stats.html">Stats</a>
+        <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
+      </div>
+    </div>
+
+    <div class="corner-tag">pizzaofficial.biz · v1</div>
+  </div>
+
+  <!-- ── STATE: User (logged in) ───────────────────────────── -->
+  <div id="page-user" class="page">
+    <nav class="user-nav">
+      <a href="/" class="nav-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+      <ul class="nav-links">
+        <li><a href="/database.html">Database</a></li>
+        <li><a href="/stats.html">Stats</a></li>
+        <li><a href="/submit.html" id="navSubmit" style="display:none">Submit</a></li>
+      </ul>
+      <button class="nav-signout" onclick="doSignOut()">Sign out</button>
+    </nav>
+
+    <div class="user-body">
+
+      <div class="user-card">
+        <div class="user-avatar" id="userAvatar">
+          <div class="user-avatar-placeholder" id="avatarPlaceholder">?</div>
+        </div>
+        <div class="user-info">
+          <div class="user-handle" id="userHandle">Loading…</div>
+          <span class="role-badge role-guest" id="roleBadge">Guest</span>
+        </div>
+      </div>
+
+      <!-- Quick actions — always visible -->
+      <div class="action-section-label">Quick actions</div>
+      <div class="action-grid">
+        <a href="/database.html" class="action-card" style="animation-delay:0.05s">
+          <span class="action-icon">🍕</span>
+          <div class="action-title">Browse database</div>
+          <div class="action-sub">All approved reviews by city, style, and rating.</div>
+        </a>
+        <a href="/stats.html" class="action-card" style="animation-delay:0.1s">
+          <span class="action-icon">📊</span>
+          <div class="action-title">Stats</div>
+          <div class="action-sub">Coverage, leaderboard, and your review history.</div>
+        </a>
+        <a href="/submit.html" class="action-card" id="cardSubmit" style="display:none;animation-delay:0.15s">
+          <span class="action-icon">✏️</span>
+          <div class="action-title">Submit a review</div>
+          <div class="action-sub">Structured form. Optional Bluesky cross-post.</div>
+        </a>
+      </div>
+
+      <!-- Contributor call-to-action (only shown to guests) -->
+      <div id="applySection"></div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { initAuth, signIn, signOut } from '/js/auth.js';
+
+    const LOADING_MSGS = [
+      'Initializing',
+      'Restoring session',
+      'Connecting to Bluesky',
+      'Loading',
+    ];
+
+    let msgIdx = 0;
+    const msgEl = document.getElementById('loadingMsg');
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % LOADING_MSGS.length;
+      msgEl.textContent = LOADING_MSGS[msgIdx];
+    }, 500);
+
+    function show(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    // ── Main init ──────────────────────────────────────────────
+    try {
+      const auth = await initAuth();
+      clearInterval(msgInterval);
+
+      if (auth?.user) {
+        renderUserState(auth.user);
+        show('page-user');
+      } else {
+        show('page-auth');
+      }
+    } catch (err) {
+      clearInterval(msgInterval);
+      console.error('[index] init error:', err);
+      show('page-auth');
+    }
+
+    // ── Render logged-in state ─────────────────────────────────
+    function renderUserState(user) {
+      // Handle + avatar
+      document.getElementById('userHandle').textContent = `@${user.handle}`;
+
+      const placeholder = document.getElementById('avatarPlaceholder');
+      if (user.avatar_url) {
+        const img = document.createElement('img');
+        img.src = user.avatar_url;
+        img.alt = user.handle;
+        document.getElementById('userAvatar').replaceChild(img, placeholder);
+      } else {
+        placeholder.textContent = user.handle[0].toUpperCase();
+      }
+
+      // Role badge
+      const badge = document.getElementById('roleBadge');
+      const roleLabels = { guest: 'Guest', contributor: 'Contributor', admin: 'Admin' };
+      badge.textContent = roleLabels[user.role] || 'Guest';
+      badge.className = `role-badge role-${user.role}`;
+
+      // Show submit nav + card for contributors + admin
+      if (['contributor', 'admin'].includes(user.role)) {
+        document.getElementById('navSubmit').style.display = '';
+        document.getElementById('cardSubmit').style.display = '';
+      }
+
+      // Apply section for guests
+      renderApplySection(user);
+    }
+
+    function renderApplySection(user) {
+      const el = document.getElementById('applySection');
+
+      if (user.role === 'guest') {
+        // Check if they have a pending application
+        // (In production: query contributor_applications via Supabase)
+        // For now, always show the apply banner for guests
+        el.innerHTML = `
+          <div class="apply-banner">
+            <div class="apply-text">
+              <div class="apply-title">Become a contributor</div>
+              <div class="apply-sub">Submit pizza reviews to the official database.
+                Takes 2 minutes to apply. We'll review your writing sample and get back to you.</div>
+            </div>
+            <a href="/contributor.html" class="apply-btn">Apply now</a>
+          </div>`;
+      } else if (user.role === 'contributor') {
+        // Could show rank progress here in the future
+        el.innerHTML = '';
+      }
+      // Admin: no apply section needed
+    }
+
+    // ── Sign in ────────────────────────────────────────────────
+    window.doSignIn = async function() {
+      const input = document.getElementById('handleInput');
+      const btn   = document.getElementById('signinBtn');
+      const errEl = document.getElementById('loginError');
+      const handle = input.value.trim();
+
+      errEl.style.display = 'none';
+      if (!handle) {
+        errEl.textContent = 'Enter your Bluesky handle to continue.';
+        errEl.style.display = 'block';
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Redirecting…';
+
+      try {
+        await signIn(handle);
+        // Navigates away — code below doesn't run
+      } catch (err) {
+        console.error('[index] signIn error:', err);
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        errEl.textContent = err.message?.includes('resolve')
+          ? 'Handle not found. Check the spelling and try again.'
+          : `Sign in failed: ${err.message}`;
+        errEl.style.display = 'block';
+      }
+    };
+
+    // ── Sign out ───────────────────────────────────────────────
+    window.doSignOut = async function() {
+      const { signOut } = await import('/js/auth.js');
+      await signOut();
+    };
+
+    // ── Enter key on handle input ──────────────────────────────
+    document.getElementById('handleInput')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') window.doSignIn();
+    });
+  </script>
+
+</body>
+</html>
