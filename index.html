@@ -178,6 +178,25 @@
     }
     .login-footer a:hover { color: var(--gold); }
 
+    .cta-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .cta-browse, .cta-write {
+      display: block; text-align: center;
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: 12px; text-decoration: none; transition: all .15s;
+    }
+    .cta-browse {
+      background: transparent; border: 1px solid var(--border2);
+      color: var(--muted);
+    }
+    .cta-browse:hover { border-color: var(--gold2); color: var(--gold); }
+    .cta-write {
+      background: var(--gold); color: var(--bg);
+    }
+    .cta-write:hover { background: var(--gold2); }
     .site-ver {
       position: fixed; bottom: 18px; right: 20px;
       font-size: 9px; font-weight: 700; letter-spacing: .12em;
@@ -299,17 +318,16 @@
         </div>
       </div>
 
-      <div class="browse-strip a2">
-        <div class="browse-strip-text"><strong>Just browsing?</strong> The database is public.</div>
-        <a href="/database.html" class="browse-btn">Browse database</a>
+      <div class="cta-row a2">
+        <a href="/database.html" class="cta-browse">Browse database</a>
+        <a href="/contributor.html" class="cta-write">Write reviews</a>
       </div>
 
       <div class="community-banner a3">
         <div class="community-title">Join the community</div>
         <div class="community-sub">
-          Pizza Official is built by people who eat pizza and care about getting it right.
-          Sign in and apply to become a contributor — write reviews, build the record,
-          earn your place in the database.
+          Pizza Official is built by people who eat and love pizza.
+          Sign in, contribute, and help build the record - one slice at a time.
         </div>
         <a href="/contributor.html" class="ghost-btn">How it works →</a>
       </div>
@@ -350,7 +368,7 @@
         <a href="/database.html" class="action-card">
           <span class="ac-icon">🍕</span>
           <div class="ac-title">Browse database</div>
-          <div class="ac-sub">All approved reviews by city, style, and rating.</div>
+          <div class="ac-sub">All reviews by city, style, and rating.</div>
         </a>
         <a href="/stats.html" class="action-card">
           <span class="ac-icon">📊</span>
@@ -400,7 +418,7 @@
           <div class="apply-banner a2">
             <div>
               <div class="apply-title">Become a contributor</div>
-              <div class="apply-sub">Submit pizza reviews to the official database. Takes 2 minutes to apply.</div>
+              <div class="apply-sub">Submit pizza reviews to the official database.</div>
             </div>
             <a href="/contributor.html" class="outline-btn">Apply now</a>
           </div>`;
