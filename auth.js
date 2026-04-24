@@ -12,14 +12,14 @@ export let currentSession = null;
 
 async function db() {
   if (_db) return _db;
-  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
   _db = createClient(SUPABASE_URL, SUPABASE_ANON);
   return _db;
 }
 
 async function oauth() {
   if (_oauth) return _oauth;
-  const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.12');
+  const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
   _oauth = await BrowserOAuthClient.load({ clientId: CLIENT_ID, handleResolver: RESOLVER });
   return _oauth;
 }
