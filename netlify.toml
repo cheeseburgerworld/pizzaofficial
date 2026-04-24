@@ -2,6 +2,7 @@
   publish = "."
   functions = "netlify/functions"
 
+# Correct content-type for ATProto OAuth metadata
 [[headers]]
   for = "/oauth/client-metadata.json"
   [headers.values]
@@ -9,8 +10,13 @@
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=3600"
 
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
+
+# NOTE: No catch-all redirect here.
+# This is a static site with real files at real paths.
+# A /* redirect would break JS module loading.
