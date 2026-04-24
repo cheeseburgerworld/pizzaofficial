@@ -1,37 +1,41 @@
 // PIZZA⚡OFFICIAL — Auth Module
-// All external imports are DYNAMIC (inside functions) so a slow CDN
-// cannot prevent this module from loading.
+// Fully self-contained. No top-level imports.
+// All external libraries loaded lazily inside functions.
 
-import { SUPABASE_URL, SUPABASE_ANON, OAUTH_CLIENT_ID, OAUTH_REDIRECT, ATPROTO_HANDLE_RESOLVER } from '../config.js';
-
-export let currentUser    = null;
-export let currentSession = null;
+// ── Config (hardcoded — anon key is safe to expose) ───────────
+const SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
+const OAUTH_CLIENT_ID = 'https://pizzaofficial.biz/oauth/client-metadata.json';
+const OAUTH_REDIRECT  = 'https://pizzaofficial.biz/oauth/callback';
+const HANDLE_RESOLVER = 'https://bsky.social';
 
 // ── Lazy singletons ───────────────────────────────────────────
-let _supabase = null;
-let _oauthClient = null;
+let _db     = null;
+let _client = null;
 
-async function getSupabase() {
-  if (_supabase) return _supabase;
+export async function getDb() {
+  if (_db) return _db;
   const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-  _supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
-  return _supabase;
+  _db = createClient(SUPABASE_URL, SUPABASE_ANON);
+  return _db;
 }
 
 async function getOAuthClient() {
-  if (_oauthClient) return _oauthClient;
+  if (_client) return _client;
   const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.12');
-  _oauthClient = await BrowserOAuthClient.load({
+  _client = await BrowserOAuthClient.load({
     clientId: OAUTH_CLIENT_ID,
-    handleResolver: ATPROTO_HANDLE_RESOLVER,
+    handleResolver: HANDLE_RESOLVER,
   });
-  return _oauthClient;
+  return _client;
 }
 
-// Expose supabase for pages that need direct queries
-export async function getDb() { return getSupabase(); }
+// ── Session state ─────────────────────────────────────────────
+export let currentUser    = null;
+export let currentSession = null;
 
-// ── Auth ──────────────────────────────────────────────────────
+// ── initAuth — call on every page load ───────────────────────
+// Returns { user, session } if logged in, null if not.
 export async function initAuth() {
   try {
     const client = await getOAuthClient();
@@ -46,6 +50,7 @@ export async function initAuth() {
   }
 }
 
+// ── signIn — redirects to Bluesky, never returns ─────────────
 export async function signIn(handle) {
   const clean = handle.trim().replace(/^@/, '');
   if (!clean) throw new Error('Enter your Bluesky handle');
@@ -54,15 +59,15 @@ export async function signIn(handle) {
   await client.signIn(clean, { redirect_uri: OAUTH_REDIRECT });
 }
 
+// ── signOut ───────────────────────────────────────────────────
 export async function signOut() {
-  try {
-    if (currentSession?.signOut) await currentSession.signOut();
-  } catch (_) {}
+  try { if (currentSession?.signOut) await currentSession.signOut(); } catch (_) {}
   currentUser = null;
   currentSession = null;
   location.href = '/';
 }
 
+// ── handleCallback — call only on /oauth/callback.html ───────
 export async function handleCallback() {
   const client = await getOAuthClient();
   const result = await client.init();
@@ -72,6 +77,7 @@ export async function handleCallback() {
   return { user: currentUser, session: currentSession };
 }
 
+// ── syncUser — upserts user via Netlify Function ─────────────
 async function syncUser(did) {
   try {
     const res = await fetch('/.netlify/functions/auth-user', {
@@ -79,14 +85,16 @@ async function syncUser(did) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ did }),
     });
-    if (!res.ok) throw new Error(`auth-user ${res.status}`);
+    if (!res.ok) throw new Error(`auth-user function returned ${res.status}`);
     return await res.json();
   } catch (err) {
-    console.error('[auth] syncUser:', err.message);
-    return { did, handle: did, role: 'guest' };
+    console.error('[auth] syncUser failed:', err.message);
+    // Return minimal object so pages don't crash
+    return { did, handle: did.split(':').pop(), role: 'guest' };
   }
 }
 
+// ── Guards ────────────────────────────────────────────────────
 export async function requireAuth() {
   const auth = await initAuth();
   if (!auth) {
@@ -109,13 +117,17 @@ export async function requireContributor() {
 
 // ── Data helpers ──────────────────────────────────────────────
 export async function getApprovedReviews(filters = {}) {
-  const db = await getSupabase();
+  const db = await getDb();
   let q = db
     .from('pizza_reviews')
-    .select('id, name, location, city, rating, style, crust, char_level, sauce, cheese, notes, image_url, created_at, contributor_did, users!pizza_reviews_contributor_did_fkey(handle, display_name)')
+    .select(`id, name, location, city, rating, style, crust,
+             char_level, sauce, cheese, notes, image_url, created_at,
+             contributor_did,
+             users!pizza_reviews_contributor_did_fkey(handle, display_name)`)
     .eq('status', 'approved');
-  if (filters.style) q = q.eq('style', filters.style);
-  if (filters.rating !== undefined && filters.rating !== '') q = q.eq('rating', Number(filters.rating));
+  if (filters.style)  q = q.eq('style', filters.style);
+  if (filters.rating !== undefined && filters.rating !== '')
+    q = q.eq('rating', Number(filters.rating));
   q = q.order(filters.sort === 'rating' ? 'rating' : 'created_at', { ascending: false });
   const { data, error } = await q;
   if (error) { console.error('[auth] getApprovedReviews:', error); return []; }
@@ -123,14 +135,14 @@ export async function getApprovedReviews(filters = {}) {
 }
 
 export async function getPublicStats() {
-  const db = await getSupabase();
+  const db = await getDb();
   const { data, error } = await db.from('public_stats').select('*').single();
   if (error) { console.error('[auth] getPublicStats:', error); return null; }
   return data;
 }
 
 export async function getMyReviews(did) {
-  const db = await getSupabase();
+  const db = await getDb();
   const { data, error } = await db
     .from('pizza_reviews')
     .select('id, name, location, rating, style, status, created_at')
@@ -141,7 +153,7 @@ export async function getMyReviews(did) {
 }
 
 export async function getAdminQueue() {
-  const db = await getSupabase();
+  const db = await getDb();
   const { data, error } = await db
     .from('admin_queue')
     .select('*')
