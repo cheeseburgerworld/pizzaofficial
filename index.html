@@ -4,192 +4,209 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIZZA⚡OFFICIAL — The Open Pizza Database</title>
+  <meta name="description" content="A community-built record of the world's pizza. ATProto-native. No algorithms.">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --black: #0d0800; --black2: #110e08; --black3: #1a1000;
-      --red: #FF3B30; --cream: #F5F0E8; --gold: #D4A847;
-      --muted: #5a4a30; --border: #2a1f00;
-      --mono: 'IBM Plex Mono', monospace;
-    }
-    body {
-      background: var(--black); font-family: var(--mono);
-      color: var(--cream); min-height: 100vh; overflow-x: hidden;
-    }
-    body::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
-    }
-
-    /* ── Shared nav ───────────────────────── */
-    .nav {
-      height: 52px; background: var(--black2); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo { font-size: 15px; font-weight: 700; letter-spacing: -.01em; color: var(--cream); text-decoration: none; }
-    .nav-logo span { color: var(--red); }
-    .nav-links { display: flex; align-items: center; gap: 4px; }
-    .nav-links a { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: 6px 10px; transition: color .15s; }
-    .nav-links a:hover { color: var(--cream); }
-    .nav-sign-out { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; padding: 6px 10px; transition: color .15s; }
-    .nav-sign-out:hover { color: var(--red); }
-
-    /* ── Pages ────────────────────────────── */
     .page { display: none; flex-direction: column; min-height: 100vh; }
     .page.show { display: flex; }
 
-    /* ── LOGIN PAGE ───────────────────────── */
+    /* ── Login ───────────────────────────────────────────────── */
     #pg-login {
       align-items: center; justify-content: center;
-      padding: 40px 20px;
+      padding: 48px 24px;
     }
     .login-inner { width: 100%; max-width: 420px; }
+
     .hero-logo {
-      font-size: clamp(36px, 10vw, 72px); font-weight: 700;
-      letter-spacing: -.03em; line-height: 1; text-align: center;
-      margin-bottom: 10px;
-      animation: up .4s ease both;
+      font-size: clamp(38px, 11vw, 76px);
+      font-weight: 700; letter-spacing: -.03em; line-height: 1;
+      text-align: center; color: var(--white);
+      margin-bottom: 14px;
     }
-    .hero-logo span { color: var(--red); }
-    .hero-tag {
-      font-size: 10px; color: var(--muted); letter-spacing: .2em;
-      text-transform: uppercase; text-align: center; margin-bottom: 48px;
-      animation: up .4s .06s ease both;
+    .hero-logo .bolt { color: var(--red); }
+
+    .hero-tagline {
+      text-align: center; margin-bottom: 44px;
     }
+    .hero-tagline-name {
+      font-size: 13px; font-weight: 700; letter-spacing: .04em;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .hero-tagline-sub {
+      font-size: 10px; color: var(--text2); letter-spacing: .06em;
+      line-height: 1.7;
+    }
+
     .login-card {
-      background: var(--black2); border: 1px solid var(--border); padding: 24px;
-      animation: up .4s .12s ease both;
+      background: var(--bg2); border: 1px solid var(--border);
+      padding: 26px 26px 22px; margin-bottom: 10px;
     }
-    .login-card-label { font-size: 9px; color: var(--muted); letter-spacing: .2em; text-transform: uppercase; margin-bottom: 14px; }
+    .login-card-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold2); margin-bottom: 13px;
+    }
     .handle-row { display: flex; gap: 8px; margin-bottom: 8px; }
     .handle-input {
-      flex: 1; background: var(--black3); border: 1px solid var(--border);
-      color: var(--cream); font-family: var(--mono); font-size: 13px;
-      padding: 10px 12px; outline: none; transition: border-color .15s;
+      flex: 1; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono); font-size: 14px;
+      padding: 12px 14px; outline: none; transition: border-color .15s;
     }
-    .handle-input::placeholder { color: var(--muted); }
-    .handle-input:focus { border-color: var(--red); }
-    .signin-btn {
-      background: transparent; border: 1px solid var(--red); color: var(--red);
-      font-family: var(--mono); font-size: 11px; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      padding: 10px 16px; cursor: pointer; white-space: nowrap;
-      transition: background .15s, color .15s; flex-shrink: 0;
-    }
-    .signin-btn:hover:not(:disabled) { background: var(--red); color: var(--black); }
-    .signin-btn:disabled { opacity: .4; cursor: not-allowed; }
-    .login-hint { font-size: 10px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
-    .login-error { font-size: 11px; color: var(--red); min-height: 16px; margin-bottom: 8px; display: none; }
-    .login-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-    .login-note { font-size: 10px; color: var(--muted); line-height: 1.7; }
-    .login-note a { color: var(--cream); text-decoration: none; border-bottom: 1px solid var(--border); }
-    .login-note a:hover { border-color: var(--cream); }
-    .login-footer {
-      display: flex; gap: 20px; justify-content: center;
-      margin-top: 24px; animation: up .4s .18s ease both;
-    }
-    .login-footer a { font-size: 10px; color: var(--muted); text-decoration: none; letter-spacing: .1em; transition: color .15s; }
-    .login-footer a:hover { color: var(--cream); }
-    .corner-ver { position: fixed; bottom: 20px; right: 20px; font-size: 9px; color: var(--border); letter-spacing: .1em; }
+    .handle-input::placeholder { color: var(--text2); }
+    .handle-input:focus { border-color: var(--gold); }
+    .login-hint { font-size: 11px; color: var(--text2); margin-bottom: 12px; }
+    .login-error { font-size: 11px; color: var(--red); margin-bottom: 8px; line-height: 1.5; display: none; }
+    hr.login-rule { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+    .login-note { font-size: 11px; color: var(--text2); line-height: 1.75; }
+    .login-note a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border2); }
+    .login-note a:hover { color: var(--gold); border-color: var(--gold2); }
 
-    /* ── USER PAGE ────────────────────────── */
-    #pg-user { flex-direction: column; }
-    .user-body { max-width: 780px; width: 100%; margin: 0 auto; padding: 36px 20px; }
-    .user-card { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; animation: up .35s ease both; }
+    /* Browse CTA below sign-in card */
+    .browse-cta {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-top: none; padding: 14px 26px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .browse-cta-text { font-size: 11px; color: var(--text2); line-height: 1.5; }
+    .browse-cta-text strong { color: var(--text); font-weight: 700; }
+
+    /* Community join banner */
+    .join-banner {
+      background: transparent; border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: 16px 20px; margin-bottom: 24px;
+    }
+    .join-title { font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
+    .join-sub { font-size: 11px; color: var(--text2); line-height: 1.65; margin-bottom: 12px; }
+
+    .login-footer {
+      display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    }
+    .login-footer a {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text2);
+      text-decoration: none; transition: color .15s;
+    }
+    .login-footer a:hover { color: var(--gold); }
+
+    /* ── User page ───────────────────────────────────────────── */
+    .user-card {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 32px; padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
     .avatar {
-      width: 50px; height: 50px; border-radius: 50%; background: var(--black3);
-      border: 1px solid var(--border); overflow: hidden; flex-shrink: 0;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--bg3); border: 1px solid var(--border2);
+      overflow: hidden; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 700; color: var(--muted);
+      font-size: 20px; font-weight: 700; color: var(--gold2);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-handle { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
-    .role-badge {
-      display: inline-block; font-size: 9px; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    .user-handle { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+
+    .action-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 10px; margin-bottom: 28px;
     }
-    .role-guest       { background: var(--black3); color: var(--muted); border: 1px solid var(--border); }
-    .role-contributor { background: #0d1a04; color: #639922; border: 1px solid #1a3308; }
-    .role-admin       { background: #1a0505; color: var(--red); border: 1px solid #3a0a0a; }
-    .section-lbl { font-size: 9px; color: var(--muted); letter-spacing: .18em; text-transform: uppercase; margin-bottom: 10px; }
-    .action-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 28px; }
     .action-card {
-      background: var(--black2); border: 1px solid var(--border);
-      padding: 18px; cursor: pointer; text-decoration: none;
+      background: var(--bg2); border: 1px solid var(--border);
+      padding: 20px 18px; cursor: pointer; text-decoration: none;
       display: block; transition: border-color .15s, background .15s;
     }
-    .action-card:hover { border-color: var(--red); background: var(--black3); }
-    .ac-icon { font-size: 16px; margin-bottom: 10px; display: block; }
-    .ac-title { font-size: 13px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
-    .ac-sub { font-size: 10px; color: var(--muted); line-height: 1.5; }
-    .apply-banner {
-      background: var(--black2); border: 1px solid var(--border);
-      border-left: 3px solid var(--red); padding: 16px 18px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-    }
-    .apply-title { font-size: 12px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
-    .apply-sub { font-size: 10px; color: var(--muted); line-height: 1.5; }
-    .apply-btn {
-      font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      padding: 8px 14px; background: transparent;
-      border: 1px solid var(--red); color: var(--red);
-      cursor: pointer; white-space: nowrap; text-decoration: none;
-      transition: background .15s, color .15s; display: inline-block; flex-shrink: 0;
-    }
-    .apply-btn:hover { background: var(--red); color: var(--black); }
+    .action-card:hover { border-color: var(--gold2); background: var(--bg3); }
+    .ac-icon { font-size: 16px; margin-bottom: 12px; display: block; }
+    .ac-title { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
+    .ac-sub { font-size: 10px; color: var(--text2); line-height: 1.55; }
 
-    @keyframes up {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .apply-banner {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: 18px 20px; display: flex;
+      align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
     }
-    @media (max-width: 480px) {
-      .handle-row { flex-direction: column; }
-      .signin-btn { width: 100%; }
+    .apply-title { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 5px; }
+    .apply-sub { font-size: 11px; color: var(--text2); line-height: 1.6; }
+
+    .site-footer {
+      position: fixed; bottom: 18px; right: 20px;
+      font-size: 9px; font-weight: 700; letter-spacing: .12em;
+      color: var(--border2); text-transform: uppercase;
     }
+
+    @media (max-width: 480px) { .handle-row { flex-direction: column; } }
   </style>
 </head>
 <body>
 
-  <!-- ── Login page (shown by default) ──────────────────────── -->
+  <!-- ── Login page ─────────────────────────────────────────── -->
   <div id="pg-login" class="page show">
     <div class="login-inner">
-      <div class="hero-logo">PIZZA<span>⚡</span>OFFICIAL</div>
-      <div class="hero-tag">A community-built record of the world's pizza · ATProto-native· No algorithms.</div>
 
-      <div class="login-card">
+      <div class="hero-logo anim-up">PIZZA<span class="bolt">⚡</span>OFFICIAL</div>
+
+      <div class="hero-tagline anim-up-1">
+        <div class="hero-tagline-name">PIZZA OFFICIAL</div>
+        <div class="hero-tagline-sub">
+          A community-built record of the world's pizza<br>
+          ATProto-native · No algorithms.
+        </div>
+      </div>
+
+      <div class="login-card anim-up-2">
         <div class="login-card-label">Sign in with Bluesky</div>
         <div class="handle-row">
           <input type="text" class="handle-input" id="handleInput"
             placeholder="you.bsky.social"
             autocomplete="off" autocapitalize="off" spellcheck="false">
-          <button class="signin-btn" id="signinBtn">Sign In →</button>
+          <button class="btn btn-primary" id="signinBtn">Sign In</button>
         </div>
         <div class="login-hint">Your Bluesky handle — with or without the @</div>
         <div class="login-error" id="loginErr"></div>
-        <hr class="login-divider">
+        <hr class="login-rule">
         <div class="login-note">
-          PIZZA⚡OFFICIAL uses your Bluesky account for identity.
-          No password is shared with us.<br><br>
+          Your Bluesky account is your identity here.
+          No separate login. No data sold. Your reviews stay yours.<br><br>
           No Bluesky yet? <a href="https://bsky.app" target="_blank" rel="noopener">Create a free account →</a>
         </div>
       </div>
 
-      <div class="login-footer">
-        <a href="/database.html">Browse database</a>
+      <!-- Browse without signing in -->
+      <div class="browse-cta anim-up-2">
+        <div class="browse-cta-text">
+          <strong>Just browsing?</strong> The database is public.
+        </div>
+        <a href="/database.html" class="btn btn-outline btn-sm">Browse database</a>
+      </div>
+
+      <!-- Community join callout -->
+      <div class="join-banner anim-up-3">
+        <div class="join-title">Join the community</div>
+        <div class="join-sub">
+          Pizza Official is built by people who eat pizza and care about getting it right.
+          Sign in and apply to become a contributor — write reviews, build the record,
+          earn your place in the database.
+        </div>
+        <a href="/contributor.html" class="btn btn-ghost btn-sm">How it works →</a>
+      </div>
+
+      <div class="login-footer anim-up-3">
+        <a href="/database.html">Database</a>
         <a href="/stats.html">Stats</a>
+        <a href="/contributor.html">Contribute</a>
         <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
       </div>
     </div>
-    <div class="corner-ver">PIZZA⚡OFFICIAL · v1 · pizzaofficial.biz</div>
+
+    <div class="site-footer">pizzaofficial.biz · v1</div>
   </div>
 
-  <!-- ── User page (shown when logged in) ───────────────────── -->
+  <!-- ── User page ──────────────────────────────────────────── -->
   <div id="pg-user" class="page">
     <nav class="nav">
-      <a href="/" class="nav-logo">PIZZA<span>⚡</span>OFFICIAL</a>
+      <a href="/" class="nav-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
       <div class="nav-links">
         <a href="/database.html">Database</a>
         <a href="/stats.html">Stats</a>
@@ -197,16 +214,17 @@
       </div>
       <button class="nav-sign-out" id="signOutBtn">Sign out</button>
     </nav>
-    <div class="user-body">
-      <div class="user-card">
+    <div class="wrap">
+      <div class="user-card anim-up">
         <div class="avatar" id="userAvatar">?</div>
         <div>
           <div class="user-handle" id="userHandle">Loading…</div>
-          <span class="role-badge role-guest" id="roleBadge">Guest</span>
+          <span class="pill pill-guest" id="roleBadge">Guest</span>
         </div>
       </div>
-      <div class="section-lbl">Quick actions</div>
-      <div class="action-grid">
+
+      <span class="section-label anim-up-1">Quick actions</span>
+      <div class="action-grid anim-up-1">
         <a href="/database.html" class="action-card">
           <span class="ac-icon">🍕</span>
           <div class="ac-title">Browse database</div>
@@ -215,7 +233,7 @@
         <a href="/stats.html" class="action-card">
           <span class="ac-icon">📊</span>
           <div class="ac-title">Stats</div>
-          <div class="ac-sub">Coverage, your review history, and admin queue.</div>
+          <div class="ac-sub">Coverage, leaderboard, and your review history.</div>
         </a>
         <a href="/submit.html" class="action-card" id="submitCard" style="display:none">
           <span class="ac-icon">✏️</span>
@@ -223,14 +241,12 @@
           <div class="ac-sub">Structured form. Optional Bluesky cross-post.</div>
         </a>
       </div>
+
       <div id="applyArea"></div>
     </div>
   </div>
 
   <script type="module">
-    // ── Show login page immediately — no waiting ───────────────
-    // Auth check runs in background. If session found, swaps to user page.
-
     const $ = id => document.getElementById(id);
 
     function show(id) {
@@ -240,87 +256,67 @@
 
     function renderUser(user) {
       $('userHandle').textContent = '@' + user.handle;
-
-      // Avatar
       if (user.avatar_url) {
         const img = document.createElement('img');
-        img.src = user.avatar_url;
-        img.alt = user.handle;
+        img.src = user.avatar_url; img.alt = user.handle;
         $('userAvatar').textContent = '';
         $('userAvatar').appendChild(img);
       } else {
-        $('userAvatar').textContent = user.handle[0].toUpperCase();
+        $('userAvatar').textContent = (user.display_name || user.handle)[0].toUpperCase();
       }
-
-      // Role badge
       const badge = $('roleBadge');
       const labels = { guest: 'Guest', contributor: 'Contributor', admin: 'Admin' };
       badge.textContent = labels[user.role] || 'Guest';
-      badge.className = 'role-badge role-' + (user.role || 'guest');
-
-      // Show submit for contributors + admin
-      if (['contributor', 'admin'].includes(user.role)) {
+      badge.className = 'pill pill-' + (user.role || 'guest');
+      if (['contributor','admin'].includes(user.role)) {
         $('navSubmit').style.display = '';
         $('submitCard').style.display = '';
       }
-
-      // Apply banner for guests
       if (user.role === 'guest') {
         $('applyArea').innerHTML = `
-          <div class="apply-banner">
+          <div class="apply-banner anim-up-2">
             <div>
               <div class="apply-title">Become a contributor</div>
-              <div class="apply-sub">Submit pizza reviews to the official database. Takes 2 minutes to apply.</div>
+              <div class="apply-sub">Submit reviews to the official database. Takes 2 minutes to apply.</div>
             </div>
-            <a href="/contributor.html" class="apply-btn">Apply now</a>
+            <a href="/contributor.html" class="btn btn-outline btn-sm">Apply now</a>
           </div>`;
       }
-
       show('pg-user');
     }
 
-    // ── Background auth check ──────────────────────────────────
     async function checkAuth() {
       try {
         const { initAuth } = await import('/js/auth.js');
         const auth = await initAuth();
         if (auth?.user) renderUser(auth.user);
-        // If no session, login page stays visible (already shown)
       } catch (err) {
-        console.warn('[index] auth check failed:', err.message);
-        // Login page stays — user can still sign in manually
+        console.warn('[index] auth check:', err.message);
       }
     }
-
     checkAuth();
 
-    // ── Sign in ────────────────────────────────────────────────
     async function doSignIn() {
       const handle = $('handleInput').value.trim();
-      const btn    = $('signinBtn');
-      const errEl  = $('loginErr');
+      const btn = $('signinBtn');
+      const errEl = $('loginErr');
       errEl.style.display = 'none';
-
       if (!handle) {
         errEl.textContent = 'Enter your Bluesky handle.';
         errEl.style.display = 'block';
         $('handleInput').focus();
         return;
       }
-
       btn.disabled = true;
       btn.textContent = 'Connecting…';
-
       try {
         const { signIn } = await import('/js/auth.js');
         await signIn(handle);
-        // Navigates to Bluesky — no further code runs
       } catch (err) {
-        console.error('[index] signIn error:', err);
         btn.disabled = false;
-        btn.textContent = 'Sign In →';
+        btn.textContent = 'Sign In';
         errEl.textContent = err.message?.includes('resolve')
-          ? 'Handle not found. Double-check the spelling.'
+          ? 'Handle not found — check the spelling and try again.'
           : 'Sign in failed: ' + err.message;
         errEl.style.display = 'block';
       }
@@ -328,11 +324,9 @@
 
     $('signinBtn').addEventListener('click', doSignIn);
     $('handleInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSignIn(); });
-
-    // ── Sign out ───────────────────────────────────────────────
     $('signOutBtn').addEventListener('click', async () => {
-      const { signOut } = await import('/js/auth.js');
-      await signOut();
+      try { const { signOut } = await import('/js/auth.js'); await signOut(); }
+      catch (_) { location.href = '/'; }
     });
   </script>
 
