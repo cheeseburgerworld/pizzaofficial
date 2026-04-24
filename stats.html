@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stats — PIZZA⚡OFFICIAL</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--black:#0d0800;--black2:#110e08;--black3:#1a1000;--red:#FF3B30;--cream:#F5F0E8;--gold:#D4A847;--muted:#5a4a30;--border:#2a1f00;--mono:'IBM Plex Mono',monospace}
-    body{background:var(--black);font-family:var(--mono);color:var(--cream);min-height:100vh}
+    :root{--black:var(--bg);--black2:var(--bg2);--black3:var(--bg3);--red:var(--red);--cream:var(--white);--gold:var(--gold);--muted:var(--text2);--border:var(--border);--mono:'IBM Plex Mono',monospace}
+    body{background:var(--bg);font-family:var(--mono);color:var(--white);min-height:100vh}
     body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
 
-    nav{height:52px;background:var(--black2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
-    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--cream)}
+    nav{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--white)}
     .logo span{color:var(--red)}
     .nav-r{display:flex;align-items:center;gap:4px}
-    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
-    .nav-r a:hover,.nav-r button:hover{color:var(--cream)}
+    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
+    .nav-r a:hover,.nav-r button:hover{color:var(--white)}
     .nav-r .active{color:var(--red)}
 
     .wrap{max-width:900px;margin:0 auto;padding:28px 20px}
@@ -24,45 +25,45 @@
 
     .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:24px}
     @media(min-width:480px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
-    .stat-card{background:var(--black2);border:1px solid var(--border);padding:14px 16px}
-    .stat-val{font-size:24px;font-weight:700;color:var(--cream);line-height:1;margin-bottom:4px}
-    .stat-lbl{font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+    .stat-card{background:var(--bg2);border:1px solid var(--border);padding:14px 16px}
+    .stat-val{font-size:24px;font-weight:700;color:var(--white);line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:9px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase}
 
-    .section-head{font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--border)}
+    .section-head{font-size:9px;color:var(--text2);letter-spacing:.18em;text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--border)}
 
     .review-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
     .review-row:last-child{border-bottom:none}
-    .rr-name{font-size:12px;font-weight:700;color:var(--cream);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .rr-loc{font-size:10px;color:var(--muted);min-width:80px;white-space:nowrap}
+    .rr-name{font-size:12px;font-weight:700;color:var(--white);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rr-loc{font-size:10px;color:var(--text2);min-width:80px;white-space:nowrap}
     .rr-rating{font-size:11px;min-width:60px;text-align:right}
 
     .status-pill{font-size:9px;padding:2px 8px;font-weight:700;letter-spacing:.06em}
-    .s-approved{background:#0d1a04;color:#639922;border:1px solid #1a3308}
-    .s-pending{background:#1a1400;color:#D4A847;border:1px solid #2a2200}
+    .s-approved{background:#0d1a04;color:var(--green);border:1px solid #1a3308}
+    .s-pending{background:#1a1400;color:var(--gold);border:1px solid #2a2200}
     .s-rejected{background:#1a0505;color:#A32D2D;border:1px solid #3a0a0a}
 
-    .rank-bar{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--red);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
-    .rank-label{font-size:13px;font-weight:700;color:var(--cream)}
-    .rank-sub{font-size:10px;color:var(--muted);margin-top:2px}
+    .rank-bar{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .rank-label{font-size:13px;font-weight:700;color:var(--white)}
+    .rank-sub{font-size:10px;color:var(--text2);margin-top:2px}
     .rank-track{flex:1;height:3px;background:var(--border)}
     .rank-fill{height:100%;background:var(--red);transition:width .5s ease}
 
-    .queue-card{background:var(--black2);border:1px solid var(--border);padding:14px 16px;margin-bottom:8px}
-    .q-name{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:3px}
-    .q-meta{font-size:10px;color:var(--muted);margin-bottom:6px}
+    .queue-card{background:var(--bg2);border:1px solid var(--border);padding:14px 16px;margin-bottom:8px}
+    .q-name{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
+    .q-meta{font-size:10px;color:var(--text2);margin-bottom:6px}
     .q-excerpt{font-size:11px;color:#8a7a60;line-height:1.6;margin-bottom:10px;font-style:italic}
     .q-actions{display:flex;gap:8px}
-    .q-approve{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 14px;background:transparent;border:1px solid #639922;color:#639922;cursor:pointer;transition:all .15s}
-    .q-approve:hover{background:#639922;color:var(--black)}
+    .q-approve{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 14px;background:transparent;border:1px solid #639922;color:var(--green);cursor:pointer;transition:all .15s}
+    .q-approve:hover{background:#639922;color:var(--bg)}
     .q-reject{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 14px;background:transparent;border:1px solid #A32D2D;color:#A32D2D;cursor:pointer;transition:all .15s}
-    .q-reject:hover{background:#A32D2D;color:var(--cream)}
+    .q-reject:hover{background:#A32D2D;color:var(--white)}
 
-    .empty-queue{font-size:11px;color:var(--muted);padding:16px 0}
-    .signin-cta{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--muted);padding:16px 20px}
-    .signin-cta-title{font-size:12px;font-weight:700;color:var(--cream);margin-bottom:4px}
-    .signin-cta-sub{font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+    .empty-queue{font-size:11px;color:var(--text2);padding:16px 0}
+    .signin-cta{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--text2);padding:16px 20px}
+    .signin-cta-title{font-size:12px;font-weight:700;color:var(--white);margin-bottom:4px}
+    .signin-cta-sub{font-size:10px;color:var(--text2);margin-bottom:12px;line-height:1.6}
     .signin-cta-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 16px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s}
-    .signin-cta-btn:hover{background:var(--red);color:var(--black)}
+    .signin-cta-btn:hover{background:var(--red);color:var(--bg)}
   </style>
 </head>
 <body>
@@ -93,7 +94,7 @@
 </div>
 
 <script type="module">
-  import { initAuth, getPublicStats, getMyReviews, getAdminQueue } from '/js/auth.js';
+  import { initAuth, getPublicStats, getMyReviews, getAdminQueue } from '/auth.js';
 
   const RATINGS = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
   const RANK_THRESHOLDS = { guest: 0, reviewer: 1, contributor: 10, legend: 25 };
@@ -151,7 +152,7 @@
         <div class="section-head">Your reviews (${myReviews.length})</div>`;
 
       if (!myReviews.length) {
-        html += `<div class="empty-queue">No reviews yet. <a href="/submit.html" style="color:var(--cream)">Submit your first one →</a></div>`;
+        html += `<div class="empty-queue">No reviews yet. <a href="/submit.html" style="color:var(--white)">Submit your first one →</a></div>`;
       } else {
         html += myReviews.map(r => `
           <div class="review-row">
