@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats — PIZZA⚡OFFICIAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--black:#0d0800;--black2:#110e08;--black3:#1a1000;--red:#FF3B30;--cream:#F5F0E8;--gold:#D4A847;--muted:#5a4a30;--border:#2a1f00;--mono:'IBM Plex Mono',monospace}
+    body{background:var(--black);font-family:var(--mono);color:var(--cream);min-height:100vh}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
+
+    nav{height:52px;background:var(--black2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--cream)}
+    .logo span{color:var(--red)}
+    .nav-r{display:flex;align-items:center;gap:4px}
+    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
+    .nav-r a:hover,.nav-r button:hover{color:var(--cream)}
+    .nav-r .active{color:var(--red)}
+
+    .wrap{max-width:900px;margin:0 auto;padding:28px 20px}
+    .page-title{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1;margin-bottom:24px}
+
+    .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:24px}
+    @media(min-width:480px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+    .stat-card{background:var(--black2);border:1px solid var(--border);padding:14px 16px}
+    .stat-val{font-size:24px;font-weight:700;color:var(--cream);line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+
+    .section-head{font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin:20px 0 10px;padding-top:16px;border-top:1px solid var(--border)}
+
+    .review-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+    .review-row:last-child{border-bottom:none}
+    .rr-name{font-size:12px;font-weight:700;color:var(--cream);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rr-loc{font-size:10px;color:var(--muted);min-width:80px;white-space:nowrap}
+    .rr-rating{font-size:11px;min-width:60px;text-align:right}
+
+    .status-pill{font-size:9px;padding:2px 8px;font-weight:700;letter-spacing:.06em}
+    .s-approved{background:#0d1a04;color:#639922;border:1px solid #1a3308}
+    .s-pending{background:#1a1400;color:#D4A847;border:1px solid #2a2200}
+    .s-rejected{background:#1a0505;color:#A32D2D;border:1px solid #3a0a0a}
+
+    .rank-bar{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--red);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .rank-label{font-size:13px;font-weight:700;color:var(--cream)}
+    .rank-sub{font-size:10px;color:var(--muted);margin-top:2px}
+    .rank-track{flex:1;height:3px;background:var(--border)}
+    .rank-fill{height:100%;background:var(--red);transition:width .5s ease}
+
+    .queue-card{background:var(--black2);border:1px solid var(--border);padding:14px 16px;margin-bottom:8px}
+    .q-name{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:3px}
+    .q-meta{font-size:10px;color:var(--muted);margin-bottom:6px}
+    .q-excerpt{font-size:11px;color:#8a7a60;line-height:1.6;margin-bottom:10px;font-style:italic}
+    .q-actions{display:flex;gap:8px}
+    .q-approve{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 14px;background:transparent;border:1px solid #639922;color:#639922;cursor:pointer;transition:all .15s}
+    .q-approve:hover{background:#639922;color:var(--black)}
+    .q-reject{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 14px;background:transparent;border:1px solid #A32D2D;color:#A32D2D;cursor:pointer;transition:all .15s}
+    .q-reject:hover{background:#A32D2D;color:var(--cream)}
+
+    .empty-queue{font-size:11px;color:var(--muted);padding:16px 0}
+    .signin-cta{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--muted);padding:16px 20px}
+    .signin-cta-title{font-size:12px;font-weight:700;color:var(--cream);margin-bottom:4px}
+    .signin-cta-sub{font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+    .signin-cta-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 16px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s}
+    .signin-cta-btn:hover{background:var(--red);color:var(--black)}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
+  <div class="nav-r">
+    <a href="/database.html">Database</a>
+    <a href="/stats.html" class="active">Stats</a>
+    <a href="/submit.html" id="navSubmit" style="display:none">Submit</a>
+    <button id="navAuth" onclick="location.href='/'">Sign in</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-title">STATS</div>
+
+  <!-- Public stats — always visible -->
+  <div class="stat-grid" id="statGrid">
+    <div class="stat-card"><div class="stat-val" id="sReviews">—</div><div class="stat-lbl">Reviews</div></div>
+    <div class="stat-card"><div class="stat-val" id="sCities">—</div><div class="stat-lbl">Cities</div></div>
+    <div class="stat-card"><div class="stat-val" id="sContribs">—</div><div class="stat-lbl">Contributors</div></div>
+    <div class="stat-card"><div class="stat-val" id="sLegendary">—</div><div class="stat-lbl">Legendary</div></div>
+  </div>
+
+  <!-- Auth-dependent content -->
+  <div id="authContent"></div>
+</div>
+
+<script type="module">
+  import { initAuth, getPublicStats, getMyReviews, getAdminQueue } from '/js/auth.js';
+
+  const RATINGS = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
+  const RANK_THRESHOLDS = { guest: 0, reviewer: 1, contributor: 10, legend: 25 };
+
+  async function main() {
+    // Public stats
+    const stats = await getPublicStats();
+    if (stats) {
+      document.getElementById('sReviews').textContent   = stats.total_reviews ?? 0;
+      document.getElementById('sCities').textContent    = stats.cities ?? 0;
+      document.getElementById('sContribs').textContent  = stats.contributors ?? 0;
+      document.getElementById('sLegendary').textContent = stats.legendary_count ?? 0;
+    }
+
+    // Auth
+    const auth = await initAuth();
+    const user = auth?.user;
+    const el = document.getElementById('authContent');
+
+    if (!user) {
+      el.innerHTML = `
+        <div class="signin-cta">
+          <div class="signin-cta-title">Sign in to see your stats</div>
+          <div class="signin-cta-sub">Track your reviews, see your contributor rank, and apply to submit reviews.</div>
+          <a href="/" class="signin-cta-btn">Sign in with Bluesky</a>
+        </div>`;
+      return;
+    }
+
+    // Update nav
+    document.getElementById('navAuth').textContent = `@${user.handle}`;
+    document.getElementById('navAuth').onclick = () => location.href = '/';
+    if (['contributor','admin'].includes(user.role)) {
+      document.getElementById('navSubmit').style.display = '';
+    }
+
+    // Build contributor section
+    let html = '';
+
+    if (['contributor','admin'].includes(user.role)) {
+      const myReviews = await getMyReviews(user.did);
+      const approved = myReviews.filter(r => r.status === 'approved').length;
+      const nextThreshold = approved < 1 ? 1 : approved < 10 ? 10 : approved < 25 ? 25 : null;
+      const progress = nextThreshold ? Math.round((approved / nextThreshold) * 100) : 100;
+
+      html += `
+        <div class="section-head">Your stats</div>
+        <div class="rank-bar">
+          <div>
+            <div class="rank-label">${getRankLabel(approved)}</div>
+            <div class="rank-sub">${approved} approved review${approved !== 1 ? 's' : ''}${nextThreshold ? ` · ${nextThreshold - approved} to next rank` : ' · max rank reached'}</div>
+          </div>
+          <div class="rank-track" style="min-width:80px"><div class="rank-fill" style="width:${progress}%"></div></div>
+        </div>
+        <div class="section-head">Your reviews (${myReviews.length})</div>`;
+
+      if (!myReviews.length) {
+        html += `<div class="empty-queue">No reviews yet. <a href="/submit.html" style="color:var(--cream)">Submit your first one →</a></div>`;
+      } else {
+        html += myReviews.map(r => `
+          <div class="review-row">
+            <span class="rr-name">${r.name}</span>
+            <span class="rr-loc">${r.location}</span>
+            <span class="rr-rating">${RATINGS[r.rating] || ''}</span>
+            <span class="status-pill s-${r.status}">${r.status}</span>
+          </div>`).join('');
+      }
+
+      html += `<div style="margin-top:12px"><a href="/submit.html" style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 16px;background:transparent;border:1px solid var(--red);color:var(--red);text-decoration:none;display:inline-block">+ Submit a review</a></div>`;
+    }
+
+    // Admin section
+    if (user.role === 'admin') {
+      const queue = await getAdminQueue();
+      const pendingReviews = queue.filter(q => q.queue_type === 'review');
+      const pendingApps    = queue.filter(q => q.queue_type === 'application');
+
+      html += `<div class="section-head">Pending reviews (${pendingReviews.length})</div>`;
+      if (!pendingReviews.length) {
+        html += `<div class="empty-queue">All clear.</div>`;
+      } else {
+        html += pendingReviews.map(r => `
+          <div class="queue-card" id="qr-${r.id}">
+            <div class="q-name">${r.subject}</div>
+            <div class="q-meta">${r.location} · ${r.style} · ${RATINGS[r.rating] || r.rating} · @${r.from_handle}</div>
+            <div class="q-excerpt">${(r.excerpt || '').slice(0, 200)}${(r.excerpt || '').length > 200 ? '…' : ''}</div>
+            <div class="q-actions">
+              <button class="q-approve" onclick="act('review','${r.id}','approve',this)">Approve</button>
+              <button class="q-reject"  onclick="act('review','${r.id}','reject',this)">Reject</button>
+            </div>
+          </div>`).join('');
+      }
+
+      html += `<div class="section-head">Pending applications (${pendingApps.length})</div>`;
+      if (!pendingApps.length) {
+        html += `<div class="empty-queue">No pending applications.</div>`;
+      } else {
+        html += pendingApps.map(a => `
+          <div class="queue-card" id="qa-${a.id}">
+            <div class="q-name">@${a.from_handle}</div>
+            <div class="q-meta">${a.location} · Favorite: ${a.style}</div>
+            <div class="q-excerpt">${(a.excerpt || '').slice(0, 300)}${(a.excerpt || '').length > 300 ? '…' : ''}</div>
+            <div class="q-actions">
+              <button class="q-approve" onclick="act('application','${a.id}','approve',this)">Approve</button>
+              <button class="q-reject"  onclick="act('application','${a.id}','reject',this)">Reject</button>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    el.innerHTML = html;
+  }
+
+  function getRankLabel(approved) {
+    if (approved >= 25) return '⭐⭐⭐ Legend';
+    if (approved >= 10) return '⭐⭐ Contributor';
+    if (approved >= 1)  return '⭐ Reviewer';
+    return 'Guest';
+  }
+
+  window.act = async function(type, id, action, btn) {
+    btn.disabled = true;
+    btn.textContent = action === 'approve' ? 'Approving…' : 'Rejecting…';
+    try {
+      const res = await fetch('/.netlify/functions/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_did: 'did:plc:u5jrhjdnrgx52s6secwuilkh', type, id, action }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const card = document.getElementById(`q${type[0]}-${id}`);
+      if (card) card.style.opacity = '0.4';
+      btn.textContent = action === 'approve' ? 'Approved ✓' : 'Rejected';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Error — retry';
+      console.error(err);
+    }
+  };
+
+  main();
+</script>
+</body>
+</html>
