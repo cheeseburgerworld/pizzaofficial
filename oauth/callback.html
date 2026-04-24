@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIZZA⚡OFFICIAL — Signing in</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0d0800;font-family:'IBM Plex Mono',monospace;color:#F5F0E8;
+         height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+    .logo{font-size:22px;font-weight:700}
+    .logo span{color:#FF3B30}
+    .msg{font-size:11px;color:#5a4a30;letter-spacing:.12em;text-transform:uppercase}
+    .err{font-size:12px;color:#FF3B30;max-width:320px;text-align:center;line-height:1.6;display:none}
+    .btn{display:none;font-family:inherit;font-size:11px;letter-spacing:.1em;padding:8px 20px;
+         border:1px solid #FF3B30;color:#FF3B30;background:transparent;cursor:pointer}
+    .btn:hover{background:#FF3B30;color:#0d0800}
+  </style>
+</head>
+<body>
+  <div class="logo">PIZZA<span>⚡</span>OFFICIAL</div>
+  <div class="msg" id="msg">Completing sign in…</div>
+  <div class="err" id="err"></div>
+  <button class="btn" id="btn" onclick="location.href='/'">Try again</button>
+  <script type="module">
+    import { handleCallback } from '/auth.js';
+    const msg = document.getElementById('msg');
+    const err = document.getElementById('err');
+    const btn = document.getElementById('btn');
+    try {
+      const { user } = await handleCallback();
+      msg.textContent = `Welcome, @${user?.handle || 'there'}`;
+      const returnTo = sessionStorage.getItem('pzof_return') || '/database.html';
+      sessionStorage.removeItem('pzof_return');
+      await new Promise(r => setTimeout(r, 800));
+      location.href = returnTo;
+    } catch (e) {
+      console.error(e);
+      msg.textContent = 'Sign in failed';
+      err.textContent = e.message?.includes('access_denied')
+        ? 'Sign in was cancelled. Go back and try again.'
+        : `Something went wrong: ${e.message}`;
+      err.style.display = 'block';
+      btn.style.display = 'inline-block';
+    }
+  </script>
+</body>
+</html>
