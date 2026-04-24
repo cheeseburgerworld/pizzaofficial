@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database — PIZZA⚡OFFICIAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--black:#0d0800;--black2:#110e08;--black3:#1a1000;--red:#FF3B30;--cream:#F5F0E8;--gold:#D4A847;--muted:#5a4a30;--border:#2a1f00;--mono:'IBM Plex Mono',monospace}
+    body{background:var(--black);font-family:var(--mono);color:var(--cream);min-height:100vh}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
+
+    nav{height:52px;background:var(--black2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--cream)}
+    .logo span{color:var(--red)}
+    .nav-r{display:flex;align-items:center;gap:4px}
+    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
+    .nav-r a:hover,.nav-r button:hover{color:var(--cream)}
+    .nav-r .active{color:var(--red)}
+
+    .page-head{padding:24px 20px 16px;max-width:1100px;margin:0 auto;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .page-title{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1}
+    .live-badge{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,71,.5)}50%{box-shadow:0 0 0 6px rgba(212,168,71,0)}}
+
+    .filters{padding:10px 20px;max-width:1100px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
+    .filter-label{font-size:9px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
+    .filter-btn{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s}
+    .filter-btn:hover{border-color:var(--cream);color:var(--cream)}
+    .filter-btn.active{border-color:var(--red);color:var(--red)}
+
+    .content{padding:20px;max-width:1100px;margin:0 auto}
+    .count{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:14px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:840px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+    .card{background:var(--black2);border:1px solid var(--border);cursor:pointer;display:flex;gap:0;overflow:hidden;transition:border-color .15s}
+    .card:hover{border-color:var(--red)}
+    .card-img{width:80px;min-width:80px;height:80px;background:var(--black3);overflow:hidden;flex-shrink:0}
+    .card-img img{width:100%;height:100%;object-fit:cover}
+    .card-body{padding:12px;flex:1;min-width:0}
+    .card-name{font-size:13px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .card-loc{font-size:10px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card-meta{display:flex;align-items:center;gap:8px}
+    .style-tag{font-size:9px;color:var(--muted);border:1px solid var(--border);padding:1px 6px;letter-spacing:.06em}
+
+    .empty{text-align:center;padding:60px 20px;color:var(--muted)}
+    .empty-title{font-size:14px;margin-bottom:8px;color:var(--cream)}
+    .empty-sub{font-size:11px;line-height:1.7}
+
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;backdrop-filter:blur(2px)}
+    .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(540px,94vw);max-height:88vh;background:var(--black2);border:1px solid var(--border);z-index:300;flex-direction:column;overflow:hidden}
+    .modal.open,.modal-bg.open{display:flex}
+    .modal-bg.open{display:block}
+    .modal-bar{background:var(--red);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .modal-bar-name{font-size:12px;font-weight:700;color:var(--black);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-close{background:var(--black);color:var(--red);border:none;font-family:var(--mono);font-size:14px;font-weight:700;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+    .modal-body{overflow-y:auto;flex:1}
+    .modal-img{width:100%;height:200px;background:var(--black3);overflow:hidden;flex-shrink:0}
+    .modal-img img{width:100%;height:100%;object-fit:cover}
+    .modal-info{padding:18px 20px}
+    .modal-name{font-size:18px;font-weight:700;margin-bottom:12px}
+    .modal-rating{font-size:15px;margin-bottom:12px}
+    .field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
+    .field{font-size:11px}
+    .field-k{color:var(--muted)}
+    .field-v{color:var(--cream)}
+    .modal-notes{font-size:13px;color:var(--cream);line-height:1.7;border-top:1px solid var(--border);padding-top:12px}
+    .modal-contrib{font-size:10px;color:var(--muted);margin-top:10px}
+    .modal-footer{border-top:1px solid var(--border);padding:8px 14px;font-size:9px;color:var(--muted);letter-spacing:.08em;flex-shrink:0}
+
+    .loading{text-align:center;padding:40px;font-size:10px;color:var(--muted);letter-spacing:.15em}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
+  <div class="nav-r">
+    <a href="/database.html" class="active">Database</a>
+    <a href="/stats.html">Stats</a>
+    <a href="/submit.html" id="navSubmit" style="display:none">Submit</a>
+    <button id="navAuth" onclick="location.href='/'">Sign in</button>
+  </div>
+</nav>
+
+<div class="page-head">
+  <div>
+    <div style="font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">The open pizza database</div>
+    <div class="page-title">DATABASE</div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div><span id="liveCount">Loading</span></div>
+</div>
+
+<div class="filters">
+  <span class="filter-label">Style</span>
+  <button class="filter-btn active" data-filter="style" data-value="">All</button>
+  <button class="filter-btn" data-filter="style" data-value="NY Style">NY</button>
+  <button class="filter-btn" data-filter="style" data-value="Neapolitan">Neapolitan</button>
+  <button class="filter-btn" data-filter="style" data-value="Roman">Roman</button>
+  <button class="filter-btn" data-filter="style" data-value="Detroit / Sicilian">Detroit</button>
+  <button class="filter-btn" data-filter="style" data-value="Deep Dish">Deep Dish</button>
+  <button class="filter-btn" data-filter="style" data-value="Tavern">Tavern</button>
+  <button class="filter-btn" data-filter="style" data-value="Fast / Counter">Fast</button>
+
+  <span class="filter-label" style="margin-left:8px">Rating</span>
+  <button class="filter-btn active" data-filter="rating" data-value="">All</button>
+  <button class="filter-btn" data-filter="rating" data-value="3">⭐⭐⭐</button>
+  <button class="filter-btn" data-filter="rating" data-value="2">⭐⭐</button>
+  <button class="filter-btn" data-filter="rating" data-value="1">⭐</button>
+</div>
+
+<div class="content">
+  <div class="count" id="countLabel"></div>
+  <div class="grid" id="grid"><div class="loading">Loading reviews…</div></div>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="closeModal()"></div>
+<div class="modal" id="modal">
+  <div class="modal-bar">
+    <span class="modal-bar-name" id="mTitle">—</span>
+    <button class="modal-close" onclick="closeModal()">×</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-img" id="mImg"></div>
+    <div class="modal-info">
+      <div class="modal-name" id="mName">—</div>
+      <div class="modal-rating" id="mRating">—</div>
+      <div class="field-grid" id="mFields"></div>
+      <div class="modal-notes" id="mNotes">—</div>
+      <div class="modal-contrib" id="mContrib">—</div>
+    </div>
+  </div>
+  <div class="modal-footer">PIZZA⚡OFFICIAL · pizzaofficial.biz · ATProto-native</div>
+</div>
+
+<script type="module">
+  import { initAuth, getApprovedReviews } from '/js/auth.js';
+
+  const RATINGS = {
+    3: '⭐⭐⭐ Legendary',
+    2: '⭐⭐ Worth a Trip',
+    1: '⭐ Solid',
+    0: 'ㄨ Skip It',
+  };
+
+  const filters = { style: '', rating: '' };
+  let allReviews = [];
+
+  // Auth — update nav
+  initAuth().then(auth => {
+    if (auth?.user) {
+      document.getElementById('navAuth').textContent = `@${auth.user.handle}`;
+      document.getElementById('navAuth').onclick = () => location.href = '/';
+      if (['contributor','admin'].includes(auth.user.role)) {
+        document.getElementById('navSubmit').style.display = '';
+      }
+    }
+  });
+
+  // Load reviews
+  async function load() {
+    const reviews = await getApprovedReviews(filters);
+    allReviews = reviews;
+    render(reviews);
+    document.getElementById('liveCount').textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+    document.getElementById('countLabel').textContent =
+      reviews.length ? `${reviews.length} result${reviews.length !== 1 ? 's' : ''}` : '';
+  }
+
+  function render(reviews) {
+    const grid = document.getElementById('grid');
+    if (!reviews.length) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+        <div class="empty-title">No reviews yet</div>
+        <div class="empty-sub">Be the first to submit one.<br>Apply to become a contributor at <a href="/contributor.html" style="color:var(--cream)">contributor.html</a></div>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = reviews.map(r => `
+      <div class="card" onclick="openModal('${r.id}')">
+        <div class="card-img">${r.image_url ? `<img src="${r.image_url}" alt="${r.name}" loading="lazy">` : ''}</div>
+        <div class="card-body">
+          <div class="card-name">${r.name}</div>
+          <div class="card-loc">${r.location}</div>
+          <div class="card-meta">
+            <span>${RATINGS[r.rating] || ''}</span>
+            <span class="style-tag">${r.style}</span>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  window.openModal = function(id) {
+    const r = allReviews.find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('mTitle').textContent = r.name;
+    document.getElementById('mName').textContent = r.name;
+    document.getElementById('mRating').textContent = RATINGS[r.rating] || '';
+    document.getElementById('mNotes').textContent = r.notes || '';
+    document.getElementById('mContrib').textContent =
+      `Reviewed by @${r.users?.handle || 'contributor'} · ${r.location}`;
+    document.getElementById('mImg').innerHTML =
+      r.image_url ? `<img src="${r.image_url}" alt="${r.name}">` : '';
+    const fields = [
+      ['Style', r.style], ['Crust', r.crust], ['Char', r.char_level],
+      ['Sauce', r.sauce], ['Cheese', r.cheese], ['City', r.city],
+    ].filter(([,v]) => v);
+    document.getElementById('mFields').innerHTML =
+      fields.map(([k,v]) => `<div class="field"><span class="field-k">${k} </span><span class="field-v">${v}</span></div>`).join('');
+    document.getElementById('modal').classList.add('open');
+    document.getElementById('modalBg').classList.add('open');
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modalBg').classList.remove('open');
+  };
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.filter;
+      const value = btn.dataset.value;
+      document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filters[type] = value;
+      load();
+    });
+  });
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  load();
+</script>
+</body>
+</html>
