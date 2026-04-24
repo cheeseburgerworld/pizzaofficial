@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Contributor — PIZZA⚡OFFICIAL</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--black:#0d0800;--black2:#110e08;--black3:#1a1000;--red:#FF3B30;--cream:#F5F0E8;--gold:#D4A847;--muted:#5a4a30;--border:#2a1f00;--mono:'IBM Plex Mono',monospace}
+    body{background:var(--black);font-family:var(--mono);color:var(--cream);min-height:100vh}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
+
+    nav{height:52px;background:var(--black2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--cream)}
+    .logo span{color:var(--red)}
+    .nav-r a{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;transition:color .15s}
+    .nav-r a:hover{color:var(--cream)}
+
+    .wrap{max-width:560px;margin:0 auto;padding:40px 20px}
+    .page-title{font-size:clamp(24px,5vw,40px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1;margin-bottom:8px}
+    .page-sub{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:32px}
+
+    .form-group{margin-bottom:18px}
+    .form-label{font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:6px}
+    .form-label span{color:var(--red)}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--black2);border:1px solid var(--border);color:var(--cream);font-family:var(--mono);font-size:13px;padding:10px 12px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red)}
+    .form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+    .form-input[readonly]{color:var(--muted);cursor:default}
+    .form-textarea{resize:vertical;min-height:100px;line-height:1.6}
+    .form-select option{background:var(--black2)}
+    .char-count{font-size:9px;color:var(--muted);text-align:right;margin-top:3px}
+
+    .form-agree{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;background:var(--black2);border:1px solid var(--border)}
+    .form-agree input{width:14px;height:14px;margin-top:2px;accent-color:var(--red);flex-shrink:0;cursor:pointer}
+    .form-agree-text{font-size:11px;color:var(--muted);line-height:1.6}
+    .form-agree-text a{color:var(--cream);text-decoration:none;border-bottom:1px solid var(--border)}
+
+    .submit-btn{width:100%;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:13px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;margin-top:20px;transition:all .15s}
+    .submit-btn:hover:not(:disabled){background:var(--red);color:var(--black)}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    .err{font-size:11px;color:var(--red);margin-top:8px;display:none}
+    .success{background:var(--black2);border:1px solid #1a3308;border-left:3px solid #639922;padding:20px;display:none}
+    .success-title{font-size:14px;font-weight:700;color:#639922;margin-bottom:6px}
+    .success-sub{font-size:11px;color:var(--muted);line-height:1.7}
+
+    .signin-gate{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--muted);padding:20px;display:none}
+    .signin-gate-title{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:6px}
+    .signin-gate-sub{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+    .signin-gate-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;padding:8px 18px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s}
+    .signin-gate-btn:hover{background:var(--red);color:var(--black)}
+    .already{background:var(--black2);border:1px solid #1a3308;border-left:3px solid #639922;padding:20px;display:none}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
+  <div class="nav-r">
+    <a href="/database.html">Database</a>
+    <a href="/stats.html">Stats</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page-title">BECOME A CONTRIBUTOR</div>
+  <div class="page-sub">Submit pizza reviews to the official database.<br>We'll review your application and approve manually.</div>
+
+  <!-- Not signed in -->
+  <div class="signin-gate" id="signinGate">
+    <div class="signin-gate-title">Sign in first</div>
+    <div class="signin-gate-sub">You need a Bluesky account to apply. Your account becomes your identity on Pizza Official — no separate login needed.</div>
+    <a href="/" class="signin-gate-btn">Sign in with Bluesky</a>
+  </div>
+
+  <!-- Already a contributor -->
+  <div class="already" id="alreadyContrib">
+    <div style="font-size:14px;font-weight:700;color:#639922;margin-bottom:6px">You're already a contributor</div>
+    <div style="font-size:11px;color:var(--muted);line-height:1.7">Head over to <a href="/submit.html" style="color:var(--cream);text-decoration:none">submit.html</a> to write a review.</div>
+  </div>
+
+  <!-- Success state -->
+  <div class="success" id="successMsg">
+    <div class="success-title">Application submitted</div>
+    <div class="success-sub">Good work!<br><br>In the meantime, <a href="/database.html" style="color:var(--cream);text-decoration:none">browse the database</a></div>
+  </div>
+
+  <!-- The form -->
+  <form id="appForm" onsubmit="submitApp(event)" style="display:none">
+
+    <div class="form-group">
+      <label class="form-label">Your Bluesky handle</label>
+      <input type="text" class="form-input" id="fieldHandle" readonly placeholder="Loading…">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Your city <span>*</span></label>
+      <input type="text" class="form-input" id="fieldCity" placeholder="Portland, OR" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Favorite pizza style <span>*</span></label>
+      <select class="form-select" id="fieldStyle" required>
+        <option value="">Select a style…</option>
+        <option>NY Style</option>
+        <option>Neapolitan</option>
+        <option>Roman</option>
+        <option>Detroit / Sicilian</option>
+        <option>Deep Dish</option>
+        <option>Tavern</option>
+        <option>Fast / Counter</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tell us about a pizza you've eaten recently <span>*</span></label>
+      <textarea class="form-textarea" id="fieldSample" placeholder="Be specific. What restaurant? What made it memorable — or forgettable? What did the crust taste like? This is your audition." required maxlength="600" oninput="updateCount(this)"></textarea>
+      <div class="char-count"><span id="sampleCount">0</span>/600</div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-agree">
+        <input type="checkbox" id="fieldAgree" required>
+        <div class="form-agree-text">
+          I'll follow the <a href="/format.html">review format guide</a> and won't be a jerk.
+          My reviews are my own and I own them — Pizza Official indexes them, it doesn't own them.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Your name (signature) <span>*</span></label>
+      <input type="text" class="form-input" id="fieldSig" placeholder="Full name" required>
+    </div>
+
+    <div class="err" id="formErr"></div>
+    <button type="submit" class="submit-btn" id="submitBtn">Submit application</button>
+
+  </form>
+</div>
+
+<script type="module">
+  import { initAuth } from '/js/auth.js';
+
+  let currentDid = null;
+
+  async function main() {
+    const auth = await initAuth();
+
+    if (!auth?.user) {
+      document.getElementById('signinGate').style.display = 'block';
+      return;
+    }
+
+    const user = auth.user;
+    currentDid = user.did;
+
+    if (['contributor','admin'].includes(user.role)) {
+      document.getElementById('alreadyContrib').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('fieldHandle').value = `@${user.handle}`;
+    document.getElementById('appForm').style.display = 'block';
+  }
+
+  window.updateCount = function(el) {
+    document.getElementById('sampleCount').textContent = el.value.length;
+  };
+
+  window.submitApp = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const err = document.getElementById('formErr');
+    err.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const payload = {
+      did:            currentDid,
+      city:           document.getElementById('fieldCity').value.trim(),
+      favorite_style: document.getElementById('fieldStyle').value,
+      writing_sample: document.getElementById('fieldSample').value.trim(),
+      signature_name: document.getElementById('fieldSig').value.trim(),
+    };
+
+    try {
+      const res = await fetch('/.netlify/functions/submit-application', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || data || 'Submission failed');
+      document.getElementById('appForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    } catch (ex) {
+      err.textContent = ex.message;
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit application';
+    }
+  };
+
+  main();
+</script>
+</body>
+</html>
