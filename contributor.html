@@ -3,208 +3,369 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Become a Contributor — PIZZA⚡OFFICIAL</title>
+  <title>Write Reviews — PIZZA⚡OFFICIAL</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--black:#0d0800;--black2:#110e08;--black3:#1a1000;--red:#FF3B30;--cream:#F5F0E8;--gold:#D4A847;--muted:#5a4a30;--border:#2a1f00;--mono:'IBM Plex Mono',monospace}
-    body{background:var(--black);font-family:var(--mono);color:var(--cream);min-height:100vh}
-    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0800; --bg2: #160D00; --bg3: #1E1400;
+      --body: #E8D5A0; --gold: #FFB800; --gold2: #CC9200;
+      --muted: #7A6040; --red: #FF3B30; --red2: #CC2F25;
+      --green: #4ABA5A; --border: #2E1C00; --border2: #4A2E00;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+    body { background: var(--bg); font-family: var(--mono); color: var(--body); min-height: 100vh; }
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
+    }
 
-    nav{height:52px;background:var(--black2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
-    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--cream)}
-    .logo span{color:var(--red)}
-    .nav-r a{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:6px 10px;transition:color .15s}
-    .nav-r a:hover{color:var(--cream)}
+    nav {
+      height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; position: sticky; top: 0; z-index: 50;
+    }
+    .nav-logo { font-size: 16px; font-weight: 700; letter-spacing: -.02em; color: #FFFFFF; text-decoration: none; }
+    .nav-logo .bolt { color: var(--red); }
+    .nav-links { display: flex; gap: 2px; }
+    .nav-links a {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
 
-    .wrap{max-width:560px;margin:0 auto;padding:40px 20px}
-    .page-title{font-size:clamp(24px,5vw,40px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1;margin-bottom:8px}
-    .page-sub{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:32px}
+    .wrap { max-width: 560px; margin: 0 auto; padding: 48px 24px; }
 
-    .form-group{margin-bottom:18px}
-    .form-label{font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:6px}
-    .form-label span{color:var(--red)}
-    .form-input,.form-select,.form-textarea{width:100%;background:var(--black2);border:1px solid var(--border);color:var(--cream);font-family:var(--mono);font-size:13px;padding:10px 12px;outline:none;transition:border-color .15s;-webkit-appearance:none}
-    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red)}
-    .form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
-    .form-input[readonly]{color:var(--muted);cursor:default}
-    .form-textarea{resize:vertical;min-height:100px;line-height:1.6}
-    .form-select option{background:var(--black2)}
-    .char-count{font-size:9px;color:var(--muted);text-align:right;margin-top:3px}
+    .page-title {
+      font-size: clamp(28px, 6vw, 44px); font-weight: 700;
+      letter-spacing: -.03em; color: var(--gold); line-height: 1; margin-bottom: 10px;
+    }
+    .page-sub { font-size: 12px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
 
-    .form-agree{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;background:var(--black2);border:1px solid var(--border)}
-    .form-agree input{width:14px;height:14px;margin-top:2px;accent-color:var(--red);flex-shrink:0;cursor:pointer}
-    .form-agree-text{font-size:11px;color:var(--muted);line-height:1.6}
-    .form-agree-text a{color:var(--cream);text-decoration:none;border-bottom:1px solid var(--border)}
+    /* ── Notices (hidden by default, shown by JS) ── */
+    .notice {
+      border: 1px solid var(--border); padding: 20px; margin-bottom: 24px; display: none;
+    }
+    .notice-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .notice-sub { font-size: 11px; color: var(--muted); line-height: 1.65; }
+    .notice-sub a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--border2); }
+    .notice-sub a:hover { color: var(--gold); }
+    .notice-gate  { border-left: 3px solid var(--muted); }
+    .notice-done  { border-left: 3px solid var(--green); }
+    .notice-done .notice-title  { color: var(--green); }
+    .notice-gate .notice-title  { color: #FFFFFF; }
 
-    .submit-btn{width:100%;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:13px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;margin-top:20px;transition:all .15s}
-    .submit-btn:hover:not(:disabled){background:var(--red);color:var(--black)}
-    .submit-btn:disabled{opacity:.4;cursor:not-allowed}
+    /* ── Code of conduct ── */
+    .coc-block {
+      background: var(--bg2); border: 1px solid var(--border);
+      padding: 24px; margin-bottom: 20px;
+    }
+    .coc-head {
+      font-size: 10px; font-weight: 700; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold2); margin-bottom: 16px;
+    }
+    .coc-rule {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 11px 0; border-bottom: 1px solid var(--border);
+    }
+    .coc-rule:last-child { border-bottom: none; padding-bottom: 0; }
+    .coc-num { font-size: 12px; font-weight: 700; color: var(--gold); min-width: 18px; flex-shrink: 0; padding-top: 1px; }
+    .coc-text { font-size: 12px; color: var(--body); line-height: 1.65; }
+    .coc-text strong { color: #FFFFFF; font-weight: 700; }
 
-    .err{font-size:11px;color:var(--red);margin-top:8px;display:none}
-    .success{background:var(--black2);border:1px solid #1a3308;border-left:3px solid #639922;padding:20px;display:none}
-    .success-title{font-size:14px;font-weight:700;color:#639922;margin-bottom:6px}
-    .success-sub{font-size:11px;color:var(--muted);line-height:1.7}
+    /* ── Checkboxes ── */
+    .checks { margin-bottom: 20px; }
+    .check-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 13px 0; border-bottom: 1px solid var(--border);
+    }
+    .check-item:first-child { border-top: 1px solid var(--border); }
+    .check-item input[type="checkbox"] {
+      width: 18px; height: 18px; min-width: 18px;
+      margin-top: 1px; accent-color: var(--gold);
+      cursor: pointer; border: 1px solid var(--border2);
+    }
+    .check-label {
+      font-size: 12px; color: var(--body); line-height: 1.6; cursor: pointer;
+    }
+    .check-label strong { color: #FFFFFF; font-weight: 700; }
 
-    .signin-gate{background:var(--black2);border:1px solid var(--border);border-left:3px solid var(--muted);padding:20px;display:none}
-    .signin-gate-title{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:6px}
-    .signin-gate-sub{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-    .signin-gate-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;padding:8px 18px;background:transparent;border:1px solid var(--red);color:var(--red);cursor:pointer;text-decoration:none;display:inline-block;transition:all .15s}
-    .signin-gate-btn:hover{background:var(--red);color:var(--black)}
-    .already{background:var(--black2);border:1px solid #1a3308;border-left:3px solid #639922;padding:20px;display:none}
+    /* ── Signature ── */
+    .sig-section { margin-bottom: 20px; }
+    .sig-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--gold2);
+      display: block; margin-bottom: 8px;
+    }
+    .sig-input {
+      width: 100%; background: var(--bg2); border: 1px solid var(--border);
+      color: var(--body); font-family: var(--mono); font-size: 14px;
+      padding: 12px 14px; outline: none; transition: border-color .15s;
+    }
+    .sig-input::placeholder { color: var(--muted); }
+    .sig-input:focus { border-color: var(--gold); }
+    .sig-note { font-size: 10px; color: var(--muted); margin-top: 7px; line-height: 1.6; }
+    .sig-handle { color: var(--gold); font-weight: 700; }
+
+    /* Sign-in required message inside form */
+    .signin-required {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 14px 16px; margin-bottom: 14px;
+      font-size: 11px; color: var(--muted); line-height: 1.6;
+      display: none;
+    }
+    .signin-required a { color: var(--gold); text-decoration: none; font-weight: 700; }
+
+    /* ── Buttons ── */
+    .submit-btn {
+      width: 100%; font-family: var(--mono); font-size: 12px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 14px; background: var(--red); color: #FFFFFF;
+      border: none; cursor: pointer; transition: background .15s;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--red2); }
+    .submit-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-gold {
+      display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: 11px 22px; background: var(--gold); color: var(--bg);
+      border: none; cursor: pointer; text-decoration: none; transition: background .15s;
+    }
+    .btn-gold:hover { background: var(--gold2); }
+
+    .btn-ghost {
+      display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: 10px 20px; background: transparent;
+      border: 1px solid var(--border2); color: var(--muted);
+      text-decoration: none; transition: all .15s;
+    }
+    .btn-ghost:hover { border-color: var(--gold2); color: var(--gold); }
+
+    .form-err {
+      font-size: 11px; color: var(--red);
+      margin-bottom: 12px; display: none; line-height: 1.5;
+    }
+
+    @keyframes up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .anim { animation: up .35s ease both; }
   </style>
 </head>
 <body>
 
 <nav>
-  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
-  <div class="nav-r">
+  <a href="/" class="nav-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+  <div class="nav-links">
     <a href="/database.html">Database</a>
     <a href="/stats.html">Stats</a>
+    <a href="/contributor.html" class="active">Write Reviews</a>
   </div>
 </nav>
 
 <div class="wrap">
-  <div class="page-title">BECOME A CONTRIBUTOR</div>
-  <div class="page-sub">Submit pizza reviews to the official database.<br>We'll review your application and approve manually.</div>
-
-  <!-- Not signed in -->
-  <div class="signin-gate" id="signinGate">
-    <div class="signin-gate-title">Sign in first</div>
-    <div class="signin-gate-sub">You need a Bluesky account to apply. Your account becomes your identity on Pizza Official — no separate login needed.</div>
-    <a href="/" class="signin-gate-btn">Sign in with Bluesky</a>
+  <div class="page-title anim">WRITE REVIEWS</div>
+  <div class="page-sub anim">
+    Join the community and help build the world's pizza database.
   </div>
 
-  <!-- Already a contributor -->
-  <div class="already" id="alreadyContrib">
-    <div style="font-size:14px;font-weight:700;color:#639922;margin-bottom:6px">You're already a contributor</div>
-    <div style="font-size:11px;color:var(--muted);line-height:1.7">Head over to <a href="/submit.html" style="color:var(--cream);text-decoration:none">submit.html</a> to write a review.</div>
+  <!-- Already a contributor / admin -->
+  <div class="notice notice-done" id="noticeAlready">
+    <div class="notice-title">You're already a contributor</div>
+    <div class="notice-sub">
+      Head to <a href="/submit.html">submit a review</a> or check
+      <a href="/stats.html">your stats</a> to see your history.
+    </div>
   </div>
 
-  <!-- Success state -->
-  <div class="success" id="successMsg">
-    <div class="success-title">Application submitted</div>
-    <div class="success-sub">Good work!<br><br>In the meantime, <a href="/database.html" style="color:var(--cream);text-decoration:none">browse the database</a></div>
+  <!-- Success after joining -->
+  <div class="notice notice-done" id="noticeSuccess">
+    <div class="notice-title">You're in. Welcome to Pizza Official.</div>
+    <div class="notice-sub" style="margin-bottom:16px">
+      Your Bluesky account is now linked as a contributor.
+      Submit a review and it'll go into the approval queue -
+      once approved it's in the database permanently.
+    </div>
+    <a href="/submit.html" class="btn-gold">Submit your first review →</a>
   </div>
 
-  <!-- The form -->
-  <form id="appForm" onsubmit="submitApp(event)" style="display:none">
+  <!-- The form — visible immediately, auth check runs behind it -->
+  <div id="formEl">
 
-    <div class="form-group">
-      <label class="form-label">Your Bluesky handle</label>
-      <input type="text" class="form-input" id="fieldHandle" readonly placeholder="Loading…">
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Your city <span>*</span></label>
-      <input type="text" class="form-input" id="fieldCity" placeholder="Portland, OR" required>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Favorite pizza style <span>*</span></label>
-      <select class="form-select" id="fieldStyle" required>
-        <option value="">Select a style…</option>
-        <option>NY Style</option>
-        <option>Neapolitan</option>
-        <option>Roman</option>
-        <option>Detroit / Sicilian</option>
-        <option>Deep Dish</option>
-        <option>Tavern</option>
-        <option>Fast / Counter</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Tell us about a pizza you've eaten recently <span>*</span></label>
-      <textarea class="form-textarea" id="fieldSample" placeholder="Be specific. What restaurant? What made it memorable — or forgettable? What did the crust taste like? This is your audition." required maxlength="600" oninput="updateCount(this)"></textarea>
-      <div class="char-count"><span id="sampleCount">0</span>/600</div>
-    </div>
-
-    <div class="form-group">
-      <div class="form-agree">
-        <input type="checkbox" id="fieldAgree" required>
-        <div class="form-agree-text">
-          I'll follow the <a href="/format.html">review format guide</a> and won't be a jerk.
-          My reviews are my own and I own them — Pizza Official indexes them, it doesn't own them.
-        </div>
+    <!-- Code of conduct -->
+    <div class="coc-block anim">
+      <div class="coc-head">Code of conduct</div>
+      <div class="coc-rule">
+        <div class="coc-num">1</div>
+        <div class="coc-text"><strong>Be honest.</strong> Only review places you've actually been. Write what you actually think. No fake reviews, no paid posts.</div>
+      </div>
+      <div class="coc-rule">
+        <div class="coc-num">2</div>
+        <div class="coc-text"><strong>Be specific.</strong> "Good pizza" tells nobody anything. Describe the crust, the char, what to order. Give someone a real reason to go — or skip it.</div>
+      </div>
+      <div class="coc-rule">
+        <div class="coc-num">3</div>
+        <div class="coc-text"><strong>Be fair.</strong> A critical review is fine. A cruel one isn't. Criticize the pizza, not the person who made it.</div>
+      </div>
+      <div class="coc-rule">
+        <div class="coc-num">4</div>
+        <div class="coc-text"><strong>Your reviews stay yours.</strong> Pizza Official indexes your reviews — it doesn't own them. Delete your account any time and your data goes with it.</div>
+      </div>
+      <div class="coc-rule">
+        <div class="coc-num">5</div>
+        <div class="coc-text"><strong>Don't be a jerk.</strong> Treat everyone with respect.</div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Your name (signature) <span>*</span></label>
-      <input type="text" class="form-input" id="fieldSig" placeholder="Full name" required>
+    <!-- Checkboxes -->
+    <div class="checks anim">
+      <div class="check-item">
+        <input type="checkbox" id="chk1">
+        <label class="check-label" for="chk1">
+          I've read the code of conduct and agree to follow it.
+        </label>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="chk2">
+        <label class="check-label" for="chk2">
+          I'll only review places I've <strong>actually visited and eaten at</strong>.
+        </label>
+      </div>
+      <div class="check-item">
+        <input type="checkbox" id="chk3">
+        <label class="check-label" for="chk3">
+          I understand every review goes through human approval before it appears publicly.
+        </label>
+      </div>
     </div>
 
-    <div class="err" id="formErr"></div>
-    <button type="submit" class="submit-btn" id="submitBtn">Submit application</button>
+    <!-- Signature -->
+    <div class="sig-section anim">
+      <label class="sig-label" for="sigInput">Your name <span style="color:var(--red)">*</span></label>
+      <input type="text" class="sig-input" id="sigInput" placeholder="Full name" autocomplete="name">
+      <div class="sig-note" id="sigNote">
+        By typing your name you agree to the code of conduct above.
+        <span id="handleLine"></span>
+      </div>
+    </div>
 
-  </form>
+    <!-- Shown if not signed in when they try to submit -->
+    <div class="signin-required" id="signinRequired">
+      You need to <a href="/">sign in with Bluesky</a> before joining.
+      Your Bluesky account is your identity here.
+    </div>
+
+    <div class="form-err" id="formErr"></div>
+
+    <button class="submit-btn" id="submitBtn" onclick="joinCommunity()">
+      Join the community
+    </button>
+
+  </div>
 </div>
 
 <script type="module">
-  import { initAuth } from '/js/auth.js';
+  import { initAuth } from '/auth.js';
 
-  let currentDid = null;
+  let currentDid  = null;
+  let currentUser = null;
 
-  async function main() {
-    const auth = await initAuth();
+  // Run auth check silently — form is already visible
+  async function checkAuth() {
+    try {
+      const auth = await initAuth();
+      if (!auth?.user) return; // not signed in — form stays, button will catch it
 
-    if (!auth?.user) {
-      document.getElementById('signinGate').style.display = 'block';
-      return;
+      currentUser = auth.user;
+      currentDid  = auth.user.did;
+
+      // Already a contributor or admin — hide form, show message
+      if (currentUser.role === 'contributor' || currentUser.role === 'admin') {
+        document.getElementById('formEl').style.display = 'none';
+        document.getElementById('noticeAlready').style.display = 'block';
+        return;
+      }
+
+      // Show their handle in the signature note
+      const line = document.getElementById('handleLine');
+      if (line) line.innerHTML = ' Your Bluesky account <span class="sig-handle">@' + currentUser.handle + '</span> will be linked.';
+
+    } catch (e) {
+      console.warn('[contributor] auth check:', e.message);
     }
-
-    const user = auth.user;
-    currentDid = user.did;
-
-    if (['contributor','admin'].includes(user.role)) {
-      document.getElementById('alreadyContrib').style.display = 'block';
-      return;
-    }
-
-    document.getElementById('fieldHandle').value = `@${user.handle}`;
-    document.getElementById('appForm').style.display = 'block';
   }
 
-  window.updateCount = function(el) {
-    document.getElementById('sampleCount').textContent = el.value.length;
-  };
+  checkAuth();
 
-  window.submitApp = async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    const err = document.getElementById('formErr');
-    err.style.display = 'none';
+  window.joinCommunity = async function() {
+    const btn   = document.getElementById('submitBtn');
+    const errEl = document.getElementById('formErr');
+    const sigReq = document.getElementById('signinRequired');
+    errEl.style.display  = 'none';
+    sigReq.style.display = 'none';
+
+    // Check sign-in
+    if (!currentDid) {
+      sigReq.style.display = 'block';
+      window.scrollTo(0, document.body.scrollHeight);
+      return;
+    }
+
+    // Validate checkboxes
+    if (!document.getElementById('chk1').checked ||
+        !document.getElementById('chk2').checked ||
+        !document.getElementById('chk3').checked) {
+      errEl.textContent = 'Please check all three boxes to continue.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    // Validate signature
+    const sig = document.getElementById('sigInput').value.trim();
+    if (!sig) {
+      errEl.textContent = 'Please type your name to sign.';
+      errEl.style.display = 'block';
+      document.getElementById('sigInput').focus();
+      return;
+    }
+
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
-
-    const payload = {
-      did:            currentDid,
-      city:           document.getElementById('fieldCity').value.trim(),
-      favorite_style: document.getElementById('fieldStyle').value,
-      writing_sample: document.getElementById('fieldSample').value.trim(),
-      signature_name: document.getElementById('fieldSig').value.trim(),
-    };
+    btn.textContent = 'Joining…';
 
     try {
       const res = await fetch('/.netlify/functions/submit-application', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          did:            currentDid,
+          city:           '',
+          favorite_style: '',
+          writing_sample: 'Agreed to code of conduct.',
+          signature_name: sig,
+          auto_approve:   true,
+        }),
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || data || 'Submission failed');
-      document.getElementById('appForm').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
+
+      // 409 = already contributor — still show success
+      if (!res.ok && res.status !== 409) {
+        throw new Error(typeof data === 'string' ? data : 'Something went wrong');
+      }
+
+      document.getElementById('formEl').style.display = 'none';
+      document.getElementById('noticeSuccess').style.display = 'block';
+      window.scrollTo(0, 0);
+
     } catch (ex) {
-      err.textContent = ex.message;
-      err.style.display = 'block';
+      errEl.textContent = ex.message;
+      errEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Submit application';
+      btn.textContent = 'Join the community';
     }
   };
-
-  main();
 </script>
 </body>
 </html>
