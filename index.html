@@ -21,85 +21,76 @@
       background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
     }
 
-    /* NAV */
+    /* ── NAV ──────────────────────────────────── */
     .nav {
       height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 20px; flex-shrink: 0; position: sticky; top: 0; z-index: 50;
     }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; letter-spacing: -.01em; }
+    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
     .nav-logo .r { color: #FF3B30; }
-    .nav-auth {
-      font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: 8px 16px; background: transparent; color: #FFFFFF;
-      border: 1px solid #3a2400; cursor: pointer;
-      transition: border-color .15s, color .15s; white-space: nowrap;
-      text-decoration: none;
+    /* Desktop nav links — hidden on mobile */
+    .nav-links { display: flex; gap: 2px; }
+    @media (max-width: 600px) { .nav-links { display: none; } }
+    .nav-link {
+      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #9A7850; text-decoration: none; padding: 6px 12px; transition: color .15s;
     }
-    .nav-auth:hover { border-color: #FFB800; color: #FFB800; }
-    .nav-auth.is-member { border-color: #4ABA5A; color: #4ABA5A; }
-    .nav-auth.is-contributor { border-color: #FFB800; color: #FFB800; }
-    .nav-auth.is-admin { border-color: #FF3B30; color: #FF3B30; }
+    .nav-link:hover { color: #FFB800; }
+    /* User area — right side */
+    .nav-user {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; padding: 5px 10px;
+      border: 1px solid transparent;
+      transition: border-color .15s;
+    }
+    .nav-user:hover { border-color: #3a2400; }
+    .nav-handle { font-size: 12px; font-weight: 700; color: #FFFFFF; }
+    .nav-role {
+      font-size: 9px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; padding: 2px 7px;
+    }
+    .role-member      { background: #0a2010; color: #4ABA5A; border: 1px solid #1a4020; }
+    .role-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
+    .role-admin       { background: #1a0505; color: #FF3B30; border: 1px solid #3a1010; }
 
-    /* SPLASH */
+    /* ── SPLASH ───────────────────────────────── */
     .splash {
       flex: 1; display: flex; align-items: center; justify-content: center;
       padding: 40px 24px; text-align: center;
     }
-    .splash-inner { width: 100%; max-width: 600px; }
+    .splash-inner { width: 100%; max-width: 580px; }
 
     .eyebrow {
       font-size: 11px; font-weight: 700; letter-spacing: .2em;
-      text-transform: uppercase; color: #C8B090; margin-bottom: 22px;
+      text-transform: uppercase; color: #C8B090; margin-bottom: 20px;
     }
 
-    /* Logo: display:table + auto margin = true centering regardless of letter-spacing */
+    /* Logo: display:table + auto margin = mathematically centered */
     .logo {
-      font-size: clamp(30px, 8.5vw, 100px);
+      font-size: clamp(30px, 8.5vw, 96px);
       font-weight: 700; letter-spacing: -.02em; line-height: 1;
-      color: #FFFFFF; margin-bottom: 22px;
+      color: #FFFFFF; margin-bottom: 20px;
       display: table; margin-left: auto; margin-right: auto;
     }
     .logo .r { color: #FF3B30; }
 
-    .punch { font-size: clamp(15px, 3vw, 20px); font-weight: 700; color: #FFB800; margin-bottom: 10px; }
+    .punch { font-size: clamp(15px, 3vw, 20px); font-weight: 700; color: #FFB800; margin-bottom: 8px; }
     .sub   { font-size: 14px; color: #C8B090; line-height: 1.75; margin-bottom: 36px; }
 
-    /* Role state card — shown when logged in */
-    .state-card {
-      display: none;
-      background: #160D00; border: 1px solid #2E1C00;
-      padding: 18px 20px; margin-bottom: 28px;
-      text-align: left;
-    }
-    .state-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .state-handle { font-size: 15px; font-weight: 700; color: #FFFFFF; }
-    .state-badge {
-      font-size: 10px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; padding: 3px 10px;
-    }
-    .badge-member      { background: #0a2010; color: #4ABA5A; border: 1px solid #1a4020; }
-    .badge-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
-    .badge-admin       { background: #1a0505; color: #FF3B30; border: 1px solid #3a1010; }
-    .state-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .state-link {
-      font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      color: #C8B090; text-decoration: none;
-      padding: 6px 12px; border: 1px solid #2E1C00;
-      transition: border-color .15s, color .15s; background: none; cursor: pointer;
-    }
-    .state-link:hover { border-color: #C8B090; color: #FFFFFF; }
-    .state-link.gold { color: #FFB800; border-color: #4a2e00; }
-    .state-link.gold:hover { border-color: #FFB800; background: #FFB800; color: #0d0800; }
-    .state-link.red { color: #FF3B30; border-color: #3a1010; font-size: 10px; }
-    .state-link.red:hover { color: #FFFFFF; border-color: #FF3B30; }
+    /* ── SIGN-IN AREA — always visible when logged out ─ */
+    .auth-area { margin-bottom: 32px; }
 
-    /* sign-in form */
-    .signin-form { display: none; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 28px; }
-    .signin-form.open { display: flex; }
-    .signin-row { display: flex; gap: 8px; width: 100%; max-width: 340px; }
+    /* Logged out: sign-in form */
+    .signin-block {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 20px 22px; text-align: left;
+    }
+    .signin-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: #CC9200; margin-bottom: 12px;
+    }
+    .signin-row { display: flex; gap: 8px; margin-bottom: 8px; }
     .signin-input {
       flex: 1; min-width: 0; background: #1E1400; border: 1px solid #3a2400;
       color: #FFFFFF; font-family: inherit; font-size: 15px;
@@ -107,132 +98,233 @@
     }
     .signin-input::placeholder { color: #6a4820; }
     .signin-input:focus { border-color: #FFB800; }
-    .signin-go {
+    .btn-signin {
       font-family: inherit; font-size: 12px; font-weight: 700;
       letter-spacing: .1em; text-transform: uppercase;
       padding: 12px 20px; background: #FF3B30; color: #FFFFFF;
       border: none; cursor: pointer; transition: background .15s; flex-shrink: 0;
     }
-    .signin-go:hover:not(:disabled) { background: #CC2F25; }
-    .signin-go:disabled { opacity: .4; cursor: not-allowed; }
-    .signin-hint { font-size: 12px; color: #9A7850; }
-    .signin-err  { font-size: 12px; color: #FF3B30; display: none; }
+    .btn-signin:hover:not(:disabled) { background: #CC2F25; }
+    .btn-signin:disabled { opacity: .4; cursor: not-allowed; }
+    .signin-note {
+      font-size: 11px; color: #9A7850; line-height: 1.6;
+    }
+    .signin-note a { color: #C8B090; text-decoration: none; border-bottom: 1px solid #3a2400; }
+    .signin-note a:hover { color: #FFB800; border-color: #FFB800; }
+    .signin-err { font-size: 12px; color: #FF3B30; margin-top: 6px; display: none; }
 
-    /* CTAs */
+    /* Logged in: user card */
+    .user-card {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 18px 22px; text-align: left; display: none;
+    }
+    .uc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .uc-handle { font-size: 16px; font-weight: 700; color: #FFFFFF; }
+    .uc-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; padding: 3px 10px;
+    }
+    .uc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .uc-btn {
+      font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 7px 14px; cursor: pointer; text-decoration: none;
+      transition: all .15s; display: inline-block;
+    }
+    .uc-btn-gold { background: #FFB800; color: #0d0800; border: none; }
+    .uc-btn-gold:hover { background: #CC9200; }
+    .uc-btn-outline { background: transparent; border: 1px solid #3a2400; color: #C8B090; }
+    .uc-btn-outline:hover { border-color: #C8B090; color: #FFFFFF; }
+    .uc-btn-ghost { background: none; border: none; color: #7A5830; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 7px 14px; }
+    .uc-btn-ghost:hover { color: #FF3B30; }
+
+    /* ── CTAs ───────────────────────────────────── */
     .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-gold {
+    .btn-browse {
       display: inline-block; font-family: inherit; font-size: 13px; font-weight: 700;
       letter-spacing: .1em; text-transform: uppercase; padding: 14px 32px;
-      background: #FFB800; color: #0d0800; text-decoration: none;
-      border: none; cursor: pointer; transition: background .15s; white-space: nowrap;
+      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
     }
-    .btn-gold:hover { background: #CC9200; }
-    .btn-outline {
+    .btn-browse:hover { background: #CC9200; }
+    .btn-format {
       display: inline-block; font-family: inherit; font-size: 13px; font-weight: 700;
       letter-spacing: .1em; text-transform: uppercase; padding: 14px 32px;
       background: transparent; color: #FFFFFF; text-decoration: none;
       border: 1px solid #4a2e00; cursor: pointer;
       transition: border-color .15s, color .15s; white-space: nowrap;
     }
-    .btn-outline:hover { border-color: #C8B090; color: #FFB800; }
+    .btn-format:hover { border-color: #C8B090; color: #FFB800; }
 
-    /* BOTTOM STRIP */
-    .bottom-strip {
+    /* ── BOTTOM STRIP ───────────────────────────── */
+    .bottom {
       border-top: 1px solid #1E1000; padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 10px; flex-shrink: 0;
     }
-    .bottom-links, .bottom-right { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-    .bottom-links a, .bottom-right a {
+    .bot-left, .bot-right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .bot-left a, .bot-right a {
       font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
       color: #C8B090; text-decoration: none; transition: color .15s;
     }
-    .bottom-links a:hover, .bottom-right a:hover { color: #FFB800; }
-    .bottom-copy { font-size: 11px; color: #7A5830; white-space: nowrap; }
+    .bot-left a:hover, .bot-right a:hover { color: #FFB800; }
+    .bot-copy { font-size: 11px; color: #7A5830; white-space: nowrap; }
 
     @media (max-width: 480px) {
       .ctas { flex-direction: column; align-items: center; }
-      .btn-gold, .btn-outline { width: 100%; max-width: 280px; text-align: center; padding: 16px; }
+      .btn-browse, .btn-format { width: 100%; max-width: 280px; text-align: center; padding: 16px; }
       .signin-row { flex-direction: column; }
-      .signin-go { width: 100%; }
-      .bottom-strip { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .btn-signin { width: 100%; }
+      .bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- NAV -->
   <nav class="nav">
     <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <button class="nav-auth" id="navAuthBtn" onclick="toggleSignIn()">Sign In</button>
+    <div class="nav-links">
+      <a href="/database.html" class="nav-link">Database</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/format.html" class="nav-link">Format</a>
+    </div>
+    <!-- Right side: populated by JS -->
+    <div id="navUser"></div>
   </nav>
 
+  <!-- SPLASH -->
   <main class="splash">
     <div class="splash-inner">
 
       <div class="eyebrow">ATProto-native &nbsp;·&nbsp; Decentralized &nbsp;·&nbsp; Open Source</div>
-
       <div class="logo">PIZZA<span class="r">⚡</span>OFFICIAL</div>
-
       <div class="punch">The world's pizza, documented.</div>
       <div class="sub">Community-built. No algorithms. No ads.</div>
 
-      <!-- Logged-in state card (shown by JS) -->
-      <div class="state-card" id="stateCard">
-        <div class="state-top">
-          <span class="state-handle" id="stateHandle"></span>
-          <span class="state-badge badge-member" id="stateBadge">Member</span>
+      <!-- Auth area: sign-in form OR user card -->
+      <div class="auth-area">
+
+        <!-- Sign-in block — shown by default, hidden when logged in -->
+        <div class="signin-block" id="signinBlock">
+          <div class="signin-label">Sign in with Bluesky</div>
+          <div class="signin-row">
+            <input type="text" class="signin-input" id="handleInput"
+              placeholder="you.bsky.social"
+              autocomplete="off" autocapitalize="off" spellcheck="false">
+            <button class="btn-signin" id="signinBtn" onclick="doSignIn()">Sign In</button>
+          </div>
+          <div class="signin-err" id="signinErr"></div>
+          <div class="signin-note">
+            Your Bluesky handle — no password shared with us.
+            No Bluesky yet? <a href="https://bsky.app" target="_blank" rel="noopener">Create a free account →</a>
+          </div>
         </div>
-        <div class="state-actions" id="stateActions"></div>
+
+        <!-- User card — hidden by default, shown when logged in -->
+        <div class="user-card" id="userCard">
+          <div class="uc-top">
+            <span class="uc-handle" id="ucHandle"></span>
+            <span class="uc-badge" id="ucBadge"></span>
+          </div>
+          <div class="uc-actions" id="ucActions"></div>
+        </div>
+
       </div>
 
-      <!-- Sign-in form -->
-      <div class="signin-form" id="signinForm">
-        <div class="signin-row">
-          <input type="text" class="signin-input" id="handleInput"
-            placeholder="you.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false">
-          <button class="signin-go" id="signinGoBtn" onclick="doSignIn()">Sign In</button>
-        </div>
-        <div class="signin-hint">Your Bluesky handle — no password shared with us</div>
-        <div class="signin-err" id="signinErr"></div>
-      </div>
-
-      <!-- CTAs -->
-      <div class="ctas" id="ctaRow">
-        <a href="/database.html" class="btn-gold">Browse Database</a>
-        <a href="/contributor.html" class="btn-outline" id="ctaContribute">Contribute</a>
+      <!-- CTAs — always visible -->
+      <div class="ctas">
+        <a href="/database.html" class="btn-browse">Browse Database</a>
+        <a href="/format.html" class="btn-format">Rating Guide</a>
       </div>
 
     </div>
   </main>
 
-  <div class="bottom-strip">
-    <div class="bottom-links">
+  <!-- BOTTOM STRIP -->
+  <div class="bottom">
+    <div class="bot-left">
       <a href="/database.html">Database</a>
       <a href="/stats.html">Stats</a>
+      <a href="/format.html">Format</a>
     </div>
-    <div class="bottom-right">
+    <div class="bot-right">
       <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
       <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
-      <span class="bottom-copy">© 2026 Cheeseburger World LLC</span>
+      <span class="bot-copy">© 2026 Cheeseburger World LLC</span>
     </div>
   </div>
 
   <script type="module">
     const $ = id => document.getElementById(id);
 
-    window.toggleSignIn = function() {
-      const form = $('signinForm');
-      const open = form.classList.toggle('open');
-      $('navAuthBtn').textContent = open ? 'Cancel' : 'Sign In';
-      if (open) setTimeout(() => $('handleInput').focus(), 50);
-    };
+    // Render nav user state
+    function renderNavUser(u) {
+      const el = $('navUser');
+      if (!u) {
+        el.innerHTML = '';
+        return;
+      }
+      const roleLabel = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
+      const roleClass = { guest: 'role-member', contributor: 'role-contributor', admin: 'role-admin' };
+      el.innerHTML = `
+        <a href="/profile.html" class="nav-user">
+          <span class="nav-handle">@${u.handle}</span>
+          <span class="nav-role ${roleClass[u.role] || 'role-member'}">${roleLabel[u.role] || 'Member'}</span>
+        </a>`;
+    }
 
+    // Render main user card
+    function renderUserCard(u) {
+      $('signinBlock').style.display = 'none';
+      const card = $('userCard');
+      card.style.display = 'block';
+
+      $('ucHandle').textContent = '@' + u.handle;
+
+      const badge = $('ucBadge');
+      if (u.role === 'admin') {
+        badge.textContent = 'Admin'; badge.className = 'uc-badge role-admin';
+      } else if (u.role === 'contributor') {
+        badge.textContent = 'Contributor ⭐'; badge.className = 'uc-badge role-contributor';
+      } else {
+        badge.textContent = 'Member ✓'; badge.className = 'uc-badge role-member';
+      }
+
+      const actions = $('ucActions');
+      if (u.role === 'contributor' || u.role === 'admin') {
+        actions.innerHTML = `
+          <a href="/submit.html" class="uc-btn uc-btn-gold">Submit a Review</a>
+          <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
+          <a href="/stats.html" class="uc-btn uc-btn-outline">Stats</a>
+          <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
+      } else {
+        actions.innerHTML = `
+          <a href="/contributor.html" class="uc-btn uc-btn-gold">Become a Contributor ⭐</a>
+          <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
+          <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
+      }
+    }
+
+    // Auth check — runs silently, page already shows sign-in form
+    async function checkAuth() {
+      try {
+        const { initAuth } = await import('/auth.js');
+        const auth = await initAuth();
+        if (auth?.user) {
+          renderNavUser(auth.user);
+          renderUserCard(auth.user);
+        }
+      } catch (_) {}
+    }
+
+    // Sign in
     window.doSignIn = async function() {
       const handle = $('handleInput').value.trim();
-      const btn = $('signinGoBtn'), err = $('signinErr');
+      const btn = $('signinBtn'), err = $('signinErr');
       err.style.display = 'none';
       if (!handle) { err.textContent = 'Enter your Bluesky handle'; err.style.display = 'block'; $('handleInput').focus(); return; }
-      btn.disabled = true; btn.textContent = '…';
+      btn.disabled = true; btn.textContent = 'Connecting…';
       try {
         const { signIn } = await import('/auth.js');
         await signIn(handle);
@@ -244,58 +336,6 @@
     };
 
     $('handleInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSignIn(); });
-
-    async function checkAuth() {
-      try {
-        const { initAuth } = await import('/auth.js');
-        const auth = await initAuth();
-        if (!auth?.user) return;
-        const u = auth.user;
-
-        // Nav button
-        const navBtn = $('navAuthBtn');
-        navBtn.textContent = '@' + u.handle;
-        navBtn.onclick = () => location.href = '/profile.html';
-        navBtn.className = 'nav-auth is-' + (u.role === 'guest' ? 'member' : u.role);
-
-        // State card
-        $('stateHandle').textContent = '@' + u.handle;
-
-        const badge = $('stateBadge');
-        if (u.role === 'admin') {
-          badge.textContent = 'Admin';
-          badge.className = 'state-badge badge-admin';
-        } else if (u.role === 'contributor') {
-          badge.textContent = 'Contributor ⭐';
-          badge.className = 'state-badge badge-contributor';
-        } else {
-          badge.textContent = 'Member';
-          badge.className = 'state-badge badge-member';
-        }
-
-        // Actions inside card
-        const actions = $('stateActions');
-        if (u.role === 'contributor' || u.role === 'admin') {
-          actions.innerHTML = `
-            <a href="/submit.html" class="state-link gold">Submit a review</a>
-            <a href="/profile.html" class="state-link">Profile</a>
-            <a href="/stats.html" class="state-link">Stats</a>
-            <button class="state-link red" onclick="doSignOut()">Sign out</button>`;
-          // Change contribute CTA to Submit
-          $('ctaContribute').textContent = 'Submit a Review';
-          $('ctaContribute').href = '/submit.html';
-        } else {
-          actions.innerHTML = `
-            <a href="/contributor.html" class="state-link gold">Become a Contributor ⭐</a>
-            <a href="/profile.html" class="state-link">Profile</a>
-            <button class="state-link red" onclick="doSignOut()">Sign out</button>`;
-        }
-
-        $('stateCard').style.display = 'block';
-        $('signinForm').classList.remove('open');
-
-      } catch (_) {}
-    }
 
     window.doSignOut = async function() {
       try { const { signOut } = await import('/auth.js'); await signOut(); }
