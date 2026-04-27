@@ -93,17 +93,17 @@
     .live-badge {
       display: flex; align-items: center; gap: 7px;
       font-size: 11px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--gold);
+      text-transform: uppercase; color: #4ABA5A;
       padding-bottom: 4px;
     }
     .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--gold); flex-shrink: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4ABA5A; flex-shrink: 0;
       animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(255,184,0,.4); }
-      50%      { box-shadow: 0 0 0 6px rgba(255,184,0,0); }
+      0%,100% { box-shadow: 0 0 0 0 rgba(74,186,90,.5); }
+      50%      { box-shadow: 0 0 0 6px rgba(74,186,90,0); }
     }
 
     /* ── FILTERS ─────────────────────────────────── */
@@ -471,19 +471,19 @@
       <button class="f-btn" data-f="style" data-v="NY Style">NY</button>
       <button class="f-btn" data-f="style" data-v="Neapolitan">Neapolitan</button>
       <button class="f-btn" data-f="style" data-v="Roman">Roman</button>
-      <button class="f-btn" data-f="style" data-v="Detroit / Sicilian">Detroit</button>
+      <button class="f-btn" data-f="style" data-v="Detroit">Detroit</button>
       <button class="f-btn" data-f="style" data-v="Deep Dish">Deep Dish</button>
       <button class="f-btn" data-f="style" data-v="Tavern">Tavern</button>
-      <button class="f-btn" data-f="style" data-v="Fast / Counter">Fast</button>
+      <button class="f-btn" data-f="style" data-v="Fast">Fast</button>
     </div>
 
     <div class="filter-row">
       <span class="filter-label">Experience</span>
       <button class="f-btn on" data-f="experience" data-v="">All</button>
-      <button class="f-btn" data-f="experience" data-v="Slice / Counter">Slice</button>
+      <button class="f-btn" data-f="experience" data-v="Slice">Slice</button>
       <button class="f-btn" data-f="experience" data-v="Casual Sit-Down">Casual</button>
       <button class="f-btn" data-f="experience" data-v="Full Service">Full Service</button>
-      <button class="f-btn" data-f="experience" data-v="Takeout / Delivery">Takeout</button>
+      <button class="f-btn" data-f="experience" data-v="Takeout">Takeout</button>
     </div>
 
     <!-- City row — populated dynamically from review data -->
