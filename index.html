@@ -21,30 +21,21 @@
       background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
     }
 
-    /* ── NAV ──────────────────────────────────── */
+    /* ── NAV — logo only ─────────────────────── */
     .nav {
       height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center;
       padding: 0 20px; flex-shrink: 0; position: sticky; top: 0; z-index: 50;
     }
     .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
     .nav-logo .r { color: #FF3B30; }
-    /* Desktop nav links — hidden on mobile */
-    .nav-links { display: flex; gap: 2px; }
-    @media (max-width: 600px) { .nav-links { display: none; } }
-    .nav-link {
-      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #9A7850; text-decoration: none; padding: 6px 12px; transition: color .15s;
-    }
-    .nav-link:hover { color: #FFB800; }
-    /* User area — right side */
+    /* When logged in, show user pill after logo */
     .nav-user {
-      display: flex; align-items: center; gap: 8px;
+      margin-left: auto; display: flex; align-items: center; gap: 8px;
       text-decoration: none; padding: 5px 10px;
-      border: 1px solid transparent;
-      transition: border-color .15s;
+      border: 1px solid #2E1C00; transition: border-color .15s;
     }
-    .nav-user:hover { border-color: #3a2400; }
+    .nav-user:hover { border-color: #FFB800; }
     .nav-handle { font-size: 12px; font-weight: 700; color: #FFFFFF; }
     .nav-role {
       font-size: 9px; font-weight: 700; letter-spacing: .12em;
@@ -78,40 +69,39 @@
     .punch { font-size: clamp(15px, 3vw, 20px); font-weight: 700; color: #FFB800; margin-bottom: 8px; }
     .sub   { font-size: 14px; color: #C8B090; line-height: 1.75; margin-bottom: 36px; }
 
-    /* ── SIGN-IN AREA — always visible when logged out ─ */
+    /* ── SIGN-IN AREA ─────────────────────────── */
     .auth-area { margin-bottom: 32px; }
 
-    /* Logged out: sign-in form */
     .signin-block {
-      background: #160D00; border: 1px solid #2E1C00;
-      padding: 20px 22px; text-align: left;
+      background: #1E1400; border: 1px solid #5a3e1c;
+      padding: 22px 24px; text-align: left;
     }
     .signin-label {
-      font-size: 10px; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: #CC9200; margin-bottom: 12px;
+      font-size: 11px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: #FFB800; margin-bottom: 14px;
     }
-    .signin-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .signin-row { display: flex; gap: 8px; margin-bottom: 10px; }
     .signin-input {
-      flex: 1; min-width: 0; background: #1E1400; border: 1px solid #3a2400;
+      flex: 1; min-width: 0; background: #0d0800; border: 1px solid #7A5830;
       color: #FFFFFF; font-family: inherit; font-size: 15px;
-      padding: 12px 14px; outline: none; transition: border-color .15s;
+      padding: 13px 16px; outline: none; transition: border-color .15s;
     }
-    .signin-input::placeholder { color: #6a4820; }
+    .signin-input::placeholder { color: #7A5830; }
     .signin-input:focus { border-color: #FFB800; }
     .btn-signin {
       font-family: inherit; font-size: 12px; font-weight: 700;
       letter-spacing: .1em; text-transform: uppercase;
-      padding: 12px 20px; background: #FF3B30; color: #FFFFFF;
+      padding: 13px 22px; background: #FF3B30; color: #FFFFFF;
       border: none; cursor: pointer; transition: background .15s; flex-shrink: 0;
     }
     .btn-signin:hover:not(:disabled) { background: #CC2F25; }
     .btn-signin:disabled { opacity: .4; cursor: not-allowed; }
     .signin-note {
-      font-size: 11px; color: #9A7850; line-height: 1.6;
+      font-size: 12px; color: #C8B090; line-height: 1.7;
     }
-    .signin-note a { color: #C8B090; text-decoration: none; border-bottom: 1px solid #3a2400; }
+    .signin-note a { color: #FFFFFF; text-decoration: none; border-bottom: 1px solid #7A5830; }
     .signin-note a:hover { color: #FFB800; border-color: #FFB800; }
-    .signin-err { font-size: 12px; color: #FF3B30; margin-top: 6px; display: none; }
+    .signin-err { font-size: 12px; color: #FF3B30; margin-top: 8px; display: none; }
 
     /* Logged in: user card */
     .user-card {
@@ -181,15 +171,9 @@
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- NAV — logo left, user pill right when logged in -->
   <nav class="nav">
     <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-links">
-      <a href="/database.html" class="nav-link">Database</a>
-      <a href="/stats.html" class="nav-link">Stats</a>
-      <a href="/format.html" class="nav-link">Format</a>
-    </div>
-    <!-- Right side: populated by JS -->
     <div id="navUser"></div>
   </nav>
 
@@ -258,13 +242,11 @@
   <script type="module">
     const $ = id => document.getElementById(id);
 
-    // Render nav user state
+    // Nav: nothing when logged out (sign-in form is on the page)
+    // User pill when logged in
     function renderNavUser(u) {
       const el = $('navUser');
-      if (!u) {
-        el.innerHTML = '<a href="#" class="nav-auth-link" onclick="document.getElementById(\'handleInput\').focus();return false">Sign In</a>';
-        return;
-      }
+      if (!u) { el.innerHTML = ''; return; }
       const roleLabel = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
       const roleClass = { guest: 'role-member', contributor: 'role-contributor', admin: 'role-admin' };
       el.innerHTML = `
