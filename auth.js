@@ -1,14 +1,21 @@
+// PIZZA⚡OFFICIAL — auth.js
+// Session persistence: user cached in sessionStorage for instant cross-page auth
+// OAuth session stored by ATProto client in localStorage
+
 const SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
 const CLIENT_ID     = 'https://pizzaofficial.biz/oauth/client-metadata.json';
 const REDIRECT_URI  = 'https://pizzaofficial.biz/oauth/callback';
 const RESOLVER      = 'https://bsky.social';
+const SESSION_KEY   = 'pzof_user';
 
-let _db = null;
+let _db    = null;
 let _oauth = null;
 
-export let currentUser = null;
+export let currentUser    = null;
 export let currentSession = null;
+
+// ── Lazy singletons ───────────────────────────────────────────
 
 async function db() {
   if (_db) return _db;
@@ -24,13 +31,47 @@ async function oauth() {
   return _oauth;
 }
 
+export { db as getDb };
+
+// ── Session cache helpers ─────────────────────────────────────
+
+function getCachedUser() {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function setCachedUser(user) {
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); } catch {}
+}
+
+function clearCachedUser() {
+  try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+}
+
+// ── initAuth ──────────────────────────────────────────────────
+// Returns { user, session } or null.
+// Uses sessionStorage cache so cross-page auth is instant.
+
 export async function initAuth() {
+  // 1. Check session cache first — instant
+  const cached = getCachedUser();
+  if (cached) {
+    currentUser = cached;
+    // Validate OAuth session in background, update cache if needed
+    validateSessionBackground();
+    return { user: cached, session: null };
+  }
+
+  // 2. No cache — full OAuth init
   try {
     const client = await oauth();
     const result = await client.init();
     if (!result?.session) return null;
     currentSession = result.session;
     currentUser = await syncUser(currentSession.did);
+    if (currentUser) setCachedUser(currentUser);
     return { user: currentUser, session: currentSession };
   } catch (e) {
     console.warn('[auth] initAuth:', e.message);
@@ -38,29 +79,62 @@ export async function initAuth() {
   }
 }
 
-export async function signIn(handle) {
-  const h = handle.trim().replace(/^@/, '');
-  if (!h) throw new Error('Enter your Bluesky handle');
-  sessionStorage.setItem('pzof_return', location.pathname);
-  const client = await oauth();
-  await client.signIn(h, { redirect_uri: REDIRECT_URI });
+// Silently revalidate the OAuth session and refresh cache
+async function validateSessionBackground() {
+  try {
+    const client = await oauth();
+    const result = await client.init();
+    if (!result?.session) {
+      clearCachedUser();
+      currentUser = null;
+      return;
+    }
+    currentSession = result.session;
+    // Refresh user data from server
+    const fresh = await syncUser(currentSession.did);
+    if (fresh) {
+      currentUser = fresh;
+      setCachedUser(fresh);
+    }
+  } catch { /* silent */ }
 }
 
+// ── signIn ────────────────────────────────────────────────────
+
+export async function signIn(handle) {
+  const clean = handle.trim().replace(/^@/, '');
+  if (!clean) throw new Error('Enter your Bluesky handle');
+  sessionStorage.setItem('pzof_return', location.pathname + location.search);
+  const client = await oauth();
+  await client.signIn(clean, { redirect_uri: REDIRECT_URI });
+}
+
+// ── signOut ───────────────────────────────────────────────────
+
 export async function signOut() {
-  try { if (currentSession && currentSession.signOut) await currentSession.signOut(); } catch (_) {}
+  clearCachedUser();
+  try {
+    const client = await oauth();
+    if (currentSession?.signOut) await currentSession.signOut();
+  } catch {}
   currentUser = null;
   currentSession = null;
   location.href = '/';
 }
 
+// ── handleCallback ────────────────────────────────────────────
+
 export async function handleCallback() {
   const client = await oauth();
   const result = await client.init();
-  if (!result?.session) throw new Error('No session from Bluesky');
+  if (!result?.session) throw new Error('No session returned from Bluesky');
   currentSession = result.session;
   currentUser = await syncUser(currentSession.did);
+  if (currentUser) setCachedUser(currentUser);
   return { user: currentUser, session: currentSession };
 }
+
+// ── syncUser ──────────────────────────────────────────────────
 
 async function syncUser(did) {
   try {
@@ -73,9 +147,11 @@ async function syncUser(did) {
     return await res.json();
   } catch (e) {
     console.error('[auth] syncUser:', e.message);
-    return { did: did, handle: did, role: 'guest' };
+    return { did, handle: did, role: 'guest' };
   }
 }
+
+// ── Guards ────────────────────────────────────────────────────
 
 export async function requireAuth() {
   const auth = await initAuth();
@@ -90,20 +166,24 @@ export async function requireAuth() {
 export async function requireContributor() {
   const auth = await requireAuth();
   if (!auth) return null;
-  if (auth.user && auth.user.role !== 'contributor' && auth.user.role !== 'admin') {
+  if (auth.user?.role !== 'contributor' && auth.user?.role !== 'admin') {
     location.href = '/contributor.html';
     return null;
   }
   return auth;
 }
 
+// ── Data helpers ──────────────────────────────────────────────
+
 export async function getApprovedReviews(filters) {
   filters = filters || {};
   const d = await db();
-  let q = d.from('pizza_reviews')
-    .select('id, name, location, city, rating, style, crust, char_level, sauce, cheese, notes, image_url, created_at, contributor_did, users!pizza_reviews_contributor_did_fkey(handle, display_name)')
+  let q = d
+    .from('pizza_reviews')
+    .select('id,name,location,city,rating,style,experience,notes,image_url,created_at,contributor_did,users!pizza_reviews_contributor_did_fkey(handle,display_name)')
     .eq('status', 'approved');
   if (filters.style) q = q.eq('style', filters.style);
+  if (filters.experience) q = q.eq('experience', filters.experience);
   if (filters.rating !== undefined && filters.rating !== '') q = q.eq('rating', Number(filters.rating));
   q = q.order(filters.sort === 'rating' ? 'rating' : 'created_at', { ascending: false });
   const { data, error } = await q;
@@ -120,8 +200,9 @@ export async function getPublicStats() {
 
 export async function getMyReviews(did) {
   const d = await db();
-  const { data, error } = await d.from('pizza_reviews')
-    .select('id, name, location, rating, style, status, created_at')
+  const { data, error } = await d
+    .from('pizza_reviews')
+    .select('id,name,location,rating,style,status,created_at')
     .eq('contributor_did', did)
     .order('created_at', { ascending: false });
   if (error) return [];
@@ -130,9 +211,23 @@ export async function getMyReviews(did) {
 
 export async function getAdminQueue() {
   const d = await db();
-  const { data, error } = await d.from('admin_queue').select('*').order('created_at', { ascending: true });
+  const { data, error } = await d
+    .from('admin_queue')
+    .select('*')
+    .order('created_at', { ascending: true });
   if (error) return [];
   return data || [];
 }
 
-export { db as getDb };
+// ── refreshUser ───────────────────────────────────────────────
+// Call after role changes (e.g. after becoming contributor)
+// to update the cache.
+
+export async function refreshUser(did) {
+  const fresh = await syncUser(did);
+  if (fresh) {
+    currentUser = fresh;
+    setCachedUser(fresh);
+  }
+  return fresh;
+}
