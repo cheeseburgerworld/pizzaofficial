@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Format & Rating Guide — PIZZA⚡OFFICIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      background: #0d0800; color: #FFFFFF; min-height: 100vh;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
+    }
+    nav {
+      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; position: sticky; top: 0; z-index: 50;
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
+    .nav-logo .r { color: #FF3B30; }
+    .nav-links { display: flex; gap: 2px; }
+    @media (max-width: 600px) { .nav-links { display: none; } }
+    .nav-link {
+      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #9A7850; text-decoration: none; padding: 6px 12px; transition: color .15s;
+    }
+    .nav-link:hover, .nav-link.active { color: #FFB800; }
+    #navUser { display: flex; align-items: center; }
+    .nav-user-link {
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      color: #9A7850; text-decoration: none; padding: 5px 10px;
+      transition: color .15s;
+    }
+    .nav-user-link:hover { color: #FFB800; }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 48px 20px 60px; }
+
+    /* Page header */
+    .page-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: .22em;
+      text-transform: uppercase; color: #CC9200; margin-bottom: 10px;
+    }
+    .page-title {
+      font-size: clamp(26px, 6vw, 44px); font-weight: 700;
+      letter-spacing: -.02em; color: #FFFFFF; line-height: 1; margin-bottom: 12px;
+    }
+    .page-sub { font-size: 14px; color: #C8B090; line-height: 1.7; margin-bottom: 48px; max-width: 500px; }
+
+    /* Section */
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-marker {
+      font-size: 10px; font-weight: 700; letter-spacing: .22em;
+      text-transform: uppercase; color: #FF3B30;
+      margin-bottom: 8px; display: block;
+    }
+    .section-title {
+      font-size: clamp(18px, 4vw, 26px); font-weight: 700;
+      color: #FFFFFF; margin-bottom: 20px; letter-spacing: -.01em;
+    }
+
+    /* Rating cards */
+    .rating-card {
+      border: 1px solid #2E1C00; padding: 20px 22px; margin-bottom: 10px;
+      background: #160D00;
+    }
+    .rating-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+    .rating-stars { font-size: 18px; min-width: 60px; }
+    .rating-name { font-size: 15px; font-weight: 700; color: #FFB800; letter-spacing: .04em; }
+    .rating-desc { font-size: 13px; color: #C8B090; line-height: 1.7; }
+    .rating-skip .rating-stars { color: #FF3B30; font-size: 15px; }
+    .rating-skip .rating-name { color: #FF3B30; }
+
+    /* Style table */
+    .style-grid { display: flex; flex-direction: column; gap: 0; }
+    .style-row {
+      display: grid; grid-template-columns: 160px 1fr;
+      border: 1px solid #2E1C00; border-bottom: none;
+      background: #160D00;
+    }
+    .style-row:last-child { border-bottom: 1px solid #2E1C00; }
+    .style-row:nth-child(odd) { background: #0d0800; }
+    .style-name {
+      padding: 14px 16px; font-size: 13px; font-weight: 700; color: #FFB800;
+      border-right: 1px solid #2E1C00;
+    }
+    .style-desc { padding: 14px 16px; font-size: 13px; color: #C8B090; line-height: 1.6; }
+    @media (max-width: 500px) {
+      .style-row { grid-template-columns: 1fr; }
+      .style-name { border-right: none; border-bottom: 1px solid #2E1C00; padding-bottom: 6px; }
+      .style-desc { padding-top: 8px; }
+    }
+
+    /* Experience table */
+    .exp-grid { display: flex; flex-direction: column; gap: 0; }
+    .exp-row {
+      display: grid; grid-template-columns: 140px 1fr 120px;
+      border: 1px solid #2E1C00; border-bottom: none;
+      background: #160D00;
+    }
+    .exp-row:last-child { border-bottom: 1px solid #2E1C00; }
+    .exp-row:nth-child(odd) { background: #0d0800; }
+    .exp-name { padding: 14px 16px; font-size: 13px; font-weight: 700; color: #FFB800; border-right: 1px solid #2E1C00; }
+    .exp-desc { padding: 14px 16px; font-size: 13px; color: #C8B090; line-height: 1.6; border-right: 1px solid #2E1C00; }
+    .exp-eg   { padding: 14px 16px; font-size: 12px; color: #9A7850; line-height: 1.6; font-style: italic; }
+    @media (max-width: 560px) {
+      .exp-row { grid-template-columns: 1fr; }
+      .exp-name { border-right: none; border-bottom: 1px solid #2E1C00; padding-bottom: 6px; }
+      .exp-desc { border-right: none; padding-top: 8px; }
+      .exp-eg   { padding-top: 4px; padding-bottom: 14px; }
+    }
+
+    /* Review format */
+    .format-block {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 20px 22px; margin-bottom: 14px;
+    }
+    .format-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: #CC9200; margin-bottom: 12px;
+    }
+    .format-row {
+      display: grid; grid-template-columns: 18px 1fr;
+      gap: 0 14px; margin-bottom: 8px; align-items: baseline;
+    }
+    .format-row:last-child { margin-bottom: 0; }
+    .format-n { font-size: 11px; color: #7A5830; }
+    .format-t { font-size: 13px; color: #C8B090; line-height: 1.55; }
+    .format-t strong { color: #FFFFFF; }
+    .format-t em { color: #9A7850; font-style: normal; }
+
+    /* Tip callout */
+    .tip {
+      background: #160D00; border: 1px solid #2E1C00; border-left: 3px solid #FFB800;
+      padding: 14px 18px; font-size: 13px; color: #C8B090; line-height: 1.65;
+      margin-top: 16px;
+    }
+    .tip strong { color: #FFB800; }
+
+    /* CTA */
+    .cta-block { margin-top: 40px; padding-top: 32px; border-top: 1px solid #2E1C00; display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-gold {
+      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 12px 24px;
+      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-gold:hover { background: #CC9200; }
+    .btn-outline {
+      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 12px 24px;
+      background: transparent; color: #FFFFFF; text-decoration: none;
+      border: 1px solid #4a2e00; cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .btn-outline:hover { border-color: #C8B090; color: #FFB800; }
+
+    hr.rule { border: none; border-top: 1px solid #2E1C00; margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
+    <div class="nav-links">
+      <a href="/database.html" class="nav-link">Database</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/format.html" class="nav-link active">Format</a>
+    </div>
+    <div id="navUser"></div>
+  </nav>
+
+  <div class="wrap">
+
+    <div class="page-eyebrow">◈ Contributor Guide</div>
+    <div class="page-title">HOW TO REVIEW</div>
+    <div class="page-sub">The rating system, style categories, and experience types that make the database consistent and searchable.</div>
+
+    <!-- RATING SYSTEM -->
+    <div class="section">
+      <span class="section-marker">◈ Step 1</span>
+      <div class="section-title">PICK YOUR RATING</div>
+
+      <div class="rating-card">
+        <div class="rating-header">
+          <div class="rating-stars">⭐⭐⭐</div>
+          <div class="rating-name">LEGENDARY</div>
+        </div>
+        <div class="rating-desc">Exceptional. A benchmark. The kind of pizza you go back for and think about often. Reserve it accordingly — the rating only means something if it's rare. If you're debating between this and Worth a Trip, it's Worth a Trip.</div>
+      </div>
+
+      <div class="rating-card">
+        <div class="rating-header">
+          <div class="rating-stars">⭐⭐</div>
+          <div class="rating-name">WORTH A TRIP</div>
+        </div>
+        <div class="rating-desc">Notably good. Worth a specific visit. Something about it — the crust, the overall experience, the value — is genuinely excellent and sets it apart.</div>
+      </div>
+
+      <div class="rating-card">
+        <div class="rating-header">
+          <div class="rating-stars">⭐</div>
+          <div class="rating-name">SOLID</div>
+        </div>
+        <div class="rating-desc">A good choice. Worth ordering if you're already there. Nothing fails, but nothing great. Most pizza lands here, and that's fine — a Solid is still a recommendation.</div>
+      </div>
+
+      <div class="rating-card rating-skip">
+        <div class="rating-header">
+          <div class="rating-stars">ㄨ</div>
+          <div class="rating-name">SKIP IT</div>
+        </div>
+        <div class="rating-desc">Not worth your time or money. Bad components, bad crust, or nothing that justifies the visit when better options exist. Be specific about what failed and why it's avoidable.</div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- STYLE CATEGORIES -->
+    <div class="section">
+      <span class="section-marker">◈ Step 2</span>
+      <div class="section-title">CHOOSE A STYLE</div>
+
+      <div class="style-grid">
+        <div class="style-row">
+          <div class="style-name">NY Style</div>
+          <div class="style-desc">Wide, round, hand-tossed. Slices fold lengthwise to eat. Thin but pliable — not crackery. The standard American slice. If you folded it, it's probably NY Style.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Neapolitan</div>
+          <div class="style-desc">Wood-fired, fast-cooked. Generally puffy crust edge, soft center, leopard-spotted char on the bottom. San Marzano tomatoes and fresh mozzarella are standard. Served whole, not by the slice. Born in Naples.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Roman</div>
+          <div class="style-desc">Two distinct formats. <strong>Tonda:</strong> round, cracker-thin, crispy all the way through — no puffy edge. <strong>Al Taglio:</strong> rectangular, sold by weight, thick and airy like focaccia. Note which one you're reviewing.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Detroit / Sicilian</div>
+          <div class="style-desc">Thick, rectangular, pan-baked. Crispy and caramelized bottom from an oiled pan. Airy, focaccia-like crumb. Detroit pushes cheese to the very rim. Sauce often goes on top. Square or rectangular, crispy-bottomed? This is your category.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Deep Dish</div>
+          <div class="style-desc">Chicago's invention. Baked in a deep pan with a tall buttery crust. Layered inside-out: cheese first, toppings, then chunky tomato sauce on top. Closer to a savory pie than a flatbread.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Tavern</div>
+          <div class="style-desc">Midwest thin-crust, crackery and rigid edge-to-edge — no foldability, no puffy rim. Always cut into small squares. Built for sharing over drinks. Common in Chicago, St. Louis, and the upper Midwest.</div>
+        </div>
+        <div class="style-row">
+          <div class="style-name">Fast / Counter</div>
+          <div class="style-desc">Pizza that prioritizes speed and accessibility. Chains, heat-lamp slices, $2 street slices, food court pies. A great fast slice is worth documenting. Use this category honestly. If it's under a heat lamp when you order, it's this category.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- EXPERIENCE / VIBE -->
+    <div class="section">
+      <span class="section-marker">◈ Step 3</span>
+      <div class="section-title">SET THE EXPERIENCE</div>
+
+      <p style="font-size:14px;color:#C8B090;line-height:1.7;margin-bottom:20px">
+        Style tells you <em style="color:#FFFFFF;font-style:normal">what kind of pizza</em>. Experience tells you <em style="color:#FFFFFF;font-style:normal">what kind of visit</em>.
+        A Neapolitan can be a quick counter lunch or a two-hour dinner. This field helps people decide if the place fits their plans.
+      </p>
+
+      <div class="exp-grid">
+        <div class="exp-row">
+          <div class="exp-name">Slice / Counter</div>
+          <div class="exp-desc">Order at the counter. Pay per slice. Eat standing, on the go, or grab a seat if there is one. Fast, casual, often the best value in the city.</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-name">Casual Sit-Down</div>
+          <div class="exp-desc">Table service or self-seat. Order a whole pie, maybe share a few. Relaxed atmosphere. You could be in and out in 45 minutes or stay longer.</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-name">Full Service</div>
+          <div class="exp-desc">Proper restaurant experience. Reservations possible or expected. Full menu beyond pizza.</div>
+        </div>
+        <div class="exp-row">
+          <div class="exp-name">Takeout / Delivery</div>
+          <div class="exp-desc">No dine-in. Pickup or delivery only. Note this when it's relevant — takeout pizza is a different beast and some places do it exceptionally well.</div>
+        </div>
+      </div>
+
+      <div class="tip"><strong>Note:</strong> Experience is optional but useful. When in doubt, pick the one that best matches how you'd actually recommend the place to a friend.</div>
+    </div>
+
+    <hr class="rule">
+
+    <!-- WRITING YOUR REVIEW -->
+    <div class="section">
+      <span class="section-marker">◈ Step 4</span>
+      <div class="section-title">WRITE YOUR REVIEW</div>
+
+      <p style="font-size:14px;color:#C8B090;line-height:1.7;margin-bottom:20px">400 characters. That's the limit and it's intentional. Constraints force clarity.</p>
+
+      <div class="format-block">
+        <div class="format-label">What to cover</div>
+        <div class="format-row"><div class="format-n">1</div><div class="format-t"><strong>The crust.</strong> Texture, char, chew.</div></div>
+        <div class="format-row"><div class="format-n">2</div><div class="format-t"><strong>What to order.</strong> If one thing is the move, say so specifically.</div></div>
+        <div class="format-row"><div class="format-n">3</div><div class="format-t"><strong>What didn't work.</strong> Honesty is the value.</div></div>
+        <div class="format-row"><div class="format-n">4</div><div class="format-t"><strong>Solid info.</strong> Something factual and specific - what sets this apart?</div></div>
+      </div>
+
+      <div class="format-block" style="margin-top:10px">
+        <div class="format-label">What to avoid</div>
+        <div class="format-row"><div class="format-n">✗</div><div class="format-t">Vague praise: <em>"Amazing pizza, highly recommend"</em> — this tells no one anything.</div></div>
+        <div class="format-row"><div class="format-n">✗</div><div class="format-t">Menu descriptions: <em>"They have pepperoni, margherita, and a white pie"</em> — describe the experience, not the menu.</div></div>
+        <div class="format-row"><div class="format-n">✗</div><div class="format-t">Cute closers: <em>"This pizza will change your life"</em> — end on a fact, not a feeling.</div></div>
+      </div>
+
+      <div class="tip">
+        <strong>The test:</strong> Read your review. Does it tell someone something specific enough to help them decide whether to go? If not, it needs another pass.
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <a href="/contributor.html" class="btn-gold">Become a Contributor →</a>
+      <a href="/database.html" class="btn-outline">Browse the database</a>
+    </div>
+
+  </div>
+
+  <script type="module">
+    async function init() {
+      try {
+        const { initAuth } = await import('/auth.js');
+        const auth = await initAuth();
+        const u = auth?.user;
+        if (!u) return;
+        const roleLabel = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
+        document.getElementById('navUser').innerHTML =
+          `<a href="/profile.html" style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#9A7850;text-decoration:none;padding:5px 10px;transition:color .15s" onmouseover="this.style.color='#FFB800'" onmouseout="this.style.color='#9A7850'">@${u.handle}</a>`;
+      } catch {}
+    }
+    init();
+  </script>
+</body>
+</html>
