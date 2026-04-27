@@ -1,67 +1,131 @@
+// auth-user.js — runs on every sign-in for ANY Bluesky user
+// Uses service_role key so RLS never blocks it
+
 const { createClient } = require('@supabase/supabase-js');
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-const ADMIN_DID  = process.env.ADMIN_DID;
-const BSKY_API   = 'https://public.api.bsky.app';
-
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
-
-  let did;
-  try { ({ did } = JSON.parse(event.body)); } catch { return { statusCode: 400, body: 'Bad JSON' }; }
-  if (!did?.startsWith('did:')) return { statusCode: 400, body: 'Invalid DID' };
-
-  // Fetch profile from Bluesky
-  let profile;
-  try {
-    const res = await fetch(`${BSKY_API}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(did)}`);
-    if (!res.ok) throw new Error(`Bluesky ${res.status}`);
-    profile = await res.json();
-  } catch (err) {
-    return { statusCode: 502, body: 'Could not fetch Bluesky profile' };
+  // CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      },
+      body: '',
+    };
   }
 
-  // Check if user already exists to preserve their role
-  const { data: existing } = await supabase.from('users').select('role').eq('did', did).single();
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method not allowed' };
+  }
 
-  // Determine role — never downgrade an existing contributor/admin
+  // Parse body
+  let did;
+  try {
+    const body = JSON.parse(event.body || '{}');
+    did = body.did;
+  } catch (e) {
+    return { statusCode: 400, body: 'Invalid JSON' };
+  }
+
+  if (!did || typeof did !== 'string' || !did.startsWith('did:')) {
+    return { statusCode: 400, body: 'Invalid DID' };
+  }
+
+  // Validate env vars
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars');
+    return { statusCode: 500, body: 'Server configuration error' };
+  }
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+
+  const ADMIN_DID = process.env.ADMIN_DID || '';
+
+  // Fetch Bluesky profile
+  let handle = did;
+  let displayName = null;
+  let avatarUrl = null;
+
+  try {
+    const res = await fetch(
+      `https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(did)}`,
+      { headers: { 'Accept': 'application/json' } }
+    );
+    if (res.ok) {
+      const profile = await res.json();
+      handle      = profile.handle      || did;
+      displayName = profile.displayName || null;
+      avatarUrl   = profile.avatar      || null;
+    }
+  } catch (e) {
+    // Non-fatal — we still create/update the user with DID as handle
+    console.warn('Bluesky profile fetch failed for', did, e.message);
+  }
+
+  // Check if user already exists to preserve role
+  const { data: existing } = await supabase
+    .from('users')
+    .select('role')
+    .eq('did', did)
+    .maybeSingle();
+
+  // Determine role — never downgrade
   let role = existing?.role || 'guest';
   if (did === ADMIN_DID) role = 'admin';
 
-  const { data, error } = await supabase
+  // Upsert — works for first-time users AND returning users
+  const { data: user, error } = await supabase
     .from('users')
-    .upsert({
-      did,
-      handle:       profile.handle,
-      display_name: profile.displayName || profile.handle,
-      avatar_url:   profile.avatar || null,
-      role,
-      updated_at:   new Date().toISOString(),
-    }, { onConflict: 'did' })
+    .upsert(
+      {
+        did,
+        handle,
+        display_name: displayName,
+        avatar_url:   avatarUrl,
+        role,
+        updated_at:   new Date().toISOString(),
+      },
+      {
+        onConflict:        'did',
+        ignoreDuplicates:  false,
+      }
+    )
     .select('did, handle, display_name, avatar_url, role')
-    .single();
+    .maybeSingle();
 
-  if (error) return { statusCode: 500, body: 'Database error: ' + error.message };
+  if (error) {
+    console.error('Supabase upsert error:', JSON.stringify(error));
+    return { statusCode: 500, body: 'Database error: ' + error.message };
+  }
 
-  // Log first-time sign-in
-  const { count } = await supabase
-    .from('events_log')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_did', did).eq('event_type', 'user_created');
+  if (!user) {
+    console.error('No user returned after upsert for DID:', did);
+    return { statusCode: 500, body: 'User record not created' };
+  }
 
-  await supabase.from('events_log').insert({
-    event_type: count === 0 ? 'user_created' : 'user_signed_in',
-    user_did: did,
-    metadata: { handle: profile.handle },
-  });
+  // Log event (non-fatal if this fails)
+  try {
+    const isNew = !existing;
+    await supabase.from('events_log').insert({
+      event_type: isNew ? 'user_created' : 'user_signed_in',
+      user_did:   did,
+      metadata:   { handle },
+    });
+  } catch (e) { /* non-fatal */ }
 
   return {
     statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    headers: {
+      'Content-Type':                'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify(user),
   };
 };
