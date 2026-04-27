@@ -3,346 +3,246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIZZA⚡OFFICIAL — The world's pizza, documented.</title>
-  <meta name="description" content="The world's pizza, documented. Community-built. ATProto-native. No algorithms. No ads.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>Database — PIZZA⚡OFFICIAL</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800; color: #FFFFFF;
-      min-height: 100vh; min-height: 100dvh;
-      display: flex; flex-direction: column; overflow-x: hidden;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
-    }
+    body{background:var(--bg);font-family:var(--mono);color:var(--white);min-height:100vh}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
 
-    /* ── NAV ──────────────────────────────────── */
-    .nav {
-      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; flex-shrink: 0; position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .r { color: #FF3B30; }
-    /* Desktop nav links — hidden on mobile */
-    .nav-links { display: flex; gap: 2px; }
-    @media (max-width: 600px) { .nav-links { display: none; } }
-    .nav-link {
-      font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #9A7850; text-decoration: none; padding: 6px 12px; transition: color .15s;
-    }
-    .nav-link:hover { color: #FFB800; }
-    /* User area — right side */
-    .nav-user {
-      display: flex; align-items: center; gap: 8px;
-      text-decoration: none; padding: 5px 10px;
-      border: 1px solid transparent;
-      transition: border-color .15s;
-    }
-    .nav-user:hover { border-color: #3a2400; }
-    .nav-handle { font-size: 12px; font-weight: 700; color: #FFFFFF; }
-    .nav-role {
-      font-size: 9px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; padding: 2px 7px;
-    }
-    .role-member      { background: #0a2010; color: #4ABA5A; border: 1px solid #1a4020; }
-    .role-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
-    .role-admin       { background: #1a0505; color: #FF3B30; border: 1px solid #3a1010; }
+    nav{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--white)}
+    .logo span{color:var(--red)}
+    .nav-r{display:flex;align-items:center;gap:4px}
+    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
+    .nav-r a:hover,.nav-r button:hover{color:var(--white)}
+    .nav-r .active{color:var(--red)}
 
-    /* ── SPLASH ───────────────────────────────── */
-    .splash {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      padding: 40px 24px; text-align: center;
-    }
-    .splash-inner { width: 100%; max-width: 580px; }
+    .page-head{padding:24px 20px 16px;max-width:1100px;margin:0 auto;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .page-title{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1}
+    .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+    .live-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,71,.5)}50%{box-shadow:0 0 0 6px rgba(212,168,71,0)}}
 
-    .eyebrow {
-      font-size: 11px; font-weight: 700; letter-spacing: .2em;
-      text-transform: uppercase; color: #C8B090; margin-bottom: 20px;
-    }
+    .filters{padding:10px 20px;max-width:1100px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
+    .filter-label{font-size:11px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
+    .filter-btn{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s}
+    .filter-btn:hover{border-color:var(--white);color:var(--white)}
+    .filter-btn.active{border-color:var(--red);color:var(--red)}
 
-    /* Logo: display:table + auto margin = mathematically centered */
-    .logo {
-      font-size: clamp(30px, 8.5vw, 96px);
-      font-weight: 700; letter-spacing: -.02em; line-height: 1;
-      color: #FFFFFF; margin-bottom: 20px;
-      display: table; margin-left: auto; margin-right: auto;
-    }
-    .logo .r { color: #FF3B30; }
+    .content{padding:20px;max-width:1100px;margin:0 auto}
+    .count{font-size:10px;color:var(--text2);letter-spacing:.1em;margin-bottom:14px}
 
-    .punch { font-size: clamp(15px, 3vw, 20px); font-weight: 700; color: #FFB800; margin-bottom: 8px; }
-    .sub   { font-size: 14px; color: #C8B090; line-height: 1.75; margin-bottom: 36px; }
+    .grid{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:840px){.grid{grid-template-columns:repeat(3,1fr)}}
 
-    /* ── SIGN-IN AREA — always visible when logged out ─ */
-    .auth-area { margin-bottom: 32px; }
+    .card{background:var(--bg2);border:1px solid var(--border);cursor:pointer;display:flex;gap:0;overflow:hidden;transition:border-color .15s}
+    .card:hover{border-color:var(--red)}
+    .card-img{width:80px;min-width:80px;height:80px;background:var(--bg3);overflow:hidden;flex-shrink:0}
+    .card-img img{width:100%;height:100%;object-fit:cover}
+    .card-body{padding:12px;flex:1;min-width:0}
+    .card-name{font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .card-loc{font-size:10px;color:var(--text2);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card-meta{display:flex;align-items:center;gap:8px}
+    .style-tag{font-size:11px;color:var(--text2);border:1px solid var(--border);padding:1px 6px;letter-spacing:.06em}
 
-    /* Logged out: sign-in form */
-    .signin-block {
-      background: #160D00; border: 1px solid #2E1C00;
-      padding: 20px 22px; text-align: left;
-    }
-    .signin-label {
-      font-size: 10px; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: #CC9200; margin-bottom: 12px;
-    }
-    .signin-row { display: flex; gap: 8px; margin-bottom: 8px; }
-    .signin-input {
-      flex: 1; min-width: 0; background: #1E1400; border: 1px solid #3a2400;
-      color: #FFFFFF; font-family: inherit; font-size: 15px;
-      padding: 12px 14px; outline: none; transition: border-color .15s;
-    }
-    .signin-input::placeholder { color: #6a4820; }
-    .signin-input:focus { border-color: #FFB800; }
-    .btn-signin {
-      font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: 12px 20px; background: #FF3B30; color: #FFFFFF;
-      border: none; cursor: pointer; transition: background .15s; flex-shrink: 0;
-    }
-    .btn-signin:hover:not(:disabled) { background: #CC2F25; }
-    .btn-signin:disabled { opacity: .4; cursor: not-allowed; }
-    .signin-note {
-      font-size: 11px; color: #9A7850; line-height: 1.6;
-    }
-    .signin-note a { color: #C8B090; text-decoration: none; border-bottom: 1px solid #3a2400; }
-    .signin-note a:hover { color: #FFB800; border-color: #FFB800; }
-    .signin-err { font-size: 12px; color: #FF3B30; margin-top: 6px; display: none; }
+    .empty{text-align:center;padding:60px 20px;color:var(--text2)}
+    .empty-title{font-size:14px;margin-bottom:8px;color:var(--white)}
+    .empty-sub{font-size:11px;line-height:1.7}
 
-    /* Logged in: user card */
-    .user-card {
-      background: #160D00; border: 1px solid #2E1C00;
-      padding: 18px 22px; text-align: left; display: none;
-    }
-    .uc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-    .uc-handle { font-size: 16px; font-weight: 700; color: #FFFFFF; }
-    .uc-badge {
-      font-size: 10px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; padding: 3px 10px;
-    }
-    .uc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .uc-btn {
-      font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: 7px 14px; cursor: pointer; text-decoration: none;
-      transition: all .15s; display: inline-block;
-    }
-    .uc-btn-gold { background: #FFB800; color: #0d0800; border: none; }
-    .uc-btn-gold:hover { background: #CC9200; }
-    .uc-btn-outline { background: transparent; border: 1px solid #3a2400; color: #C8B090; }
-    .uc-btn-outline:hover { border-color: #C8B090; color: #FFFFFF; }
-    .uc-btn-ghost { background: none; border: none; color: #7A5830; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 7px 14px; }
-    .uc-btn-ghost:hover { color: #FF3B30; }
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;backdrop-filter:blur(2px)}
+    .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(540px,94vw);max-height:88vh;background:var(--bg2);border:1px solid var(--border);z-index:300;flex-direction:column;overflow:hidden}
+    .modal.open,.modal-bg.open{display:flex}
+    .modal-bg.open{display:block}
+    .modal-bar{background:var(--red);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .modal-bar-name{font-size:12px;font-weight:700;color:var(--bg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .modal-close{background:var(--bg);color:var(--red);border:none;font-family:var(--mono);font-size:14px;font-weight:700;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+    .modal-body{overflow-y:auto;flex:1}
+    .modal-img{width:100%;height:200px;background:var(--bg3);overflow:hidden;flex-shrink:0}
+    .modal-img img{width:100%;height:100%;object-fit:cover}
+    .modal-info{padding:18px 20px}
+    .modal-name{font-size:18px;font-weight:700;margin-bottom:12px}
+    .modal-rating{font-size:15px;margin-bottom:12px}
+    .field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
+    .field{font-size:11px}
+    .field-k{color:var(--text2)}
+    .field-v{color:var(--white)}
+    .modal-notes{font-size:13px;color:var(--white);line-height:1.7;border-top:1px solid var(--border);padding-top:12px}
+    .modal-contrib{font-size:10px;color:var(--text2);margin-top:10px}
+    .modal-footer{border-top:1px solid var(--border);padding:8px 14px;font-size:11px;color:var(--text2);letter-spacing:.08em;flex-shrink:0}
 
-    /* ── CTAs ───────────────────────────────────── */
-    .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-    .btn-browse {
-      display: inline-block; font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 14px 32px;
-      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
-      cursor: pointer; transition: background .15s; white-space: nowrap;
-    }
-    .btn-browse:hover { background: #CC9200; }
-    .btn-format {
-      display: inline-block; font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 14px 32px;
-      background: transparent; color: #FFFFFF; text-decoration: none;
-      border: 1px solid #4a2e00; cursor: pointer;
-      transition: border-color .15s, color .15s; white-space: nowrap;
-    }
-    .btn-format:hover { border-color: #C8B090; color: #FFB800; }
-
-    /* ── BOTTOM STRIP ───────────────────────────── */
-    .bottom {
-      border-top: 1px solid #1E1000; padding: 16px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px; flex-shrink: 0;
-    }
-    .bot-left, .bot-right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .bot-left a, .bot-right a {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #C8B090; text-decoration: none; transition: color .15s;
-    }
-    .bot-left a:hover, .bot-right a:hover { color: #FFB800; }
-    .bot-copy { font-size: 11px; color: #7A5830; white-space: nowrap; }
-
-    @media (max-width: 480px) {
-      .ctas { flex-direction: column; align-items: center; }
-      .btn-browse, .btn-format { width: 100%; max-width: 280px; text-align: center; padding: 16px; }
-      .signin-row { flex-direction: column; }
-      .btn-signin { width: 100%; }
-      .bottom { flex-direction: column; align-items: flex-start; gap: 12px; }
-    }
+    .loading{text-align:center;padding:40px;font-size:10px;color:var(--text2);letter-spacing:.15em}
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="nav">
-    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-links">
-      <a href="/database.html" class="nav-link">Database</a>
-      <a href="/stats.html" class="nav-link">Stats</a>
-      <a href="/format.html" class="nav-link">Format</a>
-    </div>
-    <!-- Right side: populated by JS -->
-    <div id="navUser"></div>
-  </nav>
+<nav>
+  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
+  <div class="nav-r">
+    <a href="/database.html" class="active">Database</a>
+    <a href="/stats.html">Stats</a>
+    <a href="/submit.html" id="navSubmit" style="display:none">Submit</a>
+    <button id="navAuth" onclick="location.href='/'">Sign in</button>
+  </div>
+</nav>
 
-  <!-- SPLASH -->
-  <main class="splash">
-    <div class="splash-inner">
+<div class="page-head">
+  <div>
+    <div style="font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">The open pizza database</div>
+    <div class="page-title">DATABASE</div>
+  </div>
+  <div class="live-badge"><div class="live-dot"></div><span id="liveCount">Loading</span></div>
+</div>
 
-      <div class="eyebrow">ATProto-native &nbsp;·&nbsp; Decentralized &nbsp;·&nbsp; Open Source</div>
-      <div class="logo">PIZZA<span class="r">⚡</span>OFFICIAL</div>
-      <div class="punch">The world's pizza, documented.</div>
-      <div class="sub">Community-built. No algorithms. No ads.</div>
+<div class="filters">
+  <span class="filter-label">Style</span>
+  <button class="filter-btn active" data-filter="style" data-value="">All</button>
+  <button class="filter-btn" data-filter="style" data-value="NY Style">NY</button>
+  <button class="filter-btn" data-filter="style" data-value="Neapolitan">Neapolitan</button>
+  <button class="filter-btn" data-filter="style" data-value="Roman">Roman</button>
+  <button class="filter-btn" data-filter="style" data-value="Detroit / Sicilian">Detroit</button>
+  <button class="filter-btn" data-filter="style" data-value="Deep Dish">Deep Dish</button>
+  <button class="filter-btn" data-filter="style" data-value="Tavern">Tavern</button>
+  <button class="filter-btn" data-filter="style" data-value="Fast / Counter">Fast</button>
 
-      <!-- Auth area: sign-in form OR user card -->
-      <div class="auth-area">
+  <span class="filter-label" style="margin-left:8px">Rating</span>
+  <button class="filter-btn active" data-filter="rating" data-value="">All</button>
+  <button class="filter-btn" data-filter="rating" data-value="3">⭐⭐⭐</button>
+  <button class="filter-btn" data-filter="rating" data-value="2">⭐⭐</button>
+  <button class="filter-btn" data-filter="rating" data-value="1">⭐</button>
 
-        <!-- Sign-in block — shown by default, hidden when logged in -->
-        <div class="signin-block" id="signinBlock">
-          <div class="signin-label">Sign in with Bluesky</div>
-          <div class="signin-row">
-            <input type="text" class="signin-input" id="handleInput"
-              placeholder="you.bsky.social"
-              autocomplete="off" autocapitalize="off" spellcheck="false">
-            <button class="btn-signin" id="signinBtn" onclick="doSignIn()">Sign In</button>
-          </div>
-          <div class="signin-err" id="signinErr"></div>
-          <div class="signin-note">
-            Your Bluesky handle — no password shared with us.
-            No Bluesky yet? <a href="https://bsky.app" target="_blank" rel="noopener">Create a free account →</a>
-          </div>
-        </div>
+  <span class="filter-label" style="margin-left:8px">Experience</span>
+  <button class="filter-btn active" data-filter="experience" data-value="">All</button>
+  <button class="filter-btn" data-filter="experience" data-value="Slice / Counter">Slice</button>
+  <button class="filter-btn" data-filter="experience" data-value="Casual Sit-Down">Casual</button>
+  <button class="filter-btn" data-filter="experience" data-value="Full Service">Full Service</button>
+  <button class="filter-btn" data-filter="experience" data-value="Takeout / Delivery">Takeout</button>
+</div>
 
-        <!-- User card — hidden by default, shown when logged in -->
-        <div class="user-card" id="userCard">
-          <div class="uc-top">
-            <span class="uc-handle" id="ucHandle"></span>
-            <span class="uc-badge" id="ucBadge"></span>
-          </div>
-          <div class="uc-actions" id="ucActions"></div>
-        </div>
+<div class="content">
+  <div class="count" id="countLabel"></div>
+  <div class="grid" id="grid"><div class="loading">Loading reviews…</div></div>
+</div>
 
-      </div>
-
-      <!-- CTAs — always visible -->
-      <div class="ctas">
-        <a href="/database.html" class="btn-browse">Browse Database</a>
-        <a href="/format.html" class="btn-format">Rating Guide</a>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- BOTTOM STRIP -->
-  <div class="bottom">
-    <div class="bot-left">
-      <a href="/database.html">Database</a>
-      <a href="/stats.html">Stats</a>
-      <a href="/format.html">Format</a>
-    </div>
-    <div class="bot-right">
-      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
-      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
-      <span class="bot-copy">© 2026 Cheeseburger World LLC</span>
+<div class="modal-bg" id="modalBg" onclick="closeModal()"></div>
+<div class="modal" id="modal">
+  <div class="modal-bar">
+    <span class="modal-bar-name" id="mTitle">—</span>
+    <button class="modal-close" onclick="closeModal()">×</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-img" id="mImg"></div>
+    <div class="modal-info">
+      <div class="modal-name" id="mName">—</div>
+      <div class="modal-rating" id="mRating">—</div>
+      <div class="field-grid" id="mFields"></div>
+      <div class="modal-notes" id="mNotes">—</div>
+      <div class="modal-contrib" id="mContrib">—</div>
     </div>
   </div>
+  <div class="modal-footer">PIZZA⚡OFFICIAL · pizzaofficial.biz · ATProto-native</div>
+</div>
 
-  <script type="module">
-    const $ = id => document.getElementById(id);
+<script type="module">
+  import { initAuth, getApprovedReviews } from '/auth.js';
 
-    // Render nav user state
-    function renderNavUser(u) {
-      const el = $('navUser');
-      if (!u) {
-        el.innerHTML = '';
-        return;
-      }
-      const roleLabel = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
-      const roleClass = { guest: 'role-member', contributor: 'role-contributor', admin: 'role-admin' };
-      el.innerHTML = `
-        <a href="/profile.html" class="nav-user">
-          <span class="nav-handle">@${u.handle}</span>
-          <span class="nav-role ${roleClass[u.role] || 'role-member'}">${roleLabel[u.role] || 'Member'}</span>
-        </a>`;
-    }
+  const RATINGS = {
+    3: '⭐⭐⭐ Legendary',
+    2: '⭐⭐ Worth a Trip',
+    1: '⭐ Solid',
+    0: 'ㄨ Skip It',
+  };
 
-    // Render main user card
-    function renderUserCard(u) {
-      $('signinBlock').style.display = 'none';
-      const card = $('userCard');
-      card.style.display = 'block';
+  const filters = { style: '', rating: '', experience: '' };
+  let allReviews = [];
 
-      $('ucHandle').textContent = '@' + u.handle;
-
-      const badge = $('ucBadge');
-      if (u.role === 'admin') {
-        badge.textContent = 'Admin'; badge.className = 'uc-badge role-admin';
-      } else if (u.role === 'contributor') {
-        badge.textContent = 'Contributor ⭐'; badge.className = 'uc-badge role-contributor';
-      } else {
-        badge.textContent = 'Member ✓'; badge.className = 'uc-badge role-member';
-      }
-
-      const actions = $('ucActions');
-      if (u.role === 'contributor' || u.role === 'admin') {
-        actions.innerHTML = `
-          <a href="/submit.html" class="uc-btn uc-btn-gold">Submit a Review</a>
-          <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
-          <a href="/stats.html" class="uc-btn uc-btn-outline">Stats</a>
-          <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
-      } else {
-        actions.innerHTML = `
-          <a href="/contributor.html" class="uc-btn uc-btn-gold">Become a Contributor ⭐</a>
-          <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
-          <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
+  // Auth — update nav
+  initAuth().then(auth => {
+    if (auth?.user) {
+      document.getElementById('navAuth').textContent = `@${auth.user.handle}`;
+      document.getElementById('navAuth').onclick = () => location.href = '/';
+      if (['contributor','admin'].includes(auth.user.role)) {
+        document.getElementById('navSubmit').style.display = '';
       }
     }
+  });
 
-    // Auth check — runs silently, page already shows sign-in form
-    async function checkAuth() {
-      try {
-        const { initAuth } = await import('/auth.js');
-        const auth = await initAuth();
-        if (auth?.user) {
-          renderNavUser(auth.user);
-          renderUserCard(auth.user);
-        }
-      } catch (_) {}
+  // Load reviews
+  async function load() {
+    const reviews = await getApprovedReviews(filters);
+    allReviews = reviews;
+    render(reviews);
+    document.getElementById('liveCount').textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+    document.getElementById('countLabel').textContent =
+      reviews.length ? `${reviews.length} result${reviews.length !== 1 ? 's' : ''}` : '';
+  }
+
+  function render(reviews) {
+    const grid = document.getElementById('grid');
+    if (!reviews.length) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+        <div class="empty-title">No reviews yet</div>
+        <div class="empty-sub">Be the first to submit one.<br>Apply to become a contributor at <a href="/contributor.html" style="color:var(--white)">contributor.html</a></div>
+      </div>`;
+      return;
     }
+    grid.innerHTML = reviews.map(r => `
+      <div class="card" onclick="openModal('${r.id}')">
+        <div class="card-img">${r.image_url ? `<img src="${r.image_url}" alt="${r.name}" loading="lazy">` : ''}</div>
+        <div class="card-body">
+          <div class="card-name">${r.name}</div>
+          <div class="card-loc">${r.location}</div>
+          <div class="card-meta">
+            <span>${RATINGS[r.rating] || ''}</span>
+            <span class="style-tag">${r.style}</span>
+          </div>
+        </div>
+      </div>`).join('');
+  }
 
-    // Sign in
-    window.doSignIn = async function() {
-      const handle = $('handleInput').value.trim();
-      const btn = $('signinBtn'), err = $('signinErr');
-      err.style.display = 'none';
-      if (!handle) { err.textContent = 'Enter your Bluesky handle'; err.style.display = 'block'; $('handleInput').focus(); return; }
-      btn.disabled = true; btn.textContent = 'Connecting…';
-      try {
-        const { signIn } = await import('/auth.js');
-        await signIn(handle);
-      } catch (e) {
-        btn.disabled = false; btn.textContent = 'Sign In';
-        err.textContent = e.message?.includes('resolve') ? 'Handle not found — check spelling' : 'Failed: ' + e.message;
-        err.style.display = 'block';
-      }
-    };
+  window.openModal = function(id) {
+    const r = allReviews.find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('mTitle').textContent = r.name;
+    document.getElementById('mName').textContent = r.name;
+    document.getElementById('mRating').textContent = RATINGS[r.rating] || '';
+    document.getElementById('mNotes').textContent = r.notes || '';
+    document.getElementById('mContrib').textContent =
+      `Reviewed by @${r.users?.handle || 'contributor'} · ${r.location}`;
+    document.getElementById('mImg').innerHTML =
+      r.image_url ? `<img src="${r.image_url}" alt="${r.name}">` : '';
+    const fields = [
+      ['Style', r.style], ['Crust', r.crust], ['Char', r.char_level],
+      ['Sauce', r.sauce], ['Cheese', r.cheese], ['City', r.city],
+    ].filter(([,v]) => v);
+    document.getElementById('mFields').innerHTML =
+      fields.map(([k,v]) => `<div class="field"><span class="field-k">${k} </span><span class="field-v">${v}</span></div>`).join('');
+    document.getElementById('modal').classList.add('open');
+    document.getElementById('modalBg').classList.add('open');
+  };
 
-    $('handleInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSignIn(); });
+  window.closeModal = function() {
+    document.getElementById('modal').classList.remove('open');
+    document.getElementById('modalBg').classList.remove('open');
+  };
 
-    window.doSignOut = async function() {
-      try { const { signOut } = await import('/auth.js'); await signOut(); }
-      catch (_) { location.href = '/'; }
-    };
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.filter;
+      const value = btn.dataset.value;
+      document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filters[type] = value;
+      if (type === 'experience') filters.experience = value;
+      load();
+    });
+  });
 
-    checkAuth();
-  </script>
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  load();
+</script>
 </body>
 </html>
