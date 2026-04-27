@@ -10,140 +10,210 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800; color: #FFFFFF; min-height: 100vh;
+
+    :root {
+      --bg:      #0d0800;
+      --bg2:     #160D00;
+      --bg3:     #1E1400;
+      --gold:    #FFB800;
+      --gold2:   #CC9200;
+      --red:     #FF3B30;
+      --white:   #FFFFFF;
+      --text2:   #C8B090;
+      --text3:   #9A7850;
+      --muted:   #7A5830;
+      --border:  #2E1C00;
+      --border2: #1E1000;
+      --mono:    'IBM Plex Mono', 'Courier New', monospace;
     }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
     body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
+      content: ''; position: fixed; inset: 0;
+      pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px
+      );
     }
 
     /* ── NAV ─────────────────────────────────────── */
     .nav {
-      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
-      display: flex; align-items: center; justify-content: space-between;
+      height: 54px; background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      justify-content: space-between;
       padding: 0 20px; position: sticky; top: 0; z-index: 50;
     }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .r { color: #FF3B30; }
+    .nav-logo {
+      font-size: 14px; font-weight: 700;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo .r { color: var(--red); }
+
     .nav-right { display: flex; align-items: center; gap: 2px; }
     .nav-link {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #9A7850; text-decoration: none; padding: 6px 10px;
-      transition: color .15s; background: none; border: none;
-      cursor: pointer; font-family: inherit; white-space: nowrap;
+      font-size: 11px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--text3);
+      text-decoration: none; padding: 6px 10px;
+      transition: color .15s; background: none;
+      border: none; cursor: pointer; font-family: var(--mono);
     }
-    .nav-link:hover { color: #FFB800; }
-    .nav-link.active { color: #FFB800; }
+    .nav-link:hover { color: var(--gold); }
+    .nav-link.active { color: var(--gold); }
     .nav-user {
-      font-size: 11px; font-weight: 700; color: #9A7850;
+      font-size: 11px; font-weight: 700; color: var(--text3);
       text-decoration: none; padding: 5px 10px;
-      border: 1px solid #2E1C00; transition: all .15s;
+      border: 1px solid var(--border);
+      transition: all .15s;
     }
-    .nav-user:hover { border-color: #FFB800; color: #FFB800; }
+    .nav-user:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* ── PAGE HEADER ──────────────────────────────── */
-    .page-header {
+    /* ── PAGE HEAD ───────────────────────────────── */
+    .page-head {
       max-width: 1100px; margin: 0 auto;
-      padding: 32px 20px 0;
+      padding: 28px 20px 0;
     }
-    .header-row {
+    .head-row {
       display: flex; align-items: flex-end;
-      justify-content: space-between; gap: 16px;
-      margin-bottom: 24px; flex-wrap: wrap;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
     }
     .page-title {
-      font-size: clamp(32px, 7vw, 56px); font-weight: 700;
-      letter-spacing: -.03em; color: #FFFFFF; line-height: 1;
+      font-size: clamp(30px, 6vw, 52px);
+      font-weight: 700; letter-spacing: -.03em;
+      color: var(--white); line-height: 1;
     }
-    .page-title .r { color: #FF3B30; }
     .live-badge {
       display: flex; align-items: center; gap: 7px;
       font-size: 11px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: #FFB800; padding-bottom: 4px;
+      text-transform: uppercase; color: var(--gold);
+      padding-bottom: 4px;
     }
     .live-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #FFB800;
-      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); flex-shrink: 0;
+      animation: pulse 2s ease-in-out infinite;
     }
     @keyframes pulse {
       0%,100% { box-shadow: 0 0 0 0 rgba(255,184,0,.4); }
       50%      { box-shadow: 0 0 0 6px rgba(255,184,0,0); }
     }
 
-    /* ── FILTERS ──────────────────────────────────── */
-    .filters {
+    /* ── FILTERS ─────────────────────────────────── */
+    .filter-bar {
       max-width: 1100px; margin: 0 auto;
-      border-top: 1px solid #2E1C00; border-bottom: 1px solid #2E1C00;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
     }
     .filter-row {
-      display: flex; align-items: center; padding: 0 20px;
-      overflow-x: auto; scrollbar-width: none; gap: 0;
+      display: flex; align-items: center;
+      padding: 0 20px; overflow-x: auto;
+      scrollbar-width: none; gap: 0;
     }
     .filter-row::-webkit-scrollbar { display: none; }
-    .filter-row + .filter-row { border-top: 1px solid #1E1000; }
-    .filter-group {
+    .filter-row + .filter-row { border-top: 1px solid var(--border2); }
+
+    .filter-label {
       font-size: 10px; font-weight: 700; letter-spacing: .18em;
       text-transform: uppercase; color: #5a3e1c;
-      padding: 10px 12px 10px 0; white-space: nowrap; flex-shrink: 0;
+      padding: 10px 14px 10px 0; white-space: nowrap;
+      flex-shrink: 0;
     }
-    .filter-btn {
-      font-family: inherit; font-size: 11px; font-weight: 700;
+    .f-btn {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
       letter-spacing: .06em; text-transform: uppercase;
       padding: 10px 14px; background: transparent;
       border: none; border-bottom: 2px solid transparent;
-      color: #9A7850; cursor: pointer; white-space: nowrap;
+      color: var(--text3); cursor: pointer; white-space: nowrap;
       transition: color .15s, border-color .15s;
     }
-    .filter-btn:hover { color: #FFFFFF; }
-    .filter-btn.on { color: #FFB800; border-bottom-color: #FFB800; }
+    .f-btn:hover { color: var(--white); }
+    .f-btn.on { color: var(--gold); border-bottom-color: var(--gold); }
 
-    /* ── MAIN CONTENT ─────────────────────────────── */
-    .content { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
+    /* City dropdown */
+    .city-select {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 8px 12px; background: transparent;
+      border: 1px solid var(--border); border-radius: 0;
+      color: var(--text3); cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      outline: none; transition: all .15s;
+      margin: 6px 0;
+    }
+    .city-select:hover, .city-select:focus {
+      border-color: var(--gold2); color: var(--gold);
+    }
+    .city-select option {
+      background: var(--bg2); color: var(--white);
+      font-size: 12px; text-transform: none; letter-spacing: 0;
+    }
+
+    /* ── CONTENT ─────────────────────────────────── */
+    .content {
+      max-width: 1100px; margin: 0 auto;
+      padding: 20px 20px 60px;
+    }
 
     .result-bar {
       display: flex; align-items: center;
       justify-content: space-between; gap: 10px;
-      margin-bottom: 20px; flex-wrap: wrap;
+      margin-bottom: 18px; flex-wrap: wrap;
     }
-    .result-count { font-size: 12px; color: #7A5830; letter-spacing: .04em; }
+    .result-count { font-size: 12px; color: var(--muted); }
     .sort-row { display: flex; gap: 4px; }
     .sort-btn {
-      font-family: inherit; font-size: 10px; font-weight: 700;
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
       letter-spacing: .08em; text-transform: uppercase;
       padding: 5px 12px; background: transparent;
-      border: 1px solid #2E1C00; color: #7A5830;
+      border: 1px solid var(--border); color: var(--muted);
       cursor: pointer; transition: all .15s;
     }
-    .sort-btn:hover { border-color: #9A7850; color: #C8B090; }
-    .sort-btn.on { border-color: #FFB800; color: #FFB800; }
+    .sort-btn:hover { border-color: var(--text3); color: var(--text2); }
+    .sort-btn.on { border-color: var(--gold); color: var(--gold); }
 
-    /* ── CARD GRID ────────────────────────────────── */
+    /* ── CITY SECTION HEADING ───────────────────── */
+    .city-heading {
+      font-size: 11px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--gold2);
+      padding: 20px 0 10px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .city-heading:first-child { border-top: none; padding-top: 0; }
+
+    /* ── CARD GRID ───────────────────────────────── */
     .grid {
-      display: grid; gap: 14px;
+      display: grid; gap: 12px;
       grid-template-columns: 1fr;
     }
-    @media (min-width: 580px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 900px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 560px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 860px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1140px) { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-    /* ── CARD BASE ────────────────────────────────── */
+    /* ── CARD ────────────────────────────────────── */
     .card {
-      background: #160D00; border: 1px solid #2E1C00;
+      background: var(--bg2); border: 1px solid var(--border);
       cursor: pointer; display: flex; flex-direction: column;
-      transition: border-color .2s, box-shadow .2s;
       overflow: hidden; position: relative;
+      transition: border-color .2s, box-shadow .2s;
     }
     .card:hover {
-      border-color: #FFB800;
-      box-shadow: 0 4px 24px rgba(255,184,0,.08);
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(255,184,0,.07);
     }
 
-    /* ── CARD WITH IMAGE ──────────────────────────── */
+    /* Card with image */
     .card-img {
       width: 100%; aspect-ratio: 16 / 10;
-      background: #1a1000; overflow: hidden; flex-shrink: 0;
+      background: var(--bg3); overflow: hidden; flex-shrink: 0;
       position: relative;
     }
     .card-img img {
@@ -152,234 +222,212 @@
     }
     .card:hover .card-img img { transform: scale(1.04); }
 
-    /* Rating badge floated over image */
-    .rating-badge {
+    .img-rating-badge {
       position: absolute; bottom: 10px; left: 10px;
       font-size: 12px; font-weight: 700;
-      background: rgba(13,8,0,.9);
-      padding: 5px 10px;
-      border: 1px solid rgba(255,184,0,.3);
-      backdrop-filter: blur(8px);
+      background: rgba(13,8,0,.88); padding: 5px 10px;
+      border: 1px solid rgba(255,184,0,.25);
+      backdrop-filter: blur(8px); line-height: 1;
       letter-spacing: .02em;
-      line-height: 1;
     }
 
-    /* ── CARD WITHOUT IMAGE ───────────────────────── */
-    /* Left accent bar signals rating tier */
+    /* Card without image — accent bar on left */
     .card.no-img { border-left-width: 3px; }
-    .card.no-img.r3 { border-left-color: #FFB800; }
-    .card.no-img.r2 { border-left-color: #CC9200; }
-    .card.no-img.r1 { border-left-color: #7A5830; }
-    .card.no-img.r0 { border-left-color: #3a2400; }
+    .card.no-img.rat-3 { border-left-color: var(--gold); }
+    .card.no-img.rat-2 { border-left-color: var(--gold2); }
+    .card.no-img.rat-1 { border-left-color: #5a3e1c; }
+    .card.no-img.rat-0 { border-left-color: var(--border); }
 
-    /* Inline rating for no-image cards */
-    .rating-inline {
-      font-size: 13px; font-weight: 700;
-      margin-bottom: 10px; line-height: 1;
+    /* Card body */
+    .card-body {
+      padding: 13px 15px 11px;
+      display: flex; flex-direction: column;
+      flex: 1; gap: 0;
     }
 
-    /* ── CARD BODY ────────────────────────────────── */
-    .card-body {
-      padding: 14px 16px 12px;
-      display: flex; flex-direction: column; flex: 1; gap: 0;
+    /* No-image inline rating */
+    .inline-rating {
+      font-size: 12px; font-weight: 700;
+      color: var(--gold); margin-bottom: 8px; line-height: 1;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .inline-rating .rl {
+      font-size: 9px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
     }
 
     .card-name {
-      font-size: 15px; font-weight: 700; color: #FFFFFF;
+      font-size: 14px; font-weight: 700; color: var(--white);
       line-height: 1.25; margin-bottom: 5px;
     }
-
     .card-meta {
       display: flex; align-items: center; gap: 6px;
-      font-size: 11px; color: #C8B090; margin-bottom: 10px;
-      flex-wrap: wrap;
+      font-size: 11px; color: var(--text2);
+      margin-bottom: 9px; flex-wrap: wrap;
     }
-    .card-meta .sep { color: #3a2400; }
-    .card-style-tag {
+    .card-sep { color: #3a2400; }
+    .style-tag {
       font-size: 9px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: #7A5830;
-      border: 1px solid #2E1C00; padding: 2px 7px;
+      text-transform: uppercase; color: var(--muted);
+      border: 1px solid var(--border); padding: 2px 7px;
+      flex-shrink: 0;
     }
-    .card-experience {
-      font-size: 9px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: #5a3e1c;
+    .exp-tag {
+      font-size: 9px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: #5a3e1c; flex-shrink: 0;
     }
-
-    /* Review excerpt — 3 lines, then clip */
     .card-excerpt {
-      font-size: 12px; color: #C8B090; line-height: 1.7;
-      flex: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      margin-bottom: 12px;
+      font-size: 12px; color: var(--text2); line-height: 1.7; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+      margin-bottom: 10px;
     }
-
-    /* Card footer: reviewer handle + Discuss link */
     .card-footer {
       display: flex; align-items: center;
-      justify-content: space-between; gap: 8px;
-      padding-top: 10px; border-top: 1px solid #1E1000;
+      justify-content: space-between; gap: 6px;
+      padding-top: 9px; border-top: 1px solid var(--border2);
       margin-top: auto;
     }
     .card-reviewer {
-      font-size: 10px; color: #7A5830; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+      font-size: 10px; color: var(--muted); font-weight: 700;
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; flex: 1;
     }
     .card-discuss {
-      font-size: 10px; color: #7A5830; text-decoration: none;
+      font-size: 10px; color: var(--muted); text-decoration: none;
       font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-      padding: 3px 8px; border: 1px solid #2E1C00;
+      padding: 3px 8px; border: 1px solid var(--border);
       transition: all .15s; flex-shrink: 0; white-space: nowrap;
-      display: none; /* shown only when bluesky_uri exists */
     }
-    .card-discuss:hover { color: #FFB800; border-color: #FFB800; }
+    .card-discuss:hover { color: var(--gold); border-color: var(--gold); }
 
-    /* ── DETAIL DRAWER (slide up on mobile, side panel on desktop) ── */
+    /* ── SKELETON ────────────────────────────────── */
+    .skel {
+      background: var(--bg2); border: 1px solid var(--border);
+      height: 240px; animation: shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes shimmer { 0%,100%{opacity:.4}50%{opacity:.8} }
+
+    /* ── EMPTY ───────────────────────────────────── */
+    .empty {
+      grid-column: 1/-1; text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 14px; opacity: .35; }
+    .empty-title { font-size: 15px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
+    .empty-sub { font-size: 13px; color: var(--muted); line-height: 1.7; }
+    .empty-sub a { color: var(--gold); text-decoration: none; }
+
+    /* ── DRAWER ──────────────────────────────────── */
     .overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.7); z-index: 200;
+      background: rgba(0,0,0,.72); z-index: 200;
       backdrop-filter: blur(3px);
     }
     .overlay.open { display: block; }
 
     .drawer {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: #160D00; border-top: 1px solid #2E1C00;
+      background: var(--bg2); border-top: 1px solid var(--border);
       z-index: 300; max-height: 92vh; overflow-y: auto;
       transform: translateY(100%);
-      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      transition: transform .28s cubic-bezier(.4,0,.2,1);
     }
     .drawer.open { transform: translateY(0); }
-
     @media (min-width: 700px) {
       .drawer {
-        left: auto; bottom: 0; top: 0; right: 0;
-        width: min(520px, 90vw); max-height: 100vh;
-        border-top: none; border-left: 1px solid #2E1C00;
+        left: auto; top: 0; bottom: 0; right: 0; width: min(500px, 90vw);
+        max-height: 100vh; border-top: none; border-left: 1px solid var(--border);
         transform: translateX(100%);
-        transition: transform .3s cubic-bezier(.4,0,.2,1);
       }
       .drawer.open { transform: translateX(0); }
     }
 
-    /* Drawer handle (mobile) */
     .drawer-handle {
-      width: 40px; height: 4px; background: #3a2400;
+      width: 36px; height: 4px; background: #3a2400;
       border-radius: 2px; margin: 12px auto 0;
     }
     @media (min-width: 700px) { .drawer-handle { display: none; } }
 
-    /* Drawer image */
     .drawer-img {
-      width: 100%; aspect-ratio: 16 / 9;
-      background: #1a1000; overflow: hidden;
+      width: 100%; aspect-ratio: 16/9;
+      background: var(--bg3); overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
     }
     .drawer-img img { width: 100%; height: 100%; object-fit: cover; }
-    .drawer-img-placeholder {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px; opacity: .15;
-    }
+    .drawer-img .placeholder { font-size: 52px; opacity: .12; }
 
-    /* Drawer content */
-    .drawer-content { padding: 20px 22px 32px; }
+    .drawer-body { padding: 20px 22px 36px; }
 
-    .drawer-header {
+    .d-header {
       display: flex; align-items: flex-start;
-      justify-content: space-between; gap: 12px;
-      margin-bottom: 4px;
+      justify-content: space-between; gap: 10px; margin-bottom: 6px;
     }
-    .drawer-name {
-      font-size: 20px; font-weight: 700; color: #FFFFFF;
+    .d-name {
+      font-size: 20px; font-weight: 700; color: var(--white);
       line-height: 1.2; flex: 1;
     }
-    .drawer-close {
-      width: 32px; height: 32px; background: #1E1400;
-      border: 1px solid #2E1C00; color: #9A7850;
+    .d-close {
+      width: 32px; height: 32px; background: var(--bg3);
+      border: 1px solid var(--border); color: var(--text3);
       font-size: 18px; cursor: pointer; display: flex;
       align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all .15s; font-family: inherit;
+      flex-shrink: 0; transition: all .15s; font-family: var(--mono);
     }
-    .drawer-close:hover { border-color: #FF3B30; color: #FF3B30; }
+    .d-close:hover { border-color: var(--red); color: var(--red); }
 
-    .drawer-rating { font-size: 18px; margin-bottom: 12px; }
+    .d-rating { font-size: 17px; margin-bottom: 12px; line-height: 1; }
+    .d-rating-lbl { font-size: 13px; color: var(--gold); font-weight: 700; }
 
-    .drawer-tags {
-      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
-    }
-    .drawer-tag {
+    .d-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .d-tag {
       font-size: 10px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: #C8B090;
-      border: 1px solid #2E1C00; padding: 4px 10px;
+      text-transform: uppercase; color: var(--text2);
+      border: 1px solid var(--border); padding: 4px 10px;
     }
-    .drawer-tag.highlight { border-color: #FFB800; color: #FFB800; }
+    .d-tag.hi { border-color: var(--gold); color: var(--gold); }
 
-    .drawer-divider { border: none; border-top: 1px solid #1E1000; margin: 16px 0; }
+    .d-hr { border: none; border-top: 1px solid var(--border2); margin: 14px 0; }
 
-    .drawer-notes {
-      font-size: 14px; color: #FFFFFF; line-height: 1.8;
-      margin-bottom: 20px;
+    .d-notes {
+      font-size: 14px; color: var(--white); line-height: 1.8;
+      margin-bottom: 18px;
     }
 
-    .drawer-reviewer {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 16px;
+    .d-reviewer {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
     }
-    .reviewer-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: #1E1400; border: 1px solid #2E1C00;
-      overflow: hidden; flex-shrink: 0;
+    .d-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--bg3); border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #7A5830;
+      font-size: 14px; font-weight: 700; color: var(--muted);
+      overflow: hidden; flex-shrink: 0;
     }
-    .reviewer-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .reviewer-info { flex: 1; min-width: 0; }
-    .reviewer-handle {
-      font-size: 12px; font-weight: 700; color: #C8B090;
-    }
-    .reviewer-role-badge {
+    .d-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .d-reviewer-info { flex: 1; min-width: 0; }
+    .d-reviewer-handle { font-size: 12px; font-weight: 700; color: var(--text2); }
+    .d-reviewer-badge {
       font-size: 9px; font-weight: 700; letter-spacing: .1em;
       text-transform: uppercase; padding: 1px 6px;
-      background: #1a1400; color: #FFB800; border: 1px solid #3a2800;
+      background: #1a1400; color: var(--gold); border: 1px solid #3a2800;
     }
+    .d-reviewer-date { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; }
 
-    .drawer-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .drawer-btn {
-      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: 9px 18px; text-decoration: none;
-      cursor: pointer; transition: all .15s; white-space: nowrap;
+    .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .d-btn {
+      display: inline-block; font-family: var(--mono); font-size: 11px;
+      font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 9px 18px; text-decoration: none; cursor: pointer;
+      transition: all .15s; white-space: nowrap; border: none;
     }
-    .drawer-btn-primary { background: #FFB800; color: #0d0800; border: none; }
-    .drawer-btn-primary:hover { background: #CC9200; }
-    .drawer-btn-outline { background: transparent; color: #C8B090; border: 1px solid #2E1C00; }
-    .drawer-btn-outline:hover { border-color: #C8B090; color: #FFFFFF; }
-
-    /* ── SKELETON LOADING ─────────────────────────── */
-    .skeleton {
-      background: #160D00; border: 1px solid #2E1C00;
-      height: 260px;
-      animation: shimmer 1.6s ease-in-out infinite;
+    .d-btn-gold { background: var(--gold); color: var(--bg); }
+    .d-btn-gold:hover { background: var(--gold2); }
+    .d-btn-outline {
+      background: transparent; color: var(--text2);
+      border: 1px solid var(--border);
     }
-    @keyframes shimmer {
-      0%,100% { opacity: .5; } 50% { opacity: 1; }
-    }
-
-    /* ── EMPTY STATE ──────────────────────────────── */
-    .empty {
-      grid-column: 1 / -1; text-align: center;
-      padding: 64px 20px;
-    }
-    .empty-icon { font-size: 40px; margin-bottom: 16px; opacity: .4; }
-    .empty-title { font-size: 16px; font-weight: 700; color: #C8B090; margin-bottom: 8px; }
-    .empty-sub { font-size: 13px; color: #7A5830; line-height: 1.7; }
-    .empty-sub a { color: #FFB800; text-decoration: none; }
-
-    @media (max-width: 480px) {
-      .result-bar { flex-direction: column; align-items: flex-start; }
-    }
+    .d-btn-outline:hover { border-color: var(--text2); color: var(--white); }
   </style>
 </head>
 <body>
@@ -394,113 +442,117 @@
     </div>
   </nav>
 
-  <!-- Page header -->
-  <div class="page-header">
-    <div class="header-row">
-      <div class="page-title">DATABASE</div>
-      <div class="live-badge" id="liveCount">
+  <!-- Page head -->
+  <div class="page-head">
+    <div class="head-row">
+      <div class="page-title">THE DATABASE</div>
+      <div class="live-badge" id="liveBadge">
         <div class="live-dot"></div>
         <span>Loading</span>
       </div>
     </div>
   </div>
 
-  <!-- Filters -->
-  <div class="filters">
+  <!-- Filter bar -->
+  <div class="filter-bar">
+
     <div class="filter-row">
-      <span class="filter-group">Rating</span>
-      <button class="filter-btn on" data-f="rating" data-v="">All</button>
-      <button class="filter-btn" data-f="rating" data-v="3">⭐⭐⭐</button>
-      <button class="filter-btn" data-f="rating" data-v="2">⭐⭐</button>
-      <button class="filter-btn" data-f="rating" data-v="1">⭐</button>
-      <button class="filter-btn" data-f="rating" data-v="0">ㄨ</button>
+      <span class="filter-label">Rating</span>
+      <button class="f-btn on" data-f="rating" data-v="">All</button>
+      <button class="f-btn" data-f="rating" data-v="3">⭐⭐⭐ Legendary</button>
+      <button class="f-btn" data-f="rating" data-v="2">⭐⭐ Worth a Trip</button>
+      <button class="f-btn" data-f="rating" data-v="1">⭐ Solid</button>
+      <button class="f-btn" data-f="rating" data-v="0">ㄨ Skip It</button>
     </div>
+
     <div class="filter-row">
-      <span class="filter-group">Style</span>
-      <button class="filter-btn on" data-f="style" data-v="">All</button>
-      <button class="filter-btn" data-f="style" data-v="NY Style">NY</button>
-      <button class="filter-btn" data-f="style" data-v="Neapolitan">Neapolitan</button>
-      <button class="filter-btn" data-f="style" data-v="Roman">Roman</button>
-      <button class="filter-btn" data-f="style" data-v="Detroit / Sicilian">Detroit</button>
-      <button class="filter-btn" data-f="style" data-v="Deep Dish">Deep Dish</button>
-      <button class="filter-btn" data-f="style" data-v="Tavern">Tavern</button>
-      <button class="filter-btn" data-f="style" data-v="Fast / Counter">Fast</button>
+      <span class="filter-label">Style</span>
+      <button class="f-btn on" data-f="style" data-v="">All</button>
+      <button class="f-btn" data-f="style" data-v="NY Style">NY</button>
+      <button class="f-btn" data-f="style" data-v="Neapolitan">Neapolitan</button>
+      <button class="f-btn" data-f="style" data-v="Roman">Roman</button>
+      <button class="f-btn" data-f="style" data-v="Detroit / Sicilian">Detroit</button>
+      <button class="f-btn" data-f="style" data-v="Deep Dish">Deep Dish</button>
+      <button class="f-btn" data-f="style" data-v="Tavern">Tavern</button>
+      <button class="f-btn" data-f="style" data-v="Fast / Counter">Fast</button>
     </div>
+
     <div class="filter-row">
-      <span class="filter-group">Experience</span>
-      <button class="filter-btn on" data-f="experience" data-v="">All</button>
-      <button class="filter-btn" data-f="experience" data-v="Slice / Counter">Slice</button>
-      <button class="filter-btn" data-f="experience" data-v="Casual Sit-Down">Casual</button>
-      <button class="filter-btn" data-f="experience" data-v="Full Service">Full Service</button>
-      <button class="filter-btn" data-f="experience" data-v="Takeout / Delivery">Takeout</button>
+      <span class="filter-label">Experience</span>
+      <button class="f-btn on" data-f="experience" data-v="">All</button>
+      <button class="f-btn" data-f="experience" data-v="Slice / Counter">Slice</button>
+      <button class="f-btn" data-f="experience" data-v="Casual Sit-Down">Casual</button>
+      <button class="f-btn" data-f="experience" data-v="Full Service">Full Service</button>
+      <button class="f-btn" data-f="experience" data-v="Takeout / Delivery">Takeout</button>
     </div>
+
+    <!-- City row — populated dynamically from review data -->
+    <div class="filter-row" id="cityRow" style="display:none">
+      <span class="filter-label">City</span>
+      <select class="city-select" id="citySelect">
+        <option value="">All Cities</option>
+      </select>
+    </div>
+
   </div>
 
   <!-- Content -->
   <div class="content">
     <div class="result-bar">
-      <span class="result-count" id="resultCount"></span>
+      <span class="result-count" id="resultCount">Loading…</span>
       <div class="sort-row">
         <button class="sort-btn on" data-sort="recent">Recent</button>
         <button class="sort-btn" data-sort="rating">Top Rated</button>
       </div>
     </div>
-    <div class="grid" id="grid">
+    <div id="output">
       <!-- Skeleton loaders -->
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
+      <div class="grid">
+        <div class="skel"></div><div class="skel"></div>
+        <div class="skel"></div><div class="skel"></div>
+        <div class="skel"></div><div class="skel"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Detail drawer overlay -->
+  <!-- Overlay + Drawer -->
   <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-
-  <!-- Detail drawer -->
   <div class="drawer" id="drawer">
     <div class="drawer-handle"></div>
-    <div class="drawer-img" id="drawerImg"></div>
-    <div class="drawer-content">
-      <div class="drawer-header">
-        <div class="drawer-name" id="drawerName"></div>
-        <button class="drawer-close" onclick="closeDrawer()">×</button>
+    <div class="drawer-img" id="dImg"></div>
+    <div class="drawer-body">
+      <div class="d-header">
+        <div class="d-name" id="dName"></div>
+        <button class="d-close" onclick="closeDrawer()">×</button>
       </div>
-      <div class="drawer-rating" id="drawerRating"></div>
-      <div class="drawer-tags" id="drawerTags"></div>
-      <hr class="drawer-divider">
-      <div class="drawer-notes" id="drawerNotes"></div>
-      <div class="drawer-reviewer" id="drawerReviewer"></div>
-      <div class="drawer-actions" id="drawerActions"></div>
+      <div class="d-rating" id="dRating"></div>
+      <div class="d-tags" id="dTags"></div>
+      <hr class="d-hr">
+      <div class="d-notes" id="dNotes"></div>
+      <div class="d-reviewer" id="dReviewer"></div>
+      <div class="d-actions" id="dActions"></div>
     </div>
   </div>
 
   <script type="module">
-    // ── Constants ─────────────────────────────────────────────
     const RATINGS = {
-      3: { stars: '⭐⭐⭐', label: 'Legendary' },
-      2: { stars: '⭐⭐',  label: 'Worth a Trip' },
-      1: { stars: '⭐',    label: 'Solid' },
-      0: { stars: 'ㄨ',    label: 'Skip It' },
+      3: { s: '⭐⭐⭐', l: 'Legendary' },
+      2: { s: '⭐⭐',  l: 'Worth a Trip' },
+      1: { s: '⭐',    l: 'Solid' },
+      0: { s: 'ㄨ',    l: 'Skip It' },
     };
-    const BSKY_BASE = 'https://bsky.app';
+    const BSKY = 'https://bsky.app';
 
-    // ── State ─────────────────────────────────────────────────
-    let allReviews = [];
-    let currentReview = null;
-    const filters = { rating: '', style: '', experience: '' };
-    let sortMode = 'recent';
+    let all = [];
+    const F = { rating: '', style: '', experience: '', city: '' };
+    let sort = 'recent';
 
-    // ── Init ──────────────────────────────────────────────────
+    // ── Init ─────────────────────────────────────────────────
     async function init() {
-      // Auth (non-blocking — updates nav)
       authCheck();
-
-      // Load reviews
       const { getApprovedReviews } = await import('/auth.js');
-      allReviews = await getApprovedReviews({});
+      all = await getApprovedReviews({});
+      buildCityDropdown();
       render();
     }
 
@@ -509,168 +561,215 @@
         const { initAuth } = await import('/auth.js');
         const auth = await initAuth();
         if (auth?.user) {
-          const u = auth.user;
-          const navEl = document.getElementById('navUser');
-          navEl.textContent = '@' + u.handle;
-          navEl.href = '/profile.html';
+          const n = document.getElementById('navUser');
+          n.textContent = '@' + auth.user.handle;
+          n.href = '/profile.html';
         }
       } catch {}
     }
 
+    // ── City dropdown — auto-populated from review data ──────
+    function buildCityDropdown() {
+      // Extract unique cities, sorted alphabetically
+      const cities = [...new Set(
+        all.map(r => r.city).filter(Boolean).map(c => c.trim())
+      )].sort();
+
+      if (cities.length <= 1) return; // no point showing if 0-1 cities
+
+      const sel = document.getElementById('citySelect');
+      cities.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c; opt.textContent = c;
+        sel.appendChild(opt);
+      });
+
+      document.getElementById('cityRow').style.display = 'flex';
+
+      sel.addEventListener('change', () => {
+        F.city = sel.value;
+        render();
+      });
+    }
+
     // ── Render ────────────────────────────────────────────────
     function render() {
-      let reviews = allReviews.filter(r => {
-        if (filters.rating !== '' && r.rating !== parseInt(filters.rating)) return false;
-        if (filters.style && r.style !== filters.style) return false;
-        if (filters.experience && r.experience !== filters.experience) return false;
+      let reviews = all.filter(r => {
+        if (F.rating !== '' && r.rating !== parseInt(F.rating)) return false;
+        if (F.style && r.style !== F.style) return false;
+        if (F.experience && r.experience !== F.experience) return false;
+        if (F.city && (r.city || '').trim() !== F.city) return false;
         return true;
       });
 
-      if (sortMode === 'rating') {
+      if (sort === 'rating') {
         reviews.sort((a, b) => b.rating - a.rating || new Date(b.created_at) - new Date(a.created_at));
       } else {
         reviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       }
 
-      const total = allReviews.length;
-      document.getElementById('liveCount').innerHTML =
-        `<div class="live-dot"></div><span>${total} review${total !== 1 ? 's' : ''}</span>`;
+      // Live count
+      document.getElementById('liveBadge').innerHTML =
+        `<div class="live-dot"></div><span>${all.length} review${all.length !== 1 ? 's' : ''}</span>`;
       document.getElementById('resultCount').textContent =
-        reviews.length === total ? `${total} review${total !== 1 ? 's' : ''}` :
-        `${reviews.length} of ${total} reviews`;
+        reviews.length === all.length
+          ? `${all.length} review${all.length !== 1 ? 's' : ''}`
+          : `${reviews.length} of ${all.length} reviews`;
 
-      const grid = document.getElementById('grid');
+      const out = document.getElementById('output');
 
       if (!reviews.length) {
-        grid.innerHTML = `
+        out.innerHTML = `<div class="grid">
           <div class="empty">
             <div class="empty-icon">🍕</div>
             <div class="empty-title">No reviews match these filters</div>
-            <div class="empty-sub">Try a different combination, or <a href="#" onclick="clearFilters()">clear all filters</a>.</div>
-          </div>`;
+            <div class="empty-sub">Try a different filter, or
+              <a href="#" onclick="clearAll(); return false">clear all</a>.</div>
+          </div></div>`;
         return;
       }
 
-      grid.innerHTML = reviews.map(r => buildCard(r)).join('');
-    }
+      // Group by city when not filtered to one city
+      const grouped = groupByCity(reviews);
+      const showGroups = !F.city && grouped.length > 1;
 
-    function buildCard(r) {
-      const rating  = RATINGS[r.rating] || RATINGS[1];
-      const handle  = r.users?.handle || 'contributor';
-      const hasImg  = !!r.image_url;
-      const hasBsky = !!r.bluesky_uri;
-      const date    = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      let html = '';
 
-      // Build bluesky discuss URL
-      let bskyUrl = '';
-      if (hasBsky) {
-        const parts = r.bluesky_uri.split('/');
-        bskyUrl = `${BSKY_BASE}/profile/${handle}/post/${parts[parts.length-1]}`;
+      if (showGroups) {
+        grouped.forEach(({ city, reviews: cityRevs }) => {
+          html += `<div class="city-heading">◈ ${city} <span style="color:#5a3e1c;font-weight:400;letter-spacing:0;text-transform:none;font-size:10px">${cityRevs.length} review${cityRevs.length !== 1 ? 's' : ''}</span></div>`;
+          html += `<div class="grid">${cityRevs.map(buildCard).join('')}</div>`;
+        });
+      } else {
+        html = `<div class="grid">${reviews.map(buildCard).join('')}</div>`;
       }
 
-      const ratingClass = `r${r.rating}`;
+      out.innerHTML = html;
+    }
+
+    function groupByCity(reviews) {
+      const map = {};
+      reviews.forEach(r => {
+        const city = (r.city || r.location || 'Other').trim();
+        if (!map[city]) map[city] = [];
+        map[city].push(r);
+      });
+      return Object.entries(map)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([city, reviews]) => ({ city, reviews }));
+    }
+
+    // ── Build card ────────────────────────────────────────────
+    function buildCard(r) {
+      const rt     = RATINGS[r.rating] || RATINGS[1];
+      const handle = r.users?.handle || 'contributor';
+      const hasImg = !!r.image_url;
+      const date   = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+      let bskyUrl = '';
+      if (r.bluesky_uri) {
+        const parts = r.bluesky_uri.split('/');
+        bskyUrl = `${BSKY}/profile/${handle}/post/${parts[parts.length-1]}`;
+      }
+
+      const metaTags = [
+        r.style    ? `<span class="style-tag">${r.style}</span>` : '',
+        r.experience ? `<span class="exp-tag">${r.experience}</span>` : '',
+      ].join('');
+
+      const footer = `
+        <div class="card-footer">
+          <span class="card-reviewer">@${handle} · ${date}</span>
+          ${bskyUrl ? `<a class="card-discuss" href="${bskyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Discuss ↗</a>` : ''}
+        </div>`;
 
       if (hasImg) {
         return `
           <div class="card" onclick="openDrawer('${r.id}')">
             <div class="card-img">
               <img src="${r.image_url}" alt="${r.name}" loading="lazy">
-              <div class="rating-badge">${rating.stars} ${rating.label}</div>
+              <div class="img-rating-badge">${rt.s} ${rt.l}</div>
             </div>
             <div class="card-body">
               <div class="card-name">${r.name}</div>
               <div class="card-meta">
                 <span>${r.location}</span>
-                <span class="sep">·</span>
-                <span class="card-style-tag">${r.style}</span>
-                ${r.experience ? `<span class="card-experience">${r.experience}</span>` : ''}
+                <span class="card-sep">·</span>
+                ${metaTags}
               </div>
               <div class="card-excerpt">${r.notes || ''}</div>
-              <div class="card-footer">
-                <span class="card-reviewer">@${handle} · ${date}</span>
-                ${hasBsky ? `<a class="card-discuss" href="${bskyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:block">Discuss ↗</a>` : ''}
-              </div>
+              ${footer}
             </div>
           </div>`;
       } else {
-        // No image — text-forward layout with accent bar
         return `
-          <div class="card no-img ${ratingClass}" onclick="openDrawer('${r.id}')">
+          <div class="card no-img rat-${r.rating}" onclick="openDrawer('${r.id}')">
             <div class="card-body">
-              <div class="rating-inline">${rating.stars} <span style="font-size:11px;color:#9A7850;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${rating.label}</span></div>
+              <div class="inline-rating">
+                ${rt.s} <span class="rl">${rt.l}</span>
+              </div>
               <div class="card-name">${r.name}</div>
               <div class="card-meta">
                 <span>${r.location}</span>
-                <span class="sep">·</span>
-                <span class="card-style-tag">${r.style}</span>
-                ${r.experience ? `<span class="card-experience">${r.experience}</span>` : ''}
+                <span class="card-sep">·</span>
+                ${metaTags}
               </div>
               <div class="card-excerpt">${r.notes || ''}</div>
-              <div class="card-footer">
-                <span class="card-reviewer">@${handle} · ${date}</span>
-                ${hasBsky ? `<a class="card-discuss" href="${bskyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:block">Discuss ↗</a>` : ''}
-              </div>
+              ${footer}
             </div>
           </div>`;
       }
     }
 
-    // ── Drawer ────────────────────────────────────────────────
+    // ── Drawer ─────────────────────────────────────────────────
     window.openDrawer = function(id) {
-      const r = allReviews.find(x => x.id === id);
+      const r = all.find(x => x.id === id);
       if (!r) return;
-      currentReview = r;
 
-      const rating  = RATINGS[r.rating] || RATINGS[1];
-      const handle  = r.users?.handle || 'contributor';
-      const date    = new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      const rt     = RATINGS[r.rating] || RATINGS[1];
+      const handle = r.users?.handle || 'contributor';
+      const date   = new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
       // Image
-      const imgEl = document.getElementById('drawerImg');
-      if (r.image_url) {
-        imgEl.innerHTML = `<img src="${r.image_url}" alt="${r.name}">`;
-        imgEl.style.display = 'block';
-      } else {
-        imgEl.innerHTML = `<div class="drawer-img-placeholder">🍕</div>`;
-        imgEl.style.display = 'block';
-      }
+      const dImg = document.getElementById('dImg');
+      dImg.innerHTML = r.image_url
+        ? `<img src="${r.image_url}" alt="${r.name}" loading="lazy">`
+        : `<div class="placeholder">🍕</div>`;
 
-      document.getElementById('drawerName').textContent = r.name;
-      document.getElementById('drawerRating').innerHTML =
-        `${rating.stars} <span style="font-size:14px;color:#FFB800;font-weight:700">${rating.label}</span>`;
+      document.getElementById('dName').textContent = r.name;
+      document.getElementById('dRating').innerHTML =
+        `${rt.s} <span class="d-rating-lbl">${rt.l}</span>`;
 
       // Tags
-      const tags = [];
-      tags.push({ text: r.location, highlight: false });
-      tags.push({ text: r.style, highlight: true });
-      if (r.experience) tags.push({ text: r.experience, highlight: false });
-      document.getElementById('drawerTags').innerHTML =
-        tags.map(t => `<span class="drawer-tag${t.highlight ? ' highlight' : ''}">${t.text}</span>`).join('');
+      const tags = [
+        { t: r.location, hi: false },
+        { t: r.style, hi: true },
+        r.experience ? { t: r.experience, hi: false } : null,
+      ].filter(Boolean);
+      document.getElementById('dTags').innerHTML =
+        tags.map(({ t, hi }) => `<span class="d-tag${hi ? ' hi' : ''}">${t}</span>`).join('');
 
-      document.getElementById('drawerNotes').textContent = r.notes || '';
+      document.getElementById('dNotes').textContent = r.notes || '';
 
-      // Reviewer section
-      const initials = handle[0].toUpperCase();
-      document.getElementById('drawerReviewer').innerHTML = `
-        <div class="reviewer-avatar">${initials}</div>
-        <div class="reviewer-info">
-          <div class="reviewer-handle">@${handle}</div>
-          <span class="reviewer-role-badge">Contributor</span>
+      // Reviewer
+      document.getElementById('dReviewer').innerHTML = `
+        <div class="d-avatar">${handle[0].toUpperCase()}</div>
+        <div class="d-reviewer-info">
+          <div class="d-reviewer-handle">@${handle}</div>
+          <span class="d-reviewer-badge">Contributor</span>
         </div>
-        <span style="font-size:11px;color:#7A5830;margin-left:auto">${date}</span>
-      `;
+        <span class="d-reviewer-date">${date}</span>`;
 
       // Actions
-      let actionsHtml = '';
+      let actions = '';
       if (r.bluesky_uri) {
         const parts = r.bluesky_uri.split('/');
-        const bskyUrl = `${BSKY_BASE}/profile/${handle}/post/${parts[parts.length-1]}`;
-        actionsHtml += `<a href="${bskyUrl}" target="_blank" rel="noopener" class="drawer-btn drawer-btn-primary">Discuss on Bluesky ↗</a>`;
+        const url = `${BSKY}/profile/${handle}/post/${parts[parts.length-1]}`;
+        actions += `<a href="${url}" target="_blank" rel="noopener" class="d-btn d-btn-gold">Discuss on Bluesky ↗</a>`;
       }
-      actionsHtml += `<button class="drawer-btn drawer-btn-outline" onclick="closeDrawer()">Close</button>`;
-      document.getElementById('drawerActions').innerHTML = actionsHtml;
+      actions += `<button class="d-btn d-btn-outline" onclick="closeDrawer()">Close</button>`;
+      document.getElementById('dActions').innerHTML = actions;
 
-      // Open
       document.getElementById('overlay').classList.add('open');
       document.getElementById('drawer').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -684,13 +783,13 @@
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
-    // ── Filters ───────────────────────────────────────────────
-    document.querySelectorAll('.filter-btn').forEach(btn => {
+    // ── Filters ────────────────────────────────────────────────
+    document.querySelectorAll('.f-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const f = btn.dataset.f;
         document.querySelectorAll(`[data-f="${f}"]`).forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
-        filters[f] = btn.dataset.v;
+        F[f] = btn.dataset.v;
         render();
       });
     });
@@ -699,18 +798,16 @@
       btn.addEventListener('click', () => {
         document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
-        sortMode = btn.dataset.sort;
+        sort = btn.dataset.sort;
         render();
       });
     });
 
-    window.clearFilters = function() {
-      filters.rating = ''; filters.style = ''; filters.experience = '';
-      document.querySelectorAll('.filter-btn').forEach(b => {
-        b.classList.toggle('on', b.dataset.v === '');
-      });
+    window.clearAll = function() {
+      F.rating = ''; F.style = ''; F.experience = ''; F.city = '';
+      document.querySelectorAll('.f-btn').forEach(b => b.classList.toggle('on', b.dataset.v === ''));
+      document.getElementById('citySelect').value = '';
       render();
-      return false;
     };
 
     init();
