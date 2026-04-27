@@ -114,19 +114,28 @@
       font-size: 10px; font-weight: 700; letter-spacing: .12em;
       text-transform: uppercase; padding: 3px 10px;
     }
-    .uc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .uc-btn {
-      font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase;
-      padding: 7px 14px; cursor: pointer; text-decoration: none;
-      transition: all .15s; display: inline-block;
+    .uc-actions {
+      display: flex; flex-direction: column; gap: 6px;
     }
+    .uc-btn {
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 12px 16px; cursor: pointer; text-decoration: none;
+      transition: all .15s; display: flex; align-items: center;
+      justify-content: space-between; width: 100%;
+    }
+    .uc-btn::after { content: '→'; font-size: 12px; opacity: .5; }
     .uc-btn-gold { background: #FFB800; color: #0d0800; border: none; }
     .uc-btn-gold:hover { background: #CC9200; }
-    .uc-btn-outline { background: transparent; border: 1px solid #3a2400; color: #C8B090; }
+    .uc-btn-gold::after { opacity: .6; }
+    .uc-btn-outline { background: transparent; border: 1px solid #2E1C00; color: #C8B090; }
     .uc-btn-outline:hover { border-color: #C8B090; color: #FFFFFF; }
-    .uc-btn-ghost { background: none; border: none; color: #7A5830; font-size: 11px; cursor: pointer; font-family: inherit; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 7px 14px; }
-    .uc-btn-ghost:hover { color: #FF3B30; }
+    .uc-btn-ghost {
+      background: none; border: 1px solid #1E1000; color: #5a3e1c;
+      font-size: 11px; width: 100; text-align: left;
+    }
+    .uc-btn-ghost:hover { color: #FF3B30; border-color: #3a1010; }
+    .uc-btn-ghost::after { content: ''; }
 
     /* ── CTAs ───────────────────────────────────── */
     .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
@@ -216,8 +225,8 @@
 
       </div>
 
-      <!-- CTAs — always visible -->
-      <div class="ctas">
+      <!-- CTAs — shown when logged out only -->
+      <div class="ctas" id="ctaRow">
         <a href="/database.html" class="btn-browse">Browse Database</a>
         <a href="/format.html" class="btn-format">Rating Guide</a>
       </div>
@@ -259,6 +268,7 @@
     // Render main user card
     function renderUserCard(u) {
       $('signinBlock').style.display = 'none';
+      $('ctaRow').style.display = 'none'; // hide Browse/Rating Guide when logged in
       const card = $('userCard');
       card.style.display = 'block';
 
@@ -279,11 +289,14 @@
           <a href="/submit.html" class="uc-btn uc-btn-gold">Submit a Review</a>
           <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
           <a href="/stats.html" class="uc-btn uc-btn-outline">Stats</a>
+          <a href="/database.html" class="uc-btn uc-btn-outline">Database</a>
           <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
       } else {
         actions.innerHTML = `
           <a href="/contributor.html" class="uc-btn uc-btn-gold">Become a Contributor</a>
           <a href="/profile.html" class="uc-btn uc-btn-outline">Profile</a>
+          <a href="/stats.html" class="uc-btn uc-btn-outline">Stats</a>
+          <a href="/database.html" class="uc-btn uc-btn-outline">Database</a>
           <button class="uc-btn uc-btn-ghost" onclick="doSignOut()">Sign out</button>`;
       }
     }
