@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIZZA⚡OFFICIAL — The world's pizza, documented.</title>
-  <meta name="description" content="The world's pizza, documented. Community-built database. ATProto-native. No algorithms. No ads.">
+  <meta name="description" content="The world's pizza, documented. Community-built. ATProto-native. No algorithms. No ads.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -109,14 +109,18 @@
       margin-bottom: 20px;
     }
 
-    /* the brand mark */
+    /* the brand mark — fit-content + auto margin = true center */
     .logo {
-      font-size: clamp(40px, 12vw, 100px);
+      font-size: clamp(30px, 8.5vw, 100px);
       font-weight: 700;
-      letter-spacing: -.04em;
-      line-height: .92;
+      letter-spacing: -.02em;
+      line-height: 1;
       color: #FFFFFF;
       margin-bottom: 22px;
+      /* true centering regardless of letter-spacing */
+      display: table;
+      margin-left: auto;
+      margin-right: auto;
     }
     .logo .r { color: #FF3B30; }
 
@@ -353,8 +357,6 @@
     <div class="bottom-links">
       <a href="/database.html">Database</a>
       <a href="/stats.html">Stats</a>
-      <a href="/contributor.html">Contribute</a>
-      <a href="/submit.html">Submit</a>
     </div>
     <div class="bottom-right">
       <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
