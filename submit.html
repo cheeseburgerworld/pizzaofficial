@@ -4,651 +4,701 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit a Review — PIZZA⚡OFFICIAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
 
     body {
-      background: var(--bg);
-      font-family: var(--mono);
-      color: var(--body);
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      background: #0d0800;
+      color: #FFFFFF;
       min-height: 100vh;
     }
-
-    body::after {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
     }
 
-    /* nav */
-    nav {
-      height: 52px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    /* ── NAV ─────────────────────────────────── */
+    .nav {
+      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px; position: sticky; top: 0; z-index: 50;
+      padding: 0 20px; position: sticky; top: 0; z-index: 50;
     }
-    .nav-logo { font-size: 16px; font-weight: 700; letter-spacing: -.02em; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .bolt { color: var(--red); }
-    .nav-links { display: flex; gap: 2px; }
-    .nav-links a {
-      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--text2); text-decoration: none; padding: 6px 12px; transition: color .15s;
+    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
+    .nav-logo .r { color: #FF3B30; }
+    .nav-right { display: flex; align-items: center; gap: 2px; }
+    .nav-link {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #9A7850; text-decoration: none; padding: 6px 10px; transition: color .15s;
     }
-    .nav-links a:hover { color: var(--gold); }
-    .nav-links a.active { color: var(--gold); }
+    .nav-link:hover { color: #FFB800; }
+    .nav-link.active { color: #FFB800; }
 
-    /* layout */
-    .wrap { max-width: 580px; margin: 0 auto; padding: 40px 24px; }
+    /* ── LAYOUT ──────────────────────────────── */
+    .wrap { max-width: 600px; margin: 0 auto; padding: 36px 20px 64px; }
 
+    /* ── PAGE TITLE ──────────────────────────── */
+    .page-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: .22em;
+      text-transform: uppercase; color: #FF3B30; margin-bottom: 8px;
+    }
     .page-title {
-      font-size: clamp(28px, 6vw, 44px); font-weight: 700;
-      letter-spacing: -.03em; color: var(--gold);
-      line-height: 1; margin-bottom: 28px;
+      font-size: clamp(28px, 7vw, 48px); font-weight: 700;
+      letter-spacing: -.03em; color: #FFFFFF; line-height: 1;
+      margin-bottom: 8px;
     }
+    .page-sub {
+      font-size: 13px; color: #C8B090; line-height: 1.65;
+      margin-bottom: 32px; max-width: 460px;
+    }
+    .page-sub a { color: #FFB800; text-decoration: none; border-bottom: 1px solid #3a2800; }
+    .page-sub a:hover { color: #FFFFFF; }
 
-    /* success state */
+    /* ── SUCCESS ─────────────────────────────── */
     .success {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-left: 3px solid var(--green);
-      padding: 20px; display: none; margin-bottom: 24px;
+      background: #160D00; border: 1px solid #2E1C00;
+      border-left: 3px solid #4ABA5A;
+      padding: 24px; display: none;
     }
-    .success-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
-    .success-sub { font-size: 11px; color: var(--text2); line-height: 1.7; }
-    .success-sub a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--border); }
+    .success-icon { font-size: 28px; margin-bottom: 10px; }
+    .success-title { font-size: 16px; font-weight: 700; color: #4ABA5A; margin-bottom: 8px; }
+    .success-body { font-size: 13px; color: #C8B090; line-height: 1.7; }
+    .success-body a { color: #FFB800; text-decoration: none; }
 
-    /* form */
-    .field { margin-bottom: 18px; }
-    .field-label {
-      font-size: 10px; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--gold2);
-      display: block; margin-bottom: 7px;
+    /* ── SECTION DIVIDER ─────────────────────── */
+    .section-rule { border: none; border-top: 1px solid #2E1C00; margin: 28px 0 24px; }
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .2em;
+      text-transform: uppercase; color: #CC9200;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
     }
-    .field-label .req { color: var(--red); margin-left: 2px; }
-    .field-label .opt { color: var(--text2); font-weight: 400; font-size: 11px; margin-left: 4px; }
-
-    .field-input, .field-select, .field-textarea {
-      width: 100%; background: var(--bg2); border: 1px solid var(--border);
-      color: var(--body); font-family: var(--mono); font-size: 13px;
-      padding: 11px 13px; outline: none; transition: border-color .15s;
-      -webkit-appearance: none; appearance: none;
+    .section-label::after {
+      content: ''; flex: 1; height: 1px; background: #2E1C00;
     }
-    .field-input::placeholder, .field-textarea::placeholder { color: var(--text2); }
-    .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--gold); }
-    .field-select { cursor: pointer; }
-    .field-select option { background: var(--bg2); color: var(--body); }
-    .field-textarea { resize: vertical; min-height: 120px; line-height: 1.65; }
 
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    /* ── FIELD ───────────────────────────────── */
+    .field { margin-bottom: 20px; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
 
-    hr.rule { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+    .field-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: #CC9200;
+      display: flex; align-items: baseline; gap: 6px;
+      margin-bottom: 8px;
+    }
+    .field-label .req { color: #FF3B30; font-size: 13px; line-height: 1; }
+    .field-label .opt { color: #7A5830; font-weight: 400; font-size: 10px;
+      letter-spacing: .04em; text-transform: none; }
 
-    /* rating */
-    .rating-group { display: flex; gap: 6px; flex-wrap: wrap; }
-    .rating-opt { cursor: pointer; }
+    .field-input, .field-select, .field-textarea {
+      width: 100%; background: #160D00; border: 1px solid #3a2400;
+      color: #FFFFFF; font-family: inherit; font-size: 14px;
+      padding: 13px 16px; outline: none;
+      transition: border-color .15s, background .15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .field-input::placeholder, .field-textarea::placeholder { color: #7A5830; }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: #FFB800; background: #1E1400;
+    }
+    .field-select { cursor: pointer; }
+    .field-select option { background: #160D00; color: #FFFFFF; }
+    .field-textarea { resize: vertical; min-height: 120px; line-height: 1.65; }
+
+    .field-hint {
+      font-size: 11px; color: #9A7850; margin-top: 5px;
+      line-height: 1.55; min-height: 0;
+      transition: opacity .15s;
+    }
+
+    /* ── RATING SELECTOR ─────────────────────── */
+    .rating-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 420px) { .rating-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .rating-opt { cursor: pointer; display: block; }
     .rating-opt input { display: none; }
-    .rating-opt span {
-      display: block; font-family: var(--mono); font-size: 11px; font-weight: 700;
-      padding: 8px 14px; border: 1px solid var(--border);
-      color: var(--text2); transition: all .15s;
+    .rating-opt-inner {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; padding: 14px 8px;
+      background: #160D00; border: 1px solid #2E1C00;
+      transition: border-color .15s, background .15s;
+      text-align: center;
     }
-    .rating-opt input:checked + span { border-color: var(--gold); color: var(--gold); }
-    .rating-opt:hover span { border-color: var(--body); color: var(--body); }
-
-    /* style hint */
-    .style-hint { font-size: 10px; color: var(--text2); margin-top: 5px; line-height: 1.6; min-height: 16px; }
-
-    /* char counter */
-    .char-row { display: flex; justify-content: flex-end; margin-top: 4px; }
-    .char-count { font-size: 10px; }
-    .c-ok   { color: var(--text2); }
-    .c-warn { color: var(--gold); }
-    .c-over { color: var(--red); }
-
-    /* image upload */
-    .img-upload {
-      border: 1px dashed var(--border); background: var(--bg2);
-      padding: 24px; text-align: center; cursor: pointer;
-      transition: border-color .15s;
+    .rating-opt:hover .rating-opt-inner { border-color: #7A5830; background: #1E1400; }
+    .rating-opt input:checked + .rating-opt-inner {
+      border-color: #FFB800; background: #1a1400;
     }
-    .img-upload:hover { border-color: var(--gold2); }
-    .img-upload input { display: none; }
-    .img-upload-txt { font-size: 11px; color: var(--text2); }
-    .img-upload-txt strong { color: var(--body); font-weight: 700; }
-    .img-preview { margin-top: 12px; display: none; }
-    .img-preview img { max-height: 180px; max-width: 100%; border: 1px solid var(--border); display: block; margin: 0 auto; }
-
-    /* crosspost */
-    .crosspost {
-      background: var(--bg2); border: 1px solid var(--border);
-      padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start;
+    .rating-stars { font-size: 16px; line-height: 1; }
+    .rating-name {
+      font-size: 9px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: #9A7850; line-height: 1;
     }
-    .crosspost input { width: 14px; height: 14px; margin-top: 2px; accent-color: var(--red); flex-shrink: 0; cursor: pointer; }
-    .crosspost-txt { font-size: 11px; color: var(--text2); line-height: 1.65; }
-    .crosspost-txt strong { color: var(--body); font-weight: 700; }
-    .crosspost-note { font-size: 11px; color: var(--text2); margin-top: 4px; }
+    .rating-opt input:checked + .rating-opt-inner .rating-name { color: #FFB800; }
 
-    /* submit */
+    /* ── CHAR COUNTER ────────────────────────── */
+    .char-row { display: flex; justify-content: flex-end; margin-top: 5px; }
+    .char-count { font-size: 11px; }
+    .c-ok   { color: #7A5830; }
+    .c-warn { color: #FFB800; }
+    .c-over { color: #FF3B30; }
+
+    /* ── IMAGE UPLOAD ────────────────────────── */
+    .upload-zone {
+      border: 1px dashed #3a2400; background: #160D00;
+      padding: 28px 20px; text-align: center;
+      cursor: pointer; transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .upload-zone:hover { border-color: #7A5830; background: #1E1400; }
+    .upload-zone input { display: none; }
+    .upload-icon { font-size: 24px; margin-bottom: 8px; opacity: .6; }
+    .upload-label { font-size: 13px; font-weight: 700; color: #C8B090; margin-bottom: 4px; }
+    .upload-sub { font-size: 11px; color: #7A5830; }
+
+    .img-preview { display: none; margin-top: 12px; }
+    .img-preview img {
+      max-height: 200px; max-width: 100%; display: block;
+      margin: 0 auto; border: 1px solid #2E1C00;
+    }
+    .img-remove {
+      display: block; font-family: inherit; font-size: 10px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; margin-top: 8px;
+      background: none; border: none; color: #7A5830; cursor: pointer;
+      transition: color .15s;
+    }
+    .img-remove:hover { color: #FF3B30; }
+
+    /* ── CROSSPOST ───────────────────────────── */
+    .crosspost-box {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .crosspost-box input[type="checkbox"] {
+      width: 16px; height: 16px; margin-top: 3px;
+      accent-color: #FFB800; flex-shrink: 0; cursor: pointer;
+    }
+    .crosspost-text { flex: 1; }
+    .crosspost-title { font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 3px; }
+    .crosspost-sub { font-size: 11px; color: #9A7850; line-height: 1.6; }
+
+    /* ── SUBMIT BUTTON ───────────────────────── */
+    .submit-area { margin-top: 24px; }
     .submit-btn {
-      width: 100%; font-family: var(--mono); font-size: 12px; font-weight: 700;
+      width: 100%; font-family: inherit; font-size: 13px; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      padding: 14px; background: var(--red); color: #FFFFFF;
-      border: none; cursor: pointer; margin-top: 20px;
-      transition: background .15s;
+      padding: 16px; background: #FF3B30; color: #FFFFFF;
+      border: none; cursor: pointer; transition: background .15s;
     }
-    .submit-btn:hover:not(:disabled) { background: var(--red2); }
+    .submit-btn:hover:not(:disabled) { background: #CC2F25; }
     .submit-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-    .form-err { font-size: 11px; color: var(--red); margin-top: 10px; display: none; line-height: 1.5; }
+    .form-err {
+      font-size: 12px; color: #FF3B30; margin-top: 10px;
+      display: none; line-height: 1.55;
+    }
+
+    /* ── GATE (not logged in / not contributor) */
+    .gate {
+      background: #160D00; border: 1px solid #2E1C00;
+      border-left: 3px solid #9A7850; padding: 24px;
+      display: none;
+    }
+    .gate-title { font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; }
+    .gate-sub { font-size: 13px; color: #C8B090; line-height: 1.65; margin-bottom: 16px; }
+    .btn-red {
+      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 11px 24px;
+      background: #FF3B30; color: #FFFFFF; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-red:hover { background: #CC2F25; }
+    .btn-gold {
+      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 11px 24px;
+      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-gold:hover { background: #CC9200; }
   </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
-  <div class="nav-links">
-    <a href="/database.html">Database</a>
-    <a href="/stats.html">Stats</a>
-    <a href="/submit.html" class="active">Submit</a>
-  </div>
-</nav>
-
-<div class="wrap">
-  <div class="page-title">SUBMIT A REVIEW</div>
-
-  <div class="success" id="successMsg">
-    <div class="success-title">Review submitted</div>
-    <div class="success-sub">
-      It's in the queue for approval. Once approved it'll appear in the database.<br><br>
-      <a href="/submit.html">Submit another →</a>
+  <nav class="nav">
+    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
+    <div class="nav-right">
+      <a href="/database.html" class="nav-link">Database</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/submit.html" class="nav-link active">Submit</a>
     </div>
-  </div>
+  </nav>
 
-  <form id="reviewForm">
+  <div class="wrap">
 
-    <div class="field">
-      <label class="field-label">Restaurant or pizza name <span class="req">*</span></label>
-      <input type="text" class="field-input" id="fName" placeholder="Ken's Artisan Pizza" required>
+    <!-- Gate: not logged in -->
+    <div class="gate" id="gateLogin">
+      <div class="gate-title">Sign in to submit a review</div>
+      <div class="gate-sub">You need a Bluesky account to submit. Your account is your identity here.</div>
+      <a href="/" class="btn-red">Sign in with Bluesky</a>
     </div>
 
-    <div class="row-2">
+    <!-- Gate: logged in but not contributor -->
+    <div class="gate" id="gateContrib">
+      <div class="gate-title">Become a contributor first</div>
+      <div class="gate-sub">Read the code of conduct and sign your name — you're in instantly.</div>
+      <a href="/contributor.html" class="btn-gold">Get contributor access →</a>
+    </div>
+
+    <!-- Success -->
+    <div class="success" id="successMsg">
+      <div class="success-icon">🍕</div>
+      <div class="success-title">Review submitted</div>
+      <div class="success-body" id="successBody">
+        In the queue for approval. Once approved it's in the database permanently.<br><br>
+        <a href="/submit.html">Submit another →</a> &nbsp;·&nbsp;
+        <a href="/profile.html">View your profile →</a>
+      </div>
+    </div>
+
+    <!-- The form -->
+    <div id="formWrap" style="display:none">
+
+      <div class="page-eyebrow">◈ Contributor</div>
+      <div class="page-title">SUBMIT A REVIEW</div>
+      <div class="page-sub">
+        400 characters max. Specific beats vague every time.
+        See the <a href="/format.html" target="_blank">format guide →</a>
+      </div>
+
+      <!-- ── LOCATION ──────────────────────── -->
+      <div class="section-label">Location</div>
+
       <div class="field">
-        <label class="field-label">City <span class="req">*</span></label>
-        <input type="text" class="field-input" id="fCity" placeholder="Portland" required>
+        <label class="field-label">
+          Restaurant name <span class="req">*</span>
+        </label>
+        <input type="text" class="field-input" id="fName"
+          placeholder="Ken's Artisan Pizza" required autocomplete="off">
       </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label">City <span class="req">*</span></label>
+          <input type="text" class="field-input" id="fCity"
+            placeholder="Portland" required autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="field-label">State / Region <span class="req">*</span></label>
+          <input type="text" class="field-input" id="fRegion"
+            placeholder="OR" required autocomplete="off">
+        </div>
+      </div>
+
+      <!-- ── RATING ────────────────────────── -->
+      <hr class="section-rule">
+      <div class="section-label">Rating</div>
+
       <div class="field">
-        <label class="field-label">State / Region <span class="req">*</span></label>
-        <input type="text" class="field-input" id="fRegion" placeholder="OR" required>
+        <div class="rating-grid">
+          <label class="rating-opt">
+            <input type="radio" name="rating" value="3" required>
+            <div class="rating-opt-inner">
+              <div class="rating-stars">⭐⭐⭐</div>
+              <div class="rating-name">Legendary</div>
+            </div>
+          </label>
+          <label class="rating-opt">
+            <input type="radio" name="rating" value="2">
+            <div class="rating-opt-inner">
+              <div class="rating-stars">⭐⭐</div>
+              <div class="rating-name">Worth a Trip</div>
+            </div>
+          </label>
+          <label class="rating-opt">
+            <input type="radio" name="rating" value="1">
+            <div class="rating-opt-inner">
+              <div class="rating-stars">⭐</div>
+              <div class="rating-name">Solid</div>
+            </div>
+          </label>
+          <label class="rating-opt">
+            <input type="radio" name="rating" value="0">
+            <div class="rating-opt-inner">
+              <div class="rating-stars">ㄨ</div>
+              <div class="rating-name">Skip It</div>
+            </div>
+          </label>
+        </div>
       </div>
-    </div>
 
-    <hr class="rule">
+      <!-- ── STYLE & EXPERIENCE ─────────────── -->
+      <hr class="section-rule">
+      <div class="section-label">Classification</div>
 
-    <div class="field">
-      <label class="field-label">Rating <span class="req">*</span></label>
-      <div class="rating-group">
-        <label class="rating-opt"><input type="radio" name="rating" value="3" required><span>⭐⭐⭐ Legendary</span></label>
-        <label class="rating-opt"><input type="radio" name="rating" value="2"><span>⭐⭐ Worth a Trip</span></label>
-        <label class="rating-opt"><input type="radio" name="rating" value="1"><span>⭐ Solid</span></label>
-        <label class="rating-opt"><input type="radio" name="rating" value="0"><span>ㄨ Skip It</span></label>
+      <div class="row-2">
+        <div class="field">
+          <label class="field-label">Style <span class="req">*</span></label>
+          <select class="field-select" id="fStyle" required onchange="updateHint()">
+            <option value="">Select a style…</option>
+            <option>NY Style</option>
+            <option>Neapolitan</option>
+            <option>Roman</option>
+            <option>Detroit / Sicilian</option>
+            <option>Deep Dish</option>
+            <option>Tavern</option>
+            <option>Fast / Counter</option>
+          </select>
+          <div class="field-hint" id="styleHint"></div>
+        </div>
+        <div class="field">
+          <label class="field-label">
+            Experience <span class="opt">optional</span>
+          </label>
+          <select class="field-select" id="fExperience">
+            <option value="">Select…</option>
+            <option>Slice / Counter</option>
+            <option>Casual Sit-Down</option>
+            <option>Full Service</option>
+            <option>Takeout / Delivery</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label class="field-label">Style <span class="req">*</span></label>
-      <select class="field-select" id="fStyle" required onchange="updateHint()">
-        <option value="">Select a style…</option>
-        <option>NY Style</option>
-        <option>Neapolitan</option>
-        <option>Roman</option>
-        <option>Detroit / Sicilian</option>
-        <option>Deep Dish</option>
-        <option>Tavern</option>
-        <option>Fast / Counter</option>
-      </select>
-      <div class="style-hint" id="styleHint"></div>
-    </div>
+      <!-- ── REVIEW TEXT ────────────────────── -->
+      <hr class="section-rule">
+      <div class="section-label">Your review</div>
 
-    <div class="field">
-      <label class="field-label">Experience <span class="opt">— optional</span></label>
-      <select class="field-select" id="fExperience">
-        <option value="">Select experience type…</option>
-        <option>Slice / Counter</option>
-        <option>Casual Sit-Down</option>
-        <option>Full Service</option>
-        <option>Takeout / Delivery</option>
-      </select>
-      <div style="font-size:11px;color:#9A7850;margin-top:5px">How does visiting this place feel? See <a href="/format.html" style="color:#C8B090;text-decoration:none;border-bottom:1px solid #3a2400">format guide</a> for definitions.</div>
-    </div>
-
-    <hr class="rule">
-
-    <div class="field">
-      <label class="field-label">Review <span class="req">*</span> <span class="opt">— 400 characters max</span></label>
-      <textarea class="field-textarea" id="fNotes" maxlength="400" required
-        placeholder="Specific sensory detail. What to order. One punchy closer."
-        oninput="updateCharCount()"></textarea>
-      <div class="char-row"><span class="char-count c-ok" id="charCount">0 / 400</span></div>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Photo <span class="opt">— optional, max 2MB</span></label>
-      <div class="img-upload" onclick="document.getElementById('fImage').click()">
-        <input type="file" id="fImage" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this)">
-        <div class="img-upload-txt"><strong>Click to upload</strong> or drag and drop · JPG, PNG, WebP</div>
-        <div class="img-preview" id="imgPreview"><img id="imgThumb" src="" alt="preview"></div>
+      <div class="field">
+        <label class="field-label">
+          Review <span class="req">*</span>
+          <span class="opt">400 characters max</span>
+        </label>
+        <textarea class="field-textarea" id="fNotes" maxlength="400" required
+          placeholder="Describe the crust, char, and what to order. Specific beats vague every time."
+          oninput="updateChar()"></textarea>
+        <div class="char-row">
+          <span class="char-count c-ok" id="charCount">0 / 400</span>
+        </div>
       </div>
-    </div>
 
-    <hr class="rule">
+      <!-- ── PHOTO ──────────────────────────── -->
+      <hr class="section-rule">
+      <div class="section-label">Photo <span style="font-weight:400;color:#7A5830;letter-spacing:0;text-transform:none;font-size:10px">optional — max 2MB</span></div>
 
-    <div class="crosspost">
-      <input type="checkbox" id="fCrosspost" checked>
-      <div class="crosspost-txt">
-        <strong>Share to Bluesky</strong> — post this review to your Bluesky profile with #PizzaOfficial after submitting.
-        <div class="crosspost-note">Optional but appreciated — helps build the community. You can always post manually later.</div>
+      <div class="field">
+        <div class="upload-zone" id="uploadZone"
+          onclick="document.getElementById('fImage').click()"
+          ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+          <input type="file" id="fImage" accept="image/jpeg,image/png,image/webp"
+            onchange="previewImage(this)">
+          <div id="uploadDefault">
+            <div class="upload-icon">📷</div>
+            <div class="upload-label">Click to upload or drag & drop</div>
+            <div class="upload-sub">JPG, PNG, or WebP · under 2MB</div>
+          </div>
+          <div class="img-preview" id="imgPreview">
+            <img id="imgThumb" src="" alt="preview">
+            <button class="img-remove" onclick="removeImage(event)">Remove photo</button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="form-err" id="formErr"></div>
-    <button type="button" class="submit-btn" id="submitBtn" onclick="submitReview()">Submit for approval</button>
+      <!-- ── BLUESKY CROSS-POST ─────────────── -->
+      <hr class="section-rule">
+      <div class="section-label">Share</div>
 
-  </form>
-</div>
+      <div class="crosspost-box">
+        <input type="checkbox" id="fCrosspost" checked>
+        <div class="crosspost-text">
+          <div class="crosspost-title">Post to Bluesky with #PizzaOfficial</div>
+          <div class="crosspost-sub">
+            Share this review to your Bluesky profile after submitting.
+            Builds the community and helps others discover the database.
+          </div>
+        </div>
+      </div>
 
-<script type="module">
-  import { requireContributor, getDb } from '/auth.js';
+      <div class="submit-area">
+        <div class="form-err" id="formErr"></div>
+        <button type="button" class="submit-btn" id="submitBtn" onclick="submitReview()">
+          Submit for approval
+        </button>
+      </div>
 
-  const HINTS = {
-    'NY Style':           'Wide, foldable. The standard slice.',
-    'Neapolitan':         'Wood-fired, blistered, soft center. Born in Naples.',
-    'Roman':              'Tonda (cracker-thin) or al Taglio (sold by weight). Note which.',
-    'Detroit / Sicilian': 'Thick, rectangular, pan-baked. Crispy-bottomed.',
-    'Deep Dish':          'Chicago. Deep pan. Cheese first, sauce on top.',
-    'Tavern':             'Midwest thin-crust, crackery, always square-cut.',
-    'Fast / Counter':     'Chains, heat-lamp slices, counter pizza.',
-  };
+    </div><!-- /formWrap -->
+  </div><!-- /wrap -->
 
-  const RATING_LABELS = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
-  const RATING_NAMES  = { 3: 'Legendary', 2: 'Worth a Trip', 1: 'Solid', 0: 'Skip It' };
+  <script type="module">
 
-  let currentDid     = null;
-  let currentSession = null;
-  let uploadedImageUrl  = null;
-  let uploadedImagePath = null;
-  let submittedReviewId = null;
-
-  async function main() {
-    const { requireContributor: rc } = await import('/auth.js');
-    // Use internal initAuth to also get the session
-    const { initAuth } = await import('/auth.js');
-    const auth = await initAuth();
-    if (!auth?.user) { location.href = '/'; return; }
-    if (auth.user.role !== 'contributor' && auth.user.role !== 'admin') {
-      location.href = '/contributor.html'; return;
-    }
-    currentDid     = auth.user.did;
-    currentSession = auth.session;
-  }
-
-  window.updateHint = function() {
-    const style = document.getElementById('fStyle').value;
-    document.getElementById('styleHint').textContent = HINTS[style] || '';
-  };
-
-  window.updateCharCount = function() {
-    const len = document.getElementById('fNotes').value.length;
-    const el = document.getElementById('charCount');
-    el.textContent = len + ' / 400';
-    el.className = 'char-count ' + (len > 380 ? 'c-over' : len > 320 ? 'c-warn' : 'c-ok');
-  };
-
-  window.previewImage = function(input) {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > 2097152) { alert('Image must be under 2MB'); input.value = ''; return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById('imgThumb').src = e.target.result;
-      document.getElementById('imgPreview').style.display = 'block';
+    const STYLE_HINTS = {
+      'NY Style':           'Wide, foldable. If you folded the slice to eat it, it\'s NY Style.',
+      'Neapolitan':         'Wood-fired, blistered, soft center. Born in Naples.',
+      'Roman':              'Tonda (cracker-thin) or al Taglio (sold by weight). Note which.',
+      'Detroit / Sicilian': 'Thick, rectangular, pan-baked. Crispy-bottomed.',
+      'Deep Dish':          'Chicago. Deep pan. Cheese first, sauce on top.',
+      'Tavern':             'Midwest thin-crust, crackery, always square-cut.',
+      'Fast / Counter':     'Chains, heat-lamp slices, counter pizza.',
     };
-    reader.readAsDataURL(file);
-  };
 
-  // ── Build Bluesky post text with facet for #PizzaOfficial ──
-  function buildPostText(name, location, ratingVal, style, notes) {
-    const ratingEmoji = RATING_LABELS[ratingVal] || '';
-    const ratingName  = RATING_NAMES[ratingVal]  || '';
+    const RATING_LABELS = { 3: '⭐⭐⭐ Legendary', 2: '⭐⭐ Worth a Trip', 1: '⭐ Solid', 0: 'ㄨ Skip It' };
 
-    // Format: Rating emoji + name, location, style, truncated notes, hashtag
-    const header = `${ratingEmoji} ${ratingName} — ${name}`;
-    const meta   = `${location} · ${style}`;
-    // Leave room for header + meta + hashtag (≈80 chars) from 300 char limit
-    const maxNotes = 220;
-    const truncNotes = notes.length > maxNotes ? notes.slice(0, maxNotes) + '…' : notes;
-    const text = `${header}\n${meta}\n\n${truncNotes}\n\n#PizzaOfficial`;
+    let currentDid     = null;
+    let currentSession = null;
+    let uploadedUrl    = null;
+    let uploadedPath   = null;
 
-    // Calculate byte position of #PizzaOfficial for facet
-    const encoder = new TextEncoder();
-    const bytes = encoder.encode(text);
-    const tagStart = text.lastIndexOf('#PizzaOfficial');
-    const byteStart = encoder.encode(text.slice(0, tagStart)).length;
-    const byteEnd   = byteStart + encoder.encode('#PizzaOfficial').length;
+    // ── Auth gate ─────────────────────────────────────────────
+    async function init() {
+      try {
+        const { initAuth } = await import('/auth.js');
+        const auth = await initAuth();
 
-    const facets = [{
-      index: { byteStart, byteEnd },
-      features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }]
-    }];
-
-    return { text, facets };
-  }
-
-  // ── Post to Bluesky via ATProto API ───────────────────────
-  async function postToBluesky(reviewId, name, location, ratingVal, style, notes, imageUrl) {
-    try {
-      // Get a fresh OAuth session
-      const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
-      const client = await BrowserOAuthClient.load({
-        clientId: 'https://pizzaofficial.biz/oauth/client-metadata.json',
-        handleResolver: 'https://bsky.social',
-      });
-      const result = await client.init();
-      if (!result?.session) throw new Error('No active Bluesky session');
-
-      const session = result.session;
-      const { text, facets } = buildPostText(name, location, ratingVal, style, notes);
-
-      // Build the record
-      const record = {
-        $type: 'app.bsky.feed.post',
-        text,
-        facets,
-        createdAt: new Date().toISOString(),
-        langs: ['en'],
-      };
-
-      // If we have an image URL, embed it as an external link card
-      if (imageUrl) {
-        record.embed = {
-          $type: 'app.bsky.embed.external',
-          external: {
-            uri: `https://pizzaofficial.biz/database.html`,
-            title: `${name} — PIZZA⚡OFFICIAL`,
-            description: notes.slice(0, 200),
-          }
-        };
-      }
-
-      // Post via the ATProto session's fetch
-      const response = await session.fetchHandler(
-        'https://bsky.social/xrpc/com.atproto.repo.createRecord',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            repo: session.did,
-            collection: 'app.bsky.feed.post',
-            record,
-          }),
+        if (!auth?.user) {
+          document.getElementById('gateLogin').style.display = 'block';
+          return;
         }
-      );
 
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Bluesky API error ${response.status}: ${errText}`);
+        const u = auth.user;
+        currentDid = u.did;
+        currentSession = auth.session;
+
+        if (u.role !== 'contributor' && u.role !== 'admin') {
+          document.getElementById('gateContrib').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('formWrap').style.display = 'block';
+
+        // Update nav with handle
+        const navRight = document.querySelector('.nav-right');
+        const userLink = document.createElement('a');
+        userLink.href = '/profile.html';
+        userLink.className = 'nav-link';
+        userLink.textContent = '@' + u.handle;
+        navRight.appendChild(userLink);
+
+      } catch (e) {
+        console.error('[submit] init:', e);
+        document.getElementById('gateLogin').style.display = 'block';
+      }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────
+    window.updateHint = function() {
+      const v = document.getElementById('fStyle').value;
+      document.getElementById('styleHint').textContent = STYLE_HINTS[v] || '';
+    };
+
+    window.updateChar = function() {
+      const len = document.getElementById('fNotes').value.length;
+      const el  = document.getElementById('charCount');
+      el.textContent = `${len} / 400`;
+      el.className = 'char-count ' + (len > 380 ? 'c-over' : len > 300 ? 'c-warn' : 'c-ok');
+    };
+
+    window.previewImage = function(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2097152) {
+        alert('Image must be under 2MB — try compressing it first.');
+        input.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('imgThumb').src = e.target.result;
+        document.getElementById('uploadDefault').style.display = 'none';
+        document.getElementById('imgPreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.handleDrop = function(e) {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const input = document.getElementById('fImage');
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      previewImage(input);
+    };
+
+    window.removeImage = function(e) {
+      e.stopPropagation();
+      document.getElementById('fImage').value = '';
+      document.getElementById('imgThumb').src = '';
+      document.getElementById('uploadDefault').style.display = 'block';
+      document.getElementById('imgPreview').style.display = 'none';
+      uploadedUrl = null; uploadedPath = null;
+    };
+
+    // ── Build Bluesky post ────────────────────────────────────
+    function buildPost(name, location, ratingVal, style, notes) {
+      const label = RATING_LABELS[ratingVal] || '⭐ Solid';
+      const maxNotes = 220;
+      const body = notes.length > maxNotes ? notes.slice(0, maxNotes) + '…' : notes;
+      const text = `${label} — ${name}\n${location} · ${style}\n\n${body}\n\n#PizzaOfficial`;
+      const enc  = new TextEncoder();
+      const tagStart = text.lastIndexOf('#PizzaOfficial');
+      const byteStart = enc.encode(text.slice(0, tagStart)).length;
+      const byteEnd   = byteStart + enc.encode('#PizzaOfficial').length;
+      return {
+        text,
+        facets: [{
+          index: { byteStart, byteEnd },
+          features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }],
+        }],
+      };
+    }
+
+    // ── Post to Bluesky ───────────────────────────────────────
+    async function postToBluesky(reviewId, name, location, ratingVal, style, notes) {
+      try {
+        const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
+        const client = await BrowserOAuthClient.load({
+          clientId: 'https://pizzaofficial.biz/oauth/client-metadata.json',
+          handleResolver: 'https://bsky.social',
+        });
+        const result = await client.init();
+        if (!result?.session) return null;
+
+        const session = result.session;
+        const { text, facets } = buildPost(name, location, ratingVal, style, notes);
+        const record = { $type: 'app.bsky.feed.post', text, facets, createdAt: new Date().toISOString(), langs: ['en'] };
+
+        const resp = await session.fetchHandler(
+          'https://bsky.social/xrpc/com.atproto.repo.createRecord',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ repo: session.did, collection: 'app.bsky.feed.post', record }),
+          }
+        );
+        if (!resp.ok) throw new Error(`Bluesky ${resp.status}`);
+        const data = await resp.json();
+
+        // Save URI back to review
+        if (reviewId) {
+          await fetch('/.netlify/functions/update-review-bluesky', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ did: currentDid, review_id: reviewId, bluesky_uri: data.uri, bluesky_cid: data.cid }),
+          });
+        }
+        return data;
+      } catch (e) {
+        console.warn('[submit] Bluesky post failed:', e.message);
+        return null;
+      }
+    }
+
+    // ── Submit ────────────────────────────────────────────────
+    window.submitReview = async function() {
+      const btn   = document.getElementById('submitBtn');
+      const errEl = document.getElementById('formErr');
+      errEl.style.display = 'none';
+
+      const name   = document.getElementById('fName').value.trim();
+      const city   = document.getElementById('fCity').value.trim();
+      const region = document.getElementById('fRegion').value.trim();
+      const rating = document.querySelector('input[name="rating"]:checked');
+      const style  = document.getElementById('fStyle').value;
+      const exp    = document.getElementById('fExperience').value || null;
+      const notes  = document.getElementById('fNotes').value.trim();
+
+      if (!name || !city || !region || !rating || !style || !notes) {
+        errEl.textContent = 'Please fill in all required fields.';
+        errEl.style.display = 'block';
+        // Scroll to first empty required field
+        const first = [
+          !name && 'fName', !city && 'fCity', !region && 'fRegion',
+          !rating && null, !style && 'fStyle', !notes && 'fNotes'
+        ].find(Boolean);
+        if (first) document.getElementById(first)?.focus();
+        return;
       }
 
-      const postData = await response.json();
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
 
-      // Save bluesky_uri + bluesky_cid back to the review record
-      if (reviewId) {
-        await fetch('/.netlify/functions/update-review-bluesky', {
+      // Upload image if selected
+      const imgFile = document.getElementById('fImage').files[0];
+      if (imgFile && !uploadedUrl) {
+        try {
+          btn.textContent = 'Uploading photo…';
+          const { getDb } = await import('/auth.js');
+          const db  = await getDb();
+          const ext = imgFile.name.split('.').pop();
+          const path = currentDid.replace(/[^a-z0-9]/gi, '-') + '/' + Date.now() + '.' + ext;
+          const { error: upErr } = await db.storage.from('pizza-images').upload(path, imgFile);
+          if (upErr) throw upErr;
+          const { data: urlData } = db.storage.from('pizza-images').getPublicUrl(path);
+          uploadedUrl  = urlData.publicUrl;
+          uploadedPath = path;
+        } catch (ex) {
+          errEl.textContent = 'Photo upload failed: ' + ex.message;
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Submit for approval';
+          return;
+        }
+      }
+
+      // Save review
+      let reviewId = null;
+      try {
+        btn.textContent = 'Saving…';
+        const res = await fetch('/.netlify/functions/submit-review', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            did: currentDid,
-            review_id: reviewId,
-            bluesky_uri: postData.uri,
-            bluesky_cid: postData.cid,
+            did: currentDid, name,
+            location: `${city}, ${region}`, city, region,
+            rating: rating.value, style, experience: exp, notes,
+            image_url: uploadedUrl, image_path: uploadedPath,
           }),
         });
-      }
-
-      return { uri: postData.uri, cid: postData.cid };
-
-    } catch (err) {
-      console.error('[crosspost] Bluesky post failed:', err.message);
-      return null; // Non-fatal — review is already saved
-    }
-  }
-
-  // ── Main submit ────────────────────────────────────────────
-  window.submitReview = async function() {
-    const btn   = document.getElementById('submitBtn');
-    const errEl = document.getElementById('formErr');
-    errEl.style.display = 'none';
-
-    const name   = document.getElementById('fName').value.trim();
-    const city   = document.getElementById('fCity').value.trim();
-    const region = document.getElementById('fRegion').value.trim();
-    const rating = document.querySelector('input[name="rating"]:checked');
-    const style  = document.getElementById('fStyle').value;
-    const notes  = document.getElementById('fNotes').value.trim();
-    const exp    = document.getElementById('fExperience')?.value || null;
-
-    if (!name || !city || !region || !rating || !style || !notes) {
-      errEl.textContent = 'Please fill in all required fields.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Submitting…';
-
-    // Upload image if provided
-    const imageFile = document.getElementById('fImage').files[0];
-    if (imageFile) {
-      try {
-        btn.textContent = 'Uploading image…';
-        const db  = await getDb();
-        const ext = imageFile.name.split('.').pop();
-        const path = currentDid.replace(/[^a-z0-9]/gi, '-') + '/' + Date.now() + '.' + ext;
-        const { error } = await db.storage.from('pizza-images').upload(path, imageFile);
-        if (error) throw error;
-        const { data: urlData } = db.storage.from('pizza-images').getPublicUrl(path);
-        uploadedImageUrl  = urlData.publicUrl;
-        uploadedImagePath = path;
+        const data = await res.json();
+        if (!res.ok) throw new Error(typeof data === 'string' ? data : JSON.stringify(data));
+        reviewId = data.id;
       } catch (ex) {
-        errEl.textContent = 'Image upload failed: ' + ex.message;
+        errEl.textContent = ex.message;
         errEl.style.display = 'block';
         btn.disabled = false;
         btn.textContent = 'Submit for approval';
         return;
       }
-    }
 
-    // Submit review to Supabase
-    let reviewId = null;
-    try {
-      btn.textContent = 'Saving review…';
-      const res = await fetch('/.netlify/functions/submit-review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          did:        currentDid,
-          name, location: city + ', ' + region, city, region,
-          rating:     rating.value,
-          style,      notes,
-          experience: exp,
-          image_url:  uploadedImageUrl,
-          image_path: uploadedImagePath,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data || 'Submission failed');
-      reviewId = data.id;
-    } catch (ex) {
-      errEl.textContent = ex.message;
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Submit for approval';
-      return;
-    }
-
-    // Bluesky cross-post (optional, non-blocking)
-    const wantsCrosspost = document.getElementById('fCrosspost').checked;
-    let bskyResult = null;
-    if (wantsCrosspost) {
-      btn.textContent = 'Posting to Bluesky…';
-      bskyResult = await postToBluesky(
-        reviewId, name, city + ', ' + region,
-        parseInt(rating.value), style, notes, uploadedImageUrl
-      );
-    }
-
-    // Show success
-    const successEl = document.getElementById('successMsg');
-    const bskyLine = bskyResult?.uri
-      ? `<br><br>✓ Posted to Bluesky — <a href="https://bsky.app/profile/${currentDid}/post/${bskyResult.uri.split('/').pop()}" target="_blank" style="color:#FFB800;text-decoration:none">view post →</a>`
-      : (wantsCrosspost ? '<br><br>Note: Bluesky post failed, but your review was saved.' : '');
-
-    successEl.querySelector('.success-sub').innerHTML =
-      `It's in the queue for approval. Once approved it'll appear in the database.${bskyLine}<br><br><a href="/submit.html" style="color:#FFFFFF;text-decoration:none">Submit another →</a>`;
-
-    document.getElementById('reviewForm').style.display = 'none';
-    successEl.style.display = 'block';
-    window.scrollTo(0, 0);
-  };
-
-  main();
-</script>
-</body>
-</html>
-
-  const HINTS = {
-    'NY Style':           'Wide, foldable. The standard slice.',
-    'Neapolitan':         'Wood-fired, blistered, soft center. Born in Naples.',
-    'Roman':              'Tonda (cracker-thin) or al Taglio (sold by weight). Note which.',
-    'Detroit / Sicilian': 'Thick, rectangular, pan-baked. Crispy-bottomed.',
-    'Deep Dish':          'Chicago. Deep pan. Cheese first, sauce on top.',
-    'Tavern':             'Midwest thin-crust, crackery, always square-cut.',
-    'Fast / Counter':     'Chains, heat-lamp slices, counter pizza.',
-  };
-
-  let currentDid = null;
-  let uploadedImageUrl = null;
-  let uploadedImagePath = null;
-
-  async function main() {
-    const auth = await requireContributor();
-    if (!auth) return;
-    currentDid = auth.user.did;
-  }
-
-  window.updateHint = function() {
-    const style = document.getElementById('fStyle').value;
-    document.getElementById('styleHint').textContent = HINTS[style] || '';
-  };
-
-  window.updateCharCount = function() {
-    const len = document.getElementById('fNotes').value.length;
-    const el = document.getElementById('charCount');
-    el.textContent = len + ' / 400';
-    el.className = 'char-count ' + (len > 380 ? 'c-over' : len > 320 ? 'c-warn' : 'c-ok');
-  };
-
-  window.previewImage = function(input) {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > 2097152) {
-      alert('Image must be under 2MB');
-      input.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('imgThumb').src = e.target.result;
-      document.getElementById('imgPreview').style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-  };
-
-  window.submitReview = async function() {
-    const btn = document.getElementById('submitBtn');
-    const errEl = document.getElementById('formErr');
-    errEl.style.display = 'none';
-
-    // Basic validation
-    const name   = document.getElementById('fName').value.trim();
-    const city   = document.getElementById('fCity').value.trim();
-    const region = document.getElementById('fRegion').value.trim();
-    const rating = document.querySelector('input[name="rating"]:checked');
-    const style  = document.getElementById('fStyle').value;
-    const notes  = document.getElementById('fNotes').value.trim();
-
-    if (!name || !city || !region || !rating || !style || !notes) {
-      errEl.textContent = 'Please fill in all required fields.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Submitting…';
-
-    // Upload image if selected
-    const imageFile = document.getElementById('fImage').files[0];
-    if (imageFile) {
-      try {
-        btn.textContent = 'Uploading image…';
-        const db = await getDb();
-        const ext  = imageFile.name.split('.').pop();
-        const path = currentDid.replace(/[^a-z0-9]/gi, '-') + '/' + Date.now() + '.' + ext;
-        const { error } = await db.storage.from('pizza-images').upload(path, imageFile);
-        if (error) throw error;
-        const { data: urlData } = db.storage.from('pizza-images').getPublicUrl(path);
-        uploadedImageUrl  = urlData.publicUrl;
-        uploadedImagePath = path;
-      } catch (ex) {
-        errEl.textContent = 'Image upload failed: ' + ex.message;
-        errEl.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Submit for approval';
-        return;
+      // Optional Bluesky cross-post
+      let bskyResult = null;
+      if (document.getElementById('fCrosspost').checked) {
+        btn.textContent = 'Posting to Bluesky…';
+        bskyResult = await postToBluesky(reviewId, name, `${city}, ${region}`, parseInt(rating.value), style, notes);
       }
-    }
 
-    const payload = {
-      did:       currentDid,
-      name:      name,
-      location:  city + ', ' + region,
-      city:      city,
-      region:    region,
-      rating:    rating.value,
-      style:     style,
-      notes:     notes,
-      image_url:  uploadedImageUrl,
-      image_path: uploadedImagePath,
-    };
+      // Show success
+      const bskyLine = bskyResult?.uri
+        ? `<br><br>✓ Posted to Bluesky with <a href="https://bsky.app/search?q=%23PizzaOfficial" target="_blank">#PizzaOfficial</a>`
+        : (document.getElementById('fCrosspost').checked ? '<br><br>Note: Bluesky post failed — review is saved.' : '');
 
-    try {
-      btn.textContent = 'Submitting…';
-      const res = await fetch('/.netlify/functions/submit-review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data || 'Submission failed');
-      document.getElementById('reviewForm').style.display = 'none';
+      document.getElementById('successBody').innerHTML =
+        `Submitted for human approval. Once approved, it's in the database permanently.${bskyLine}<br><br>` +
+        `<a href="/submit.html">Submit another →</a> &nbsp;·&nbsp; <a href="/profile.html">View your profile →</a>`;
+
+      document.getElementById('formWrap').style.display = 'none';
       document.getElementById('successMsg').style.display = 'block';
-      window.scrollTo(0, 0);
-    } catch (ex) {
-      errEl.textContent = ex.message;
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Submit for approval';
-    }
-  };
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-  main();
-</script>
+    init();
+  </script>
 </body>
 </html>
