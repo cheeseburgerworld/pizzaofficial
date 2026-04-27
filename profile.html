@@ -60,9 +60,9 @@
       font-size: 10px; font-weight: 700; letter-spacing: .12em;
       text-transform: uppercase; padding: 3px 10px;
     }
-    .badge-member      { background: #0a2010; color: #4ABA5A; border: 1px solid #1a4020; }
+    .badge-member      { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
     .badge-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
-    .badge-admin       { background: #1a0505; color: #FF3B30; border: 1px solid #3a1010; }
+    .badge-admin       { background: #001a00; color: #39FF14; border: 1px solid #003300; }
     .badge-anniversary { background: #1a1000; color: #FFB800; border: 1px solid #3a2000; }
 
     /* Membership since */
@@ -107,7 +107,7 @@
       font-size: 9px; font-weight: 700; letter-spacing: .08em;
       text-transform: uppercase; padding: 2px 8px;
     }
-    .s-approved { background: #0a2010; color: #4ABA5A; border: 1px solid #1a4020; }
+    .s-approved { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
     .s-pending  { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
     .s-rejected { background: #1a0505; color: #FF6B63; border: 1px solid #3a1010; }
 
@@ -210,9 +210,9 @@
       if (u.role === 'admin') {
         roleBadge = `<span class="badge badge-admin">Admin</span>`;
       } else if (u.role === 'contributor') {
-        roleBadge = `<span class="badge badge-contributor">Contributor ⭐</span>`;
+        roleBadge = `<span class="badge badge-contributor">Contributor</span>`;
       } else {
-        roleBadge = `<span class="badge badge-member">Member ✓</span>`;
+        roleBadge = `<span class="badge badge-member">Member</span>`;
       }
 
       const annBadge = ann.isOver1
@@ -236,7 +236,7 @@
       const contribSection = u.role === 'guest' ? `
         <div class="contrib-cta">
           <div class="contrib-cta-text">
-            <div class="contrib-cta-title">Become a Contributor ⭐</div>
+            <div class="contrib-cta-title">Become a Contributor</div>
             <div class="contrib-cta-sub">Read the code of conduct, sign your name — unlocks review submissions instantly.</div>
           </div>
           <a href="/contributor.html" class="btn-gold">Get started</a>
