@@ -8,183 +8,322 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
       font-family: 'IBM Plex Mono', 'Courier New', monospace;
       background: #0d0800; color: #FFFFFF; min-height: 100vh;
     }
     body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
     }
-    nav {
+
+    /* NAV */
+    .nav {
       height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 20px; position: sticky; top: 0; z-index: 50;
     }
     .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
     .nav-logo .r { color: #FF3B30; }
-    .nav-links { display: flex; gap: 4px; }
+    .nav-right { display: flex; align-items: center; gap: 2px; }
     .nav-link {
       font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
       color: #9A7850; text-decoration: none; padding: 6px 10px;
-      transition: color .15s;
+      transition: color .15s; background: none; border: none;
+      cursor: pointer; font-family: inherit;
     }
     .nav-link:hover { color: #FFB800; }
-    .nav-signout {
-      font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: #9A7850; background: none; border: none;
-      cursor: pointer; padding: 6px 10px; transition: color .15s;
+    .nav-signout:hover { color: #FF3B30 !important; }
+
+    /* LAYOUT */
+    .wrap { max-width: 680px; margin: 0 auto; padding: 40px 20px 60px; }
+
+    /* GATE */
+    .gate {
+      text-align: center; padding: 80px 20px;
     }
-    .nav-signout:hover { color: #FF3B30; }
+    .gate-title { font-size: 22px; font-weight: 700; color: #FFB800; margin-bottom: 10px; }
+    .gate-sub { font-size: 14px; color: #C8B090; line-height: 1.7; margin-bottom: 28px; }
+    .btn-red {
+      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 13px 28px;
+      background: #FF3B30; color: #FFFFFF; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-red:hover { background: #CC2F25; }
 
-    .wrap { max-width: 640px; margin: 0 auto; padding: 40px 20px; }
-
-    /* User hero */
-    .user-hero {
-      display: flex; align-items: center; gap: 16px;
-      margin-bottom: 32px; padding-bottom: 28px;
+    /* HERO */
+    .hero {
+      display: flex; align-items: flex-start; gap: 18px;
+      padding-bottom: 28px; margin-bottom: 28px;
       border-bottom: 1px solid #2E1C00;
     }
     .avatar {
-      width: 56px; height: 56px; border-radius: 50%;
-      background: #1E1400; border: 1px solid #3a2400;
+      width: 64px; height: 64px; border-radius: 50%;
+      background: #1E1400; border: 2px solid #3a2400;
       overflow: hidden; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 700; color: #CC9200;
+      font-size: 26px; font-weight: 700; color: #CC9200;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-info { flex: 1; min-width: 0; }
-    .user-handle { font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; }
-    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-info { flex: 1; min-width: 0; }
+    .hero-handle { font-size: 22px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; line-height: 1; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
     .badge {
-      font-size: 10px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; padding: 3px 10px;
+      font-size: 9px; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; padding: 4px 10px;
     }
-    .badge-member      { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
-    .badge-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
     .badge-admin       { background: #001a00; color: #39FF14; border: 1px solid #003300; }
-    .badge-anniversary { background: #1a1000; color: #FFB800; border: 1px solid #3a2000; }
+    .badge-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
+    .badge-member      { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
+    .badge-anniversary { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
+    .hero-since { font-size: 12px; color: #9A7850; }
+    .hero-since strong { color: #C8B090; font-weight: 700; }
 
-    /* Membership since */
-    .membership-bar {
-      background: #160D00; border: 1px solid #2E1C00;
-      padding: 14px 18px; margin-bottom: 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 8px;
-    }
-    .membership-since { font-size: 13px; color: #C8B090; }
-    .membership-since strong { color: #FFFFFF; }
-    .anniversary-msg { font-size: 13px; color: #FFB800; font-weight: 700; }
-
-    /* Stats grid */
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    /* STATS STRIP */
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 10px; margin-bottom: 28px;
     }
-    .stat-card { background: #160D00; border: 1px solid #2E1C00; padding: 16px 18px; }
-    .stat-val { font-size: 28px; font-weight: 700; color: #FFB800; line-height: 1; margin-bottom: 5px; }
-    .stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #9A7850; }
+    .stat {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 18px 16px; text-align: center;
+      transition: border-color .15s;
+    }
+    .stat:hover { border-color: #3a2400; }
+    .stat-val {
+      font-size: 32px; font-weight: 700; color: #FFB800;
+      line-height: 1; margin-bottom: 6px; letter-spacing: -.02em;
+    }
+    .stat-val.accent { color: #FF8C00; }
+    .stat-val.muted  { font-size: 20px; color: #C8B090; }
+    .stat-lbl {
+      font-size: 9px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: #7A5830;
+    }
 
-    /* Section heading */
+    /* CONTRIBUTOR CTA */
+    .contrib-cta {
+      background: #160D00; border: 1px solid #2E1C00;
+      border-left: 3px solid #FFB800;
+      padding: 18px 20px; margin-bottom: 28px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    }
+    .contrib-cta-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
+    .contrib-cta-sub { font-size: 12px; color: #C8B090; line-height: 1.55; }
+    .btn-gold {
+      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px;
+      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
+      cursor: pointer; transition: background .15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-gold:hover { background: #CC9200; }
+
+    /* SUBMIT PROMPT */
+    .submit-prompt {
+      background: linear-gradient(135deg, #1a1000 0%, #0d0800 100%);
+      border: 1px solid #3a2400; padding: 24px 22px; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .submit-prompt-icon { font-size: 32px; flex-shrink: 0; }
+    .submit-prompt-text { flex: 1; }
+    .submit-prompt-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
+    .submit-prompt-sub { font-size: 12px; color: #C8B090; line-height: 1.55; }
+
+    /* SECTION HEADING */
     .section-head {
       font-size: 10px; font-weight: 700; letter-spacing: .2em;
       text-transform: uppercase; color: #CC9200;
       margin-bottom: 12px; padding-top: 24px;
       border-top: 1px solid #2E1C00;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .section-head:first-of-type { border-top: none; padding-top: 0; }
+    .section-count {
+      font-size: 10px; color: #7A5830; font-weight: 400; letter-spacing: 0; text-transform: none;
+    }
 
-    /* Review list */
-    .review-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 0; border-bottom: 1px solid #1E1000;
+    /* REVIEW LIST */
+    .review-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .review-item {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px; align-items: start;
+      transition: border-color .15s;
     }
-    .review-row:last-child { border-bottom: none; }
-    .rr-name { font-size: 13px; font-weight: 700; color: #FFFFFF; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .rr-loc  { font-size: 11px; color: #9A7850; min-width: 80px; white-space: nowrap; }
-    .rr-rating { font-size: 12px; min-width: 50px; text-align: right; }
-    .status-pill {
-      font-size: 9px; font-weight: 700; letter-spacing: .08em;
+    .review-item:hover { border-color: #3a2400; }
+
+    .ri-main { min-width: 0; }
+    .ri-name { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; line-height: 1.2; }
+    .ri-meta { font-size: 11px; color: #C8B090; margin-bottom: 6px; }
+    .ri-meta .sep { color: #3a2400; margin: 0 5px; }
+    .ri-excerpt {
+      font-size: 11px; color: #9A7850; line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .ri-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; }
+    .ri-rating { font-size: 13px; margin-bottom: 2px; }
+
+    .ri-status {
+      font-size: 9px; font-weight: 700; letter-spacing: .1em;
       text-transform: uppercase; padding: 2px 8px;
     }
-    .s-approved { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
-    .s-pending  { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
-    .s-rejected { background: #1a0505; color: #FF6B63; border: 1px solid #3a1010; }
+    .ri-status.pending  { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
+    .ri-status.approved { background: #001800; color: #4ABA5A; border: 1px solid #003a00; }
+    .ri-status.rejected { background: #1a0505; color: #FF6B63; border: 1px solid #3a1010; }
 
-    /* Contributor CTA */
-    .contrib-cta {
-      background: #160D00; border: 1px solid #2E1C00; border-left: 3px solid #FFB800;
-      padding: 18px 20px; display: flex; align-items: center;
-      justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    .ri-btn-row { display: flex; gap: 4px; }
+    .ri-btn {
+      font-family: inherit; font-size: 9px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 4px 9px; background: transparent; cursor: pointer;
+      transition: all .15s; border: 1px solid #2E1C00; color: #7A5830;
     }
-    .contrib-cta-text { flex: 1; }
-    .contrib-cta-title { font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
-    .contrib-cta-sub { font-size: 12px; color: #C8B090; line-height: 1.5; }
-    .btn-gold {
-      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px;
-      background: #FFB800; color: #0d0800; text-decoration: none;
-      border: none; cursor: pointer; transition: background .15s; white-space: nowrap;
-    }
-    .btn-gold:hover { background: #CC9200; }
+    .ri-btn:hover { border-color: #9A7850; color: #C8B090; }
+    .ri-btn.delete:hover { border-color: #FF3B30; color: #FF3B30; }
 
-    .empty { font-size: 13px; color: #9A7850; padding: 16px 0; line-height: 1.6; }
-    .loading { font-size: 12px; color: #7A5830; padding: 40px 0; text-align: center; }
-
-    .gate {
-      text-align: center; padding: 60px 20px;
+    /* PENDING NOTE */
+    .pending-note {
+      background: #1a1400; border: 1px solid #3a2800; border-left: 3px solid #FFB800;
+      padding: 10px 14px; font-size: 11px; color: #C8B090; line-height: 1.6;
+      margin-bottom: 8px;
     }
-    .gate-title { font-size: 20px; font-weight: 700; color: #FFB800; margin-bottom: 10px; }
-    .gate-sub { font-size: 14px; color: #C8B090; line-height: 1.7; margin-bottom: 24px; }
-    .btn-red {
-      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 12px 28px;
-      background: #FF3B30; color: #FFFFFF; text-decoration: none;
+
+    /* EMPTY */
+    .review-empty {
+      padding: 28px 20px; text-align: center;
+      font-size: 13px; color: #7A5830; line-height: 1.7;
+    }
+    .review-empty a { color: #FFB800; text-decoration: none; }
+
+    /* PRIVACY NOTE */
+    .privacy-note {
+      margin-top: 28px; padding: 14px 18px;
+      border-top: 1px solid #1E1000;
+      font-size: 11px; color: #5a3e1c; line-height: 1.7;
+    }
+    .privacy-note a { color: #7A5830; text-decoration: none; border-bottom: 1px solid #3a2400; }
+    .privacy-note a:hover { color: #C8B090; }
+
+    /* CONFIRM DIALOG */
+    .confirm-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.8); z-index: 400;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: #160D00; border: 1px solid #2E1C00;
+      padding: 28px; max-width: 380px; width: 100%;
+    }
+    .confirm-title { font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
+    .confirm-sub { font-size: 13px; color: #C8B090; line-height: 1.65; margin-bottom: 22px; }
+    .confirm-actions { display: flex; gap: 8px; }
+    .confirm-cancel {
+      font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 10px 20px; background: transparent;
+      border: 1px solid #3a2400; color: #C8B090; cursor: pointer;
+      transition: all .15s;
+    }
+    .confirm-cancel:hover { border-color: #C8B090; color: #FFFFFF; }
+    .confirm-delete {
+      font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 10px 20px; background: #FF3B30; color: #FFFFFF;
       border: none; cursor: pointer; transition: background .15s;
     }
-    .btn-red:hover { background: #CC2F25; }
+    .confirm-delete:hover { background: #CC2F25; }
 
     @media (max-width: 480px) {
-      .user-hero { flex-direction: column; align-items: flex-start; }
-      .rr-loc { display: none; }
+      .stats-strip { grid-template-columns: repeat(3, 1fr); }
+      .hero { flex-direction: column; }
+      .submit-prompt { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <nav>
+
+  <nav class="nav">
     <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-links">
+    <div class="nav-right">
       <a href="/database.html" class="nav-link">Database</a>
       <a href="/stats.html" class="nav-link">Stats</a>
-      <button class="nav-signout" id="signoutBtn" onclick="doSignOut()">Sign out</button>
+      <button class="nav-link nav-signout" id="signoutBtn">Sign out</button>
     </div>
   </nav>
 
   <div class="wrap" id="wrap">
-    <div class="loading">Loading your profile…</div>
+    <div style="text-align:center;padding:60px 0;font-size:12px;color:#7A5830">Loading…</div>
+  </div>
+
+  <!-- Confirm delete dialog -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <div class="confirm-title">Delete this review?</div>
+      <div class="confirm-sub">This removes it from the public database. You own your reviews — this action is permanent and cannot be undone.</div>
+      <div class="confirm-actions">
+        <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="confirm-delete" id="confirmDeleteBtn">Delete review</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
-    import { initAuth, getMyReviews } from '/auth.js';
+    import { initAuth, getMyReviews, getDb } from '/auth.js';
 
     const RATINGS = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
+    const RATING_LABELS = { 3: 'Legendary', 2: 'Worth a Trip', 1: 'Solid', 0: 'Skip It' };
 
-    function monthName(d) {
-      return ['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()];
+    let currentDid = null;
+    let pendingDeleteId = null;
+
+    // ── Signout ───────────────────────────────────────────────
+    document.getElementById('signoutBtn').addEventListener('click', async () => {
+      try { const { signOut } = await import('/auth.js'); await signOut(); }
+      catch { location.href = '/'; }
+    });
+
+    // ── Helpers ───────────────────────────────────────────────
+    function monthYear(str) {
+      const d = new Date(str);
+      return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
 
-    function memberSince(dateStr) {
-      const d = new Date(dateStr);
-      return `${monthName(d)} ${d.getFullYear()}`;
+    function yearsMonths(str) {
+      const joined = new Date(str);
+      const now    = new Date();
+      const ms     = now - joined;
+      const days   = Math.floor(ms / 86400000);
+      if (days < 30)  return `${days} day${days !== 1 ? 's' : ''}`;
+      const months = Math.floor(days / 30.44);
+      if (months < 12) return `${months} month${months !== 1 ? 's' : ''}`;
+      const years  = Math.floor(months / 12);
+      const rem    = months % 12;
+      return rem ? `${years}y ${rem}m` : `${years} year${years !== 1 ? 's' : ''}`;
     }
 
-    function isAnniversary(dateStr) {
-      const joined = new Date(dateStr);
-      const now = new Date();
-      const years = (now - joined) / (1000 * 60 * 60 * 24 * 365.25);
-      return { years: Math.floor(years), isOver1: years >= 1 };
+    function isAnniversary(str) {
+      const d = new Date(str);
+      const n = new Date();
+      return d.getMonth() === n.getMonth() && d.getDate() === n.getDate() &&
+             n.getFullYear() > d.getFullYear();
     }
 
+    function yearsOld(str) {
+      const d = new Date(str);
+      const n = new Date();
+      return n.getFullYear() - d.getFullYear();
+    }
+
+    // ── Main ──────────────────────────────────────────────────
     async function main() {
       const auth = await initAuth();
       const wrap = document.getElementById('wrap');
@@ -192,116 +331,190 @@
       if (!auth?.user) {
         wrap.innerHTML = `
           <div class="gate">
-            <div class="gate-title">Sign in to see your profile</div>
-            <div class="gate-sub">Your profile shows your reviews, badges, and membership stats.<br>Sign in with your Bluesky account to continue.</div>
+            <div class="gate-title">Sign in to view your profile</div>
+            <div class="gate-sub">Your profile shows your reviews, badges, and membership history.</div>
             <a href="/" class="btn-red">Sign in with Bluesky</a>
           </div>`;
         return;
       }
 
       const u = auth.user;
+      currentDid = u.did;
       const reviews = await getMyReviews(u.did);
-      const approved = reviews.filter(r => r.status === 'approved');
-      const pending  = reviews.filter(r => r.status === 'pending');
-      const ann      = isAnniversary(u.created_at || new Date().toISOString());
+      const pending  = reviews.filter(r => r.status === 'pending').length;
+      const approved = reviews.filter(r => r.status === 'approved').length;
+      const joinedStr = u.created_at || new Date().toISOString();
+      const tenure = yearsMonths(joinedStr);
+      const ann = isAnniversary(joinedStr);
+      const yrs = yearsOld(joinedStr);
 
-      // Badge HTML
-      let roleBadge = '';
-      if (u.role === 'admin') {
-        roleBadge = `<span class="badge badge-admin">Admin</span>`;
-      } else if (u.role === 'contributor') {
-        roleBadge = `<span class="badge badge-contributor">Contributor</span>`;
-      } else {
-        roleBadge = `<span class="badge badge-member">Member</span>`;
-      }
-
-      const annBadge = ann.isOver1
-        ? `<span class="badge badge-anniversary">🎂 ${ann.years}-Year Member</span>`
-        : '';
-
-      // Avatar
+      // ── Avatar ────────────────────────────────────────────
       const avatarHtml = u.avatar_url
         ? `<img src="${u.avatar_url}" alt="${u.handle}">`
         : u.handle[0].toUpperCase();
 
-      // Anniversary message
-      const today = new Date();
-      const joined = new Date(u.created_at || today);
-      const sameDay = today.getMonth() === joined.getMonth() && today.getDate() === joined.getDate();
-      const annMsg = sameDay && ann.isOver1
-        ? `<div class="anniversary-msg">🎂 Happy ${ann.years}-year anniversary!</div>`
+      // ── Role badge ─────────────────────────────────────────
+      let roleBadge = '';
+      if (u.role === 'admin')
+        roleBadge = `<span class="badge badge-admin">Admin</span>`;
+      else if (u.role === 'contributor')
+        roleBadge = `<span class="badge badge-contributor">Contributor</span>`;
+      else
+        roleBadge = `<span class="badge badge-member">Member</span>`;
+
+      const annBadge = ann
+        ? `<span class="badge badge-anniversary">🎂 ${yrs}-Year Member</span>`
         : '';
 
-      // Contributor CTA (only for members)
-      const contribSection = u.role === 'guest' ? `
+      // ── Stats: Reviews, Pending, Tenure ───────────────────
+      const statsHtml = `
+        <div class="stat">
+          <div class="stat-val">${reviews.length}</div>
+          <div class="stat-lbl">Reviews</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val ${pending > 0 ? 'accent' : 'muted'}">${pending}</div>
+          <div class="stat-lbl">Pending</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val muted">${tenure}</div>
+          <div class="stat-lbl">Member for</div>
+        </div>`;
+
+      // ── Contributor CTA (members only) ─────────────────────
+      const contribSection = (u.role === 'guest') ? `
         <div class="contrib-cta">
-          <div class="contrib-cta-text">
+          <div>
             <div class="contrib-cta-title">Become a Contributor</div>
-            <div class="contrib-cta-sub">Read the code of conduct, sign your name — unlocks review submissions instantly.</div>
+            <div class="contrib-cta-sub">Read the code of conduct, sign your name, start submitting reviews.</div>
           </div>
           <a href="/contributor.html" class="btn-gold">Get started</a>
         </div>` : '';
 
-      // Reviews list
-      const reviewsHtml = reviews.length === 0
-        ? `<div class="empty">No reviews yet. ${u.role === 'contributor' || u.role === 'admin' ? '<a href="/submit.html" style="color:#FFB800;text-decoration:none">Submit your first review →</a>' : 'Become a contributor to start submitting.'}</div>`
-        : reviews.map(r => `
-          <div class="review-row">
-            <span class="rr-name">${r.name}</span>
-            <span class="rr-loc">${r.location}</span>
-            <span class="rr-rating">${RATINGS[r.rating] || ''}</span>
-            <span class="status-pill s-${r.status}">${r.status}</span>
+      // ── Submit prompt (contributors) ───────────────────────
+      const submitPrompt = (u.role === 'contributor' || u.role === 'admin') ? `
+        <div class="submit-prompt">
+          <div class="submit-prompt-icon">🍕</div>
+          <div class="submit-prompt-text">
+            <div class="submit-prompt-title">${reviews.length === 0 ? 'Submit your first review' : 'Submit another review'}</div>
+            <div class="submit-prompt-sub">Your reviews build the record. Every approved review is permanent and public.</div>
+          </div>
+          <a href="/submit.html" class="btn-gold">Submit</a>
+        </div>` : '';
+
+      // ── Pending note ───────────────────────────────────────
+      const pendingNote = pending > 0 ? `
+        <div class="pending-note">
+          ${pending} review${pending !== 1 ? 's are' : ' is'} pending approval. Once approved, ${pending !== 1 ? 'they appear' : 'it appears'} in the public database.
+        </div>` : '';
+
+      // ── Review list ────────────────────────────────────────
+      const reviewsHtml = reviews.length === 0 ? `
+        <div class="review-empty">
+          ${u.role === 'contributor' || u.role === 'admin'
+            ? 'No reviews yet. <a href="/submit.html">Submit your first one →</a>'
+            : 'Reviews appear here once you become a contributor.'}
+        </div>` :
+        reviews.map(r => `
+          <div class="review-item" id="ri-${r.id}">
+            <div class="ri-main">
+              <div class="ri-name">${r.name}</div>
+              <div class="ri-meta">
+                <span>${r.location}</span>
+                <span class="sep">·</span>
+                <span>${r.style}</span>
+                <span class="sep">·</span>
+                <span>${new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              </div>
+              ${r.notes ? `<div class="ri-excerpt">${r.notes}</div>` : ''}
+            </div>
+            <div class="ri-actions">
+              <div class="ri-rating">${RATINGS[r.rating] || ''}</div>
+              <div class="ri-status ${r.status}">${r.status}</div>
+              <div class="ri-btn-row">
+                <button class="ri-btn delete" onclick="confirmDelete('${r.id}')">Delete</button>
+              </div>
+            </div>
           </div>`).join('');
 
       wrap.innerHTML = `
-        <div class="user-hero">
+        <div class="hero">
           <div class="avatar">${avatarHtml}</div>
-          <div class="user-info">
-            <div class="user-handle">@${u.handle}</div>
+          <div class="hero-info">
+            <div class="hero-handle">@${u.handle}</div>
             <div class="badges">${roleBadge}${annBadge}</div>
+            <div class="hero-since">Member since <strong>${monthYear(joinedStr)}</strong></div>
+            ${ann ? `<div style="font-size:12px;color:#FFB800;margin-top:4px;font-weight:700">🎂 Happy ${yrs}-year anniversary!</div>` : ''}
           </div>
         </div>
 
-        <div class="membership-bar">
-          <span class="membership-since">Member since <strong>${memberSince(u.created_at || new Date().toISOString())}</strong></span>
-          ${annMsg}
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-val">${reviews.length}</div>
-            <div class="stat-lbl">Reviews</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">${approved.length}</div>
-            <div class="stat-lbl">Approved</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">${pending.length}</div>
-            <div class="stat-lbl">Pending</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">${ann.isOver1 ? ann.years + 'yr' : '&lt;1yr'}</div>
-            <div class="stat-lbl">Tenure</div>
-          </div>
-        </div>
+        <div class="stats-strip">${statsHtml}</div>
 
         ${contribSection}
+        ${submitPrompt}
 
-        <div class="section-head">Your reviews</div>
-        ${reviewsHtml}
+        <div class="section-head">
+          <span>Your reviews</span>
+          <span class="section-count">${reviews.length} total · ${approved} approved</span>
+        </div>
+        ${pendingNote}
+        <div class="review-list">${reviewsHtml}</div>
 
-        ${u.role === 'contributor' || u.role === 'admin' ? `
-          <div style="margin-top:16px">
-            <a href="/submit.html" style="display:inline-block;font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 20px;background:transparent;color:#FFB800;border:1px solid #3a2800;text-decoration:none;transition:all .15s" onmouseover="this.style.background='#FFB800';this.style.color='#0d0800'" onmouseout="this.style.background='transparent';this.style.color='#FFB800'">+ Submit a new review</a>
-          </div>` : ''}
-      `;
+        <div class="privacy-note">
+          Your reviews are yours. You can delete any review at any time — it will be removed from the public database immediately.
+          Pizza Official stores no personal data beyond your Bluesky handle and DID.
+          <a href="https://bsky.app" target="_blank" rel="noopener">Manage your Bluesky account →</a>
+        </div>`;
     }
 
-    window.doSignOut = async function() {
-      try { const { signOut } = await import('/auth.js'); await signOut(); }
-      catch (_) { location.href = '/'; }
+    // ── Delete flow ───────────────────────────────────────────
+    window.confirmDelete = function(id) {
+      pendingDeleteId = id;
+      document.getElementById('confirmOverlay').classList.add('open');
     };
+
+    window.closeConfirm = function() {
+      pendingDeleteId = null;
+      document.getElementById('confirmOverlay').classList.remove('open');
+    };
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+      if (!pendingDeleteId) return;
+      const btn = document.getElementById('confirmDeleteBtn');
+      btn.disabled = true;
+      btn.textContent = 'Deleting…';
+
+      try {
+        const res = await fetch('/.netlify/functions/delete-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ did: currentDid, review_id: pendingDeleteId }),
+        });
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(msg || 'Delete failed');
+        }
+
+        // Remove the card from the DOM
+        const el = document.getElementById(`ri-${pendingDeleteId}`);
+        if (el) {
+          el.style.transition = 'opacity .3s, transform .3s';
+          el.style.opacity = '0';
+          el.style.transform = 'translateX(20px)';
+          setTimeout(() => el.remove(), 300);
+        }
+
+        closeConfirm();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Delete review';
+        alert('Delete failed: ' + err.message);
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeConfirm();
+    });
 
     main();
   </script>
