@@ -7,8 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--black:var(--bg);--black2:var(--bg2);--black3:var(--bg3);--red:var(--red);--cream:var(--white);--gold:var(--gold);--muted:var(--text2);--border:var(--border);--mono:'IBM Plex Mono',monospace}
     body{background:var(--bg);font-family:var(--mono);color:var(--white);min-height:100vh}
     body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
 
@@ -22,12 +20,12 @@
 
     .page-head{padding:24px 20px 16px;max-width:1100px;margin:0 auto;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
     .page-title{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1}
-    .live-badge{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+    .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
     .live-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
     @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,71,.5)}50%{box-shadow:0 0 0 6px rgba(212,168,71,0)}}
 
     .filters{padding:10px 20px;max-width:1100px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
-    .filter-label{font-size:9px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
+    .filter-label{font-size:11px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
     .filter-btn{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s}
     .filter-btn:hover{border-color:var(--white);color:var(--white)}
     .filter-btn.active{border-color:var(--red);color:var(--red)}
@@ -47,7 +45,7 @@
     .card-name{font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
     .card-loc{font-size:10px;color:var(--text2);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .card-meta{display:flex;align-items:center;gap:8px}
-    .style-tag{font-size:9px;color:var(--text2);border:1px solid var(--border);padding:1px 6px;letter-spacing:.06em}
+    .style-tag{font-size:11px;color:var(--text2);border:1px solid var(--border);padding:1px 6px;letter-spacing:.06em}
 
     .empty{text-align:center;padding:60px 20px;color:var(--text2)}
     .empty-title{font-size:14px;margin-bottom:8px;color:var(--white)}
@@ -72,7 +70,7 @@
     .field-v{color:var(--white)}
     .modal-notes{font-size:13px;color:var(--white);line-height:1.7;border-top:1px solid var(--border);padding-top:12px}
     .modal-contrib{font-size:10px;color:var(--text2);margin-top:10px}
-    .modal-footer{border-top:1px solid var(--border);padding:8px 14px;font-size:9px;color:var(--text2);letter-spacing:.08em;flex-shrink:0}
+    .modal-footer{border-top:1px solid var(--border);padding:8px 14px;font-size:11px;color:var(--text2);letter-spacing:.08em;flex-shrink:0}
 
     .loading{text-align:center;padding:40px;font-size:10px;color:var(--text2);letter-spacing:.15em}
   </style>
@@ -91,7 +89,7 @@
 
 <div class="page-head">
   <div>
-    <div style="font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">The open pizza database</div>
+    <div style="font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">The open pizza database</div>
     <div class="page-title">DATABASE</div>
   </div>
   <div class="live-badge"><div class="live-dot"></div><span id="liveCount">Loading</span></div>
@@ -113,6 +111,13 @@
   <button class="filter-btn" data-filter="rating" data-value="3">⭐⭐⭐</button>
   <button class="filter-btn" data-filter="rating" data-value="2">⭐⭐</button>
   <button class="filter-btn" data-filter="rating" data-value="1">⭐</button>
+
+  <span class="filter-label" style="margin-left:8px">Experience</span>
+  <button class="filter-btn active" data-filter="experience" data-value="">All</button>
+  <button class="filter-btn" data-filter="experience" data-value="Slice / Counter">Slice</button>
+  <button class="filter-btn" data-filter="experience" data-value="Casual Sit-Down">Casual</button>
+  <button class="filter-btn" data-filter="experience" data-value="Full Service">Full Service</button>
+  <button class="filter-btn" data-filter="experience" data-value="Takeout / Delivery">Takeout</button>
 </div>
 
 <div class="content">
@@ -149,7 +154,7 @@
     0: 'ㄨ Skip It',
   };
 
-  const filters = { style: '', rating: '' };
+  const filters = { style: '', rating: '', experience: '' };
   let allReviews = [];
 
   // Auth — update nav
@@ -230,6 +235,7 @@
       document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       filters[type] = value;
+      if (type === 'experience') filters.experience = value;
       load();
     });
   });
