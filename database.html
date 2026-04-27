@@ -4,245 +4,716 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Database — PIZZA⚡OFFICIAL</title>
+  <meta name="description" content="Browse the world's pizza database. Community-built reviews by city, style, and rating.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
   <style>
-    body{background:var(--bg);font-family:var(--mono);color:var(--white);min-height:100vh}
-    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      background: #0d0800; color: #FFFFFF; min-height: 100vh;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
+    }
 
-    nav{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
-    .logo{font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;color:var(--white)}
-    .logo span{color:var(--red)}
-    .nav-r{display:flex;align-items:center;gap:4px}
-    .nav-r a,.nav-r button{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);text-decoration:none;padding:6px 10px;background:none;border:none;font-family:var(--mono);cursor:pointer;transition:color .15s}
-    .nav-r a:hover,.nav-r button:hover{color:var(--white)}
-    .nav-r .active{color:var(--red)}
+    /* ── NAV ─────────────────────────────────────── */
+    .nav {
+      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; position: sticky; top: 0; z-index: 50;
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
+    .nav-logo .r { color: #FF3B30; }
+    .nav-right { display: flex; align-items: center; gap: 2px; }
+    .nav-link {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #9A7850; text-decoration: none; padding: 6px 10px;
+      transition: color .15s; background: none; border: none;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+    }
+    .nav-link:hover { color: #FFB800; }
+    .nav-link.active { color: #FFB800; }
+    .nav-user {
+      font-size: 11px; font-weight: 700; color: #9A7850;
+      text-decoration: none; padding: 5px 10px;
+      border: 1px solid #2E1C00; transition: all .15s;
+    }
+    .nav-user:hover { border-color: #FFB800; color: #FFB800; }
 
-    .page-head{padding:24px 20px 16px;max-width:1100px;margin:0 auto;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .page-title{font-size:clamp(28px,6vw,48px);font-weight:700;letter-spacing:-.02em;color:var(--red);line-height:1}
-    .live-badge{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
-    .live-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
-    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,71,.5)}50%{box-shadow:0 0 0 6px rgba(212,168,71,0)}}
+    /* ── PAGE HEADER ──────────────────────────────── */
+    .page-header {
+      max-width: 1100px; margin: 0 auto;
+      padding: 32px 20px 0;
+    }
+    .header-row {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px;
+      margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: clamp(32px, 7vw, 56px); font-weight: 700;
+      letter-spacing: -.03em; color: #FFFFFF; line-height: 1;
+    }
+    .page-title .r { color: #FF3B30; }
+    .live-badge {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: #FFB800; padding-bottom: 4px;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #FFB800;
+      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,184,0,.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(255,184,0,0); }
+    }
 
-    .filters{padding:10px 20px;max-width:1100px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
-    .filter-label{font-size:11px;color:var(--text2);letter-spacing:.15em;text-transform:uppercase;margin-right:4px}
-    .filter-btn{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s}
-    .filter-btn:hover{border-color:var(--white);color:var(--white)}
-    .filter-btn.active{border-color:var(--red);color:var(--red)}
+    /* ── FILTERS ──────────────────────────────────── */
+    .filters {
+      max-width: 1100px; margin: 0 auto;
+      border-top: 1px solid #2E1C00; border-bottom: 1px solid #2E1C00;
+    }
+    .filter-row {
+      display: flex; align-items: center; padding: 0 20px;
+      overflow-x: auto; scrollbar-width: none; gap: 0;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-row + .filter-row { border-top: 1px solid #1E1000; }
+    .filter-group {
+      font-size: 10px; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: #5a3e1c;
+      padding: 10px 12px 10px 0; white-space: nowrap; flex-shrink: 0;
+    }
+    .filter-btn {
+      font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 10px 14px; background: transparent;
+      border: none; border-bottom: 2px solid transparent;
+      color: #9A7850; cursor: pointer; white-space: nowrap;
+      transition: color .15s, border-color .15s;
+    }
+    .filter-btn:hover { color: #FFFFFF; }
+    .filter-btn.on { color: #FFB800; border-bottom-color: #FFB800; }
 
-    .content{padding:20px;max-width:1100px;margin:0 auto}
-    .count{font-size:10px;color:var(--text2);letter-spacing:.1em;margin-bottom:14px}
+    /* ── MAIN CONTENT ─────────────────────────────── */
+    .content { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
 
-    .grid{display:grid;grid-template-columns:1fr;gap:10px}
-    @media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(min-width:840px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .result-bar {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 10px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .result-count { font-size: 12px; color: #7A5830; letter-spacing: .04em; }
+    .sort-row { display: flex; gap: 4px; }
+    .sort-btn {
+      font-family: inherit; font-size: 10px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 5px 12px; background: transparent;
+      border: 1px solid #2E1C00; color: #7A5830;
+      cursor: pointer; transition: all .15s;
+    }
+    .sort-btn:hover { border-color: #9A7850; color: #C8B090; }
+    .sort-btn.on { border-color: #FFB800; color: #FFB800; }
 
-    .card{background:var(--bg2);border:1px solid var(--border);cursor:pointer;display:flex;gap:0;overflow:hidden;transition:border-color .15s}
-    .card:hover{border-color:var(--red)}
-    .card-img{width:80px;min-width:80px;height:80px;background:var(--bg3);overflow:hidden;flex-shrink:0}
-    .card-img img{width:100%;height:100%;object-fit:cover}
-    .card-body{padding:12px;flex:1;min-width:0}
-    .card-name{font-size:13px;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-    .card-loc{font-size:10px;color:var(--text2);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .card-meta{display:flex;align-items:center;gap:8px}
-    .style-tag{font-size:11px;color:var(--text2);border:1px solid var(--border);padding:1px 6px;letter-spacing:.06em}
+    /* ── CARD GRID ────────────────────────────────── */
+    .grid {
+      display: grid; gap: 14px;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 580px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
 
-    .empty{text-align:center;padding:60px 20px;color:var(--text2)}
-    .empty-title{font-size:14px;margin-bottom:8px;color:var(--white)}
-    .empty-sub{font-size:11px;line-height:1.7}
+    /* ── CARD BASE ────────────────────────────────── */
+    .card {
+      background: #160D00; border: 1px solid #2E1C00;
+      cursor: pointer; display: flex; flex-direction: column;
+      transition: border-color .2s, box-shadow .2s;
+      overflow: hidden; position: relative;
+    }
+    .card:hover {
+      border-color: #FFB800;
+      box-shadow: 0 4px 24px rgba(255,184,0,.08);
+    }
 
-    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;backdrop-filter:blur(2px)}
-    .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(540px,94vw);max-height:88vh;background:var(--bg2);border:1px solid var(--border);z-index:300;flex-direction:column;overflow:hidden}
-    .modal.open,.modal-bg.open{display:flex}
-    .modal-bg.open{display:block}
-    .modal-bar{background:var(--red);padding:8px 14px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-    .modal-bar-name{font-size:12px;font-weight:700;color:var(--bg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .modal-close{background:var(--bg);color:var(--red);border:none;font-family:var(--mono);font-size:14px;font-weight:700;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-    .modal-body{overflow-y:auto;flex:1}
-    .modal-img{width:100%;height:200px;background:var(--bg3);overflow:hidden;flex-shrink:0}
-    .modal-img img{width:100%;height:100%;object-fit:cover}
-    .modal-info{padding:18px 20px}
-    .modal-name{font-size:18px;font-weight:700;margin-bottom:12px}
-    .modal-rating{font-size:15px;margin-bottom:12px}
-    .field-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
-    .field{font-size:11px}
-    .field-k{color:var(--text2)}
-    .field-v{color:var(--white)}
-    .modal-notes{font-size:13px;color:var(--white);line-height:1.7;border-top:1px solid var(--border);padding-top:12px}
-    .modal-contrib{font-size:10px;color:var(--text2);margin-top:10px}
-    .modal-footer{border-top:1px solid var(--border);padding:8px 14px;font-size:11px;color:var(--text2);letter-spacing:.08em;flex-shrink:0}
+    /* ── CARD WITH IMAGE ──────────────────────────── */
+    .card-img {
+      width: 100%; aspect-ratio: 16 / 10;
+      background: #1a1000; overflow: hidden; flex-shrink: 0;
+      position: relative;
+    }
+    .card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .4s ease;
+    }
+    .card:hover .card-img img { transform: scale(1.04); }
 
-    .loading{text-align:center;padding:40px;font-size:10px;color:var(--text2);letter-spacing:.15em}
+    /* Rating badge floated over image */
+    .rating-badge {
+      position: absolute; bottom: 10px; left: 10px;
+      font-size: 12px; font-weight: 700;
+      background: rgba(13,8,0,.9);
+      padding: 5px 10px;
+      border: 1px solid rgba(255,184,0,.3);
+      backdrop-filter: blur(8px);
+      letter-spacing: .02em;
+      line-height: 1;
+    }
+
+    /* ── CARD WITHOUT IMAGE ───────────────────────── */
+    /* Left accent bar signals rating tier */
+    .card.no-img { border-left-width: 3px; }
+    .card.no-img.r3 { border-left-color: #FFB800; }
+    .card.no-img.r2 { border-left-color: #CC9200; }
+    .card.no-img.r1 { border-left-color: #7A5830; }
+    .card.no-img.r0 { border-left-color: #3a2400; }
+
+    /* Inline rating for no-image cards */
+    .rating-inline {
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 10px; line-height: 1;
+    }
+
+    /* ── CARD BODY ────────────────────────────────── */
+    .card-body {
+      padding: 14px 16px 12px;
+      display: flex; flex-direction: column; flex: 1; gap: 0;
+    }
+
+    .card-name {
+      font-size: 15px; font-weight: 700; color: #FFFFFF;
+      line-height: 1.25; margin-bottom: 5px;
+    }
+
+    .card-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #C8B090; margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .card-meta .sep { color: #3a2400; }
+    .card-style-tag {
+      font-size: 9px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: #7A5830;
+      border: 1px solid #2E1C00; padding: 2px 7px;
+    }
+    .card-experience {
+      font-size: 9px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: #5a3e1c;
+    }
+
+    /* Review excerpt — 3 lines, then clip */
+    .card-excerpt {
+      font-size: 12px; color: #C8B090; line-height: 1.7;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    /* Card footer: reviewer handle + Discuss link */
+    .card-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 8px;
+      padding-top: 10px; border-top: 1px solid #1E1000;
+      margin-top: auto;
+    }
+    .card-reviewer {
+      font-size: 10px; color: #7A5830; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+    }
+    .card-discuss {
+      font-size: 10px; color: #7A5830; text-decoration: none;
+      font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      padding: 3px 8px; border: 1px solid #2E1C00;
+      transition: all .15s; flex-shrink: 0; white-space: nowrap;
+      display: none; /* shown only when bluesky_uri exists */
+    }
+    .card-discuss:hover { color: #FFB800; border-color: #FFB800; }
+
+    /* ── DETAIL DRAWER (slide up on mobile, side panel on desktop) ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.7); z-index: 200;
+      backdrop-filter: blur(3px);
+    }
+    .overlay.open { display: block; }
+
+    .drawer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #160D00; border-top: 1px solid #2E1C00;
+      z-index: 300; max-height: 92vh; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .drawer.open { transform: translateY(0); }
+
+    @media (min-width: 700px) {
+      .drawer {
+        left: auto; bottom: 0; top: 0; right: 0;
+        width: min(520px, 90vw); max-height: 100vh;
+        border-top: none; border-left: 1px solid #2E1C00;
+        transform: translateX(100%);
+        transition: transform .3s cubic-bezier(.4,0,.2,1);
+      }
+      .drawer.open { transform: translateX(0); }
+    }
+
+    /* Drawer handle (mobile) */
+    .drawer-handle {
+      width: 40px; height: 4px; background: #3a2400;
+      border-radius: 2px; margin: 12px auto 0;
+    }
+    @media (min-width: 700px) { .drawer-handle { display: none; } }
+
+    /* Drawer image */
+    .drawer-img {
+      width: 100%; aspect-ratio: 16 / 9;
+      background: #1a1000; overflow: hidden;
+    }
+    .drawer-img img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-img-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; opacity: .15;
+    }
+
+    /* Drawer content */
+    .drawer-content { padding: 20px 22px 32px; }
+
+    .drawer-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 4px;
+    }
+    .drawer-name {
+      font-size: 20px; font-weight: 700; color: #FFFFFF;
+      line-height: 1.2; flex: 1;
+    }
+    .drawer-close {
+      width: 32px; height: 32px; background: #1E1400;
+      border: 1px solid #2E1C00; color: #9A7850;
+      font-size: 18px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .15s; font-family: inherit;
+    }
+    .drawer-close:hover { border-color: #FF3B30; color: #FF3B30; }
+
+    .drawer-rating { font-size: 18px; margin-bottom: 12px; }
+
+    .drawer-tags {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .drawer-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: #C8B090;
+      border: 1px solid #2E1C00; padding: 4px 10px;
+    }
+    .drawer-tag.highlight { border-color: #FFB800; color: #FFB800; }
+
+    .drawer-divider { border: none; border-top: 1px solid #1E1000; margin: 16px 0; }
+
+    .drawer-notes {
+      font-size: 14px; color: #FFFFFF; line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .drawer-reviewer {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .reviewer-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #1E1400; border: 1px solid #2E1C00;
+      overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #7A5830;
+    }
+    .reviewer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .reviewer-info { flex: 1; min-width: 0; }
+    .reviewer-handle {
+      font-size: 12px; font-weight: 700; color: #C8B090;
+    }
+    .reviewer-role-badge {
+      font-size: 9px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; padding: 1px 6px;
+      background: #1a1400; color: #FFB800; border: 1px solid #3a2800;
+    }
+
+    .drawer-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .drawer-btn {
+      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 9px 18px; text-decoration: none;
+      cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .drawer-btn-primary { background: #FFB800; color: #0d0800; border: none; }
+    .drawer-btn-primary:hover { background: #CC9200; }
+    .drawer-btn-outline { background: transparent; color: #C8B090; border: 1px solid #2E1C00; }
+    .drawer-btn-outline:hover { border-color: #C8B090; color: #FFFFFF; }
+
+    /* ── SKELETON LOADING ─────────────────────────── */
+    .skeleton {
+      background: #160D00; border: 1px solid #2E1C00;
+      height: 260px;
+      animation: shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: .5; } 50% { opacity: 1; }
+    }
+
+    /* ── EMPTY STATE ──────────────────────────────── */
+    .empty {
+      grid-column: 1 / -1; text-align: center;
+      padding: 64px 20px;
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 16px; opacity: .4; }
+    .empty-title { font-size: 16px; font-weight: 700; color: #C8B090; margin-bottom: 8px; }
+    .empty-sub { font-size: 13px; color: #7A5830; line-height: 1.7; }
+    .empty-sub a { color: #FFB800; text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .result-bar { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="logo">PIZZA<span>⚡</span>OFFICIAL</a>
-  <div class="nav-r">
-    <a href="/database.html" class="active">Database</a>
-    <a href="/stats.html">Stats</a>
-    <a href="/submit.html" id="navSubmit" style="display:none">Submit</a>
-    <button id="navAuth" onclick="location.href='/'">Sign in</button>
-  </div>
-</nav>
+  <nav class="nav">
+    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
+    <div class="nav-right">
+      <a href="/database.html" class="nav-link active">Database</a>
+      <a href="/stats.html" class="nav-link">Stats</a>
+      <a href="/format.html" class="nav-link">Format</a>
+      <a href="/" class="nav-user" id="navUser">Sign In</a>
+    </div>
+  </nav>
 
-<div class="page-head">
-  <div>
-    <div style="font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">The open pizza database</div>
-    <div class="page-title">DATABASE</div>
-  </div>
-  <div class="live-badge"><div class="live-dot"></div><span id="liveCount">Loading</span></div>
-</div>
-
-<div class="filters">
-  <span class="filter-label">Style</span>
-  <button class="filter-btn active" data-filter="style" data-value="">All</button>
-  <button class="filter-btn" data-filter="style" data-value="NY Style">NY</button>
-  <button class="filter-btn" data-filter="style" data-value="Neapolitan">Neapolitan</button>
-  <button class="filter-btn" data-filter="style" data-value="Roman">Roman</button>
-  <button class="filter-btn" data-filter="style" data-value="Detroit / Sicilian">Detroit</button>
-  <button class="filter-btn" data-filter="style" data-value="Deep Dish">Deep Dish</button>
-  <button class="filter-btn" data-filter="style" data-value="Tavern">Tavern</button>
-  <button class="filter-btn" data-filter="style" data-value="Fast / Counter">Fast</button>
-
-  <span class="filter-label" style="margin-left:8px">Rating</span>
-  <button class="filter-btn active" data-filter="rating" data-value="">All</button>
-  <button class="filter-btn" data-filter="rating" data-value="3">⭐⭐⭐</button>
-  <button class="filter-btn" data-filter="rating" data-value="2">⭐⭐</button>
-  <button class="filter-btn" data-filter="rating" data-value="1">⭐</button>
-
-  <span class="filter-label" style="margin-left:8px">Experience</span>
-  <button class="filter-btn active" data-filter="experience" data-value="">All</button>
-  <button class="filter-btn" data-filter="experience" data-value="Slice / Counter">Slice</button>
-  <button class="filter-btn" data-filter="experience" data-value="Casual Sit-Down">Casual</button>
-  <button class="filter-btn" data-filter="experience" data-value="Full Service">Full Service</button>
-  <button class="filter-btn" data-filter="experience" data-value="Takeout / Delivery">Takeout</button>
-</div>
-
-<div class="content">
-  <div class="count" id="countLabel"></div>
-  <div class="grid" id="grid"><div class="loading">Loading reviews…</div></div>
-</div>
-
-<div class="modal-bg" id="modalBg" onclick="closeModal()"></div>
-<div class="modal" id="modal">
-  <div class="modal-bar">
-    <span class="modal-bar-name" id="mTitle">—</span>
-    <button class="modal-close" onclick="closeModal()">×</button>
-  </div>
-  <div class="modal-body">
-    <div class="modal-img" id="mImg"></div>
-    <div class="modal-info">
-      <div class="modal-name" id="mName">—</div>
-      <div class="modal-rating" id="mRating">—</div>
-      <div class="field-grid" id="mFields"></div>
-      <div class="modal-notes" id="mNotes">—</div>
-      <div class="modal-contrib" id="mContrib">—</div>
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="header-row">
+      <div class="page-title">DATABASE</div>
+      <div class="live-badge" id="liveCount">
+        <div class="live-dot"></div>
+        <span>Loading</span>
+      </div>
     </div>
   </div>
-  <div class="modal-footer">PIZZA⚡OFFICIAL · pizzaofficial.biz · ATProto-native</div>
-</div>
 
-<script type="module">
-  import { initAuth, getApprovedReviews } from '/auth.js';
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-row">
+      <span class="filter-group">Rating</span>
+      <button class="filter-btn on" data-f="rating" data-v="">All</button>
+      <button class="filter-btn" data-f="rating" data-v="3">⭐⭐⭐</button>
+      <button class="filter-btn" data-f="rating" data-v="2">⭐⭐</button>
+      <button class="filter-btn" data-f="rating" data-v="1">⭐</button>
+      <button class="filter-btn" data-f="rating" data-v="0">ㄨ</button>
+    </div>
+    <div class="filter-row">
+      <span class="filter-group">Style</span>
+      <button class="filter-btn on" data-f="style" data-v="">All</button>
+      <button class="filter-btn" data-f="style" data-v="NY Style">NY</button>
+      <button class="filter-btn" data-f="style" data-v="Neapolitan">Neapolitan</button>
+      <button class="filter-btn" data-f="style" data-v="Roman">Roman</button>
+      <button class="filter-btn" data-f="style" data-v="Detroit / Sicilian">Detroit</button>
+      <button class="filter-btn" data-f="style" data-v="Deep Dish">Deep Dish</button>
+      <button class="filter-btn" data-f="style" data-v="Tavern">Tavern</button>
+      <button class="filter-btn" data-f="style" data-v="Fast / Counter">Fast</button>
+    </div>
+    <div class="filter-row">
+      <span class="filter-group">Experience</span>
+      <button class="filter-btn on" data-f="experience" data-v="">All</button>
+      <button class="filter-btn" data-f="experience" data-v="Slice / Counter">Slice</button>
+      <button class="filter-btn" data-f="experience" data-v="Casual Sit-Down">Casual</button>
+      <button class="filter-btn" data-f="experience" data-v="Full Service">Full Service</button>
+      <button class="filter-btn" data-f="experience" data-v="Takeout / Delivery">Takeout</button>
+    </div>
+  </div>
 
-  const RATINGS = {
-    3: '⭐⭐⭐ Legendary',
-    2: '⭐⭐ Worth a Trip',
-    1: '⭐ Solid',
-    0: 'ㄨ Skip It',
-  };
+  <!-- Content -->
+  <div class="content">
+    <div class="result-bar">
+      <span class="result-count" id="resultCount"></span>
+      <div class="sort-row">
+        <button class="sort-btn on" data-sort="recent">Recent</button>
+        <button class="sort-btn" data-sort="rating">Top Rated</button>
+      </div>
+    </div>
+    <div class="grid" id="grid">
+      <!-- Skeleton loaders -->
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
 
-  const filters = { style: '', rating: '', experience: '' };
-  let allReviews = [];
+  <!-- Detail drawer overlay -->
+  <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
 
-  // Auth — update nav
-  initAuth().then(auth => {
-    if (auth?.user) {
-      document.getElementById('navAuth').textContent = `@${auth.user.handle}`;
-      document.getElementById('navAuth').onclick = () => location.href = '/';
-      if (['contributor','admin'].includes(auth.user.role)) {
-        document.getElementById('navSubmit').style.display = '';
+  <!-- Detail drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-img" id="drawerImg"></div>
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <div class="drawer-name" id="drawerName"></div>
+        <button class="drawer-close" onclick="closeDrawer()">×</button>
+      </div>
+      <div class="drawer-rating" id="drawerRating"></div>
+      <div class="drawer-tags" id="drawerTags"></div>
+      <hr class="drawer-divider">
+      <div class="drawer-notes" id="drawerNotes"></div>
+      <div class="drawer-reviewer" id="drawerReviewer"></div>
+      <div class="drawer-actions" id="drawerActions"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // ── Constants ─────────────────────────────────────────────
+    const RATINGS = {
+      3: { stars: '⭐⭐⭐', label: 'Legendary' },
+      2: { stars: '⭐⭐',  label: 'Worth a Trip' },
+      1: { stars: '⭐',    label: 'Solid' },
+      0: { stars: 'ㄨ',    label: 'Skip It' },
+    };
+    const BSKY_BASE = 'https://bsky.app';
+
+    // ── State ─────────────────────────────────────────────────
+    let allReviews = [];
+    let currentReview = null;
+    const filters = { rating: '', style: '', experience: '' };
+    let sortMode = 'recent';
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      // Auth (non-blocking — updates nav)
+      authCheck();
+
+      // Load reviews
+      const { getApprovedReviews } = await import('/auth.js');
+      allReviews = await getApprovedReviews({});
+      render();
+    }
+
+    async function authCheck() {
+      try {
+        const { initAuth } = await import('/auth.js');
+        const auth = await initAuth();
+        if (auth?.user) {
+          const u = auth.user;
+          const navEl = document.getElementById('navUser');
+          navEl.textContent = '@' + u.handle;
+          navEl.href = '/profile.html';
+        }
+      } catch {}
+    }
+
+    // ── Render ────────────────────────────────────────────────
+    function render() {
+      let reviews = allReviews.filter(r => {
+        if (filters.rating !== '' && r.rating !== parseInt(filters.rating)) return false;
+        if (filters.style && r.style !== filters.style) return false;
+        if (filters.experience && r.experience !== filters.experience) return false;
+        return true;
+      });
+
+      if (sortMode === 'rating') {
+        reviews.sort((a, b) => b.rating - a.rating || new Date(b.created_at) - new Date(a.created_at));
+      } else {
+        reviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+
+      const total = allReviews.length;
+      document.getElementById('liveCount').innerHTML =
+        `<div class="live-dot"></div><span>${total} review${total !== 1 ? 's' : ''}</span>`;
+      document.getElementById('resultCount').textContent =
+        reviews.length === total ? `${total} review${total !== 1 ? 's' : ''}` :
+        `${reviews.length} of ${total} reviews`;
+
+      const grid = document.getElementById('grid');
+
+      if (!reviews.length) {
+        grid.innerHTML = `
+          <div class="empty">
+            <div class="empty-icon">🍕</div>
+            <div class="empty-title">No reviews match these filters</div>
+            <div class="empty-sub">Try a different combination, or <a href="#" onclick="clearFilters()">clear all filters</a>.</div>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = reviews.map(r => buildCard(r)).join('');
+    }
+
+    function buildCard(r) {
+      const rating  = RATINGS[r.rating] || RATINGS[1];
+      const handle  = r.users?.handle || 'contributor';
+      const hasImg  = !!r.image_url;
+      const hasBsky = !!r.bluesky_uri;
+      const date    = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+      // Build bluesky discuss URL
+      let bskyUrl = '';
+      if (hasBsky) {
+        const parts = r.bluesky_uri.split('/');
+        bskyUrl = `${BSKY_BASE}/profile/${handle}/post/${parts[parts.length-1]}`;
+      }
+
+      const ratingClass = `r${r.rating}`;
+
+      if (hasImg) {
+        return `
+          <div class="card" onclick="openDrawer('${r.id}')">
+            <div class="card-img">
+              <img src="${r.image_url}" alt="${r.name}" loading="lazy">
+              <div class="rating-badge">${rating.stars} ${rating.label}</div>
+            </div>
+            <div class="card-body">
+              <div class="card-name">${r.name}</div>
+              <div class="card-meta">
+                <span>${r.location}</span>
+                <span class="sep">·</span>
+                <span class="card-style-tag">${r.style}</span>
+                ${r.experience ? `<span class="card-experience">${r.experience}</span>` : ''}
+              </div>
+              <div class="card-excerpt">${r.notes || ''}</div>
+              <div class="card-footer">
+                <span class="card-reviewer">@${handle} · ${date}</span>
+                ${hasBsky ? `<a class="card-discuss" href="${bskyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:block">Discuss ↗</a>` : ''}
+              </div>
+            </div>
+          </div>`;
+      } else {
+        // No image — text-forward layout with accent bar
+        return `
+          <div class="card no-img ${ratingClass}" onclick="openDrawer('${r.id}')">
+            <div class="card-body">
+              <div class="rating-inline">${rating.stars} <span style="font-size:11px;color:#9A7850;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${rating.label}</span></div>
+              <div class="card-name">${r.name}</div>
+              <div class="card-meta">
+                <span>${r.location}</span>
+                <span class="sep">·</span>
+                <span class="card-style-tag">${r.style}</span>
+                ${r.experience ? `<span class="card-experience">${r.experience}</span>` : ''}
+              </div>
+              <div class="card-excerpt">${r.notes || ''}</div>
+              <div class="card-footer">
+                <span class="card-reviewer">@${handle} · ${date}</span>
+                ${hasBsky ? `<a class="card-discuss" href="${bskyUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:block">Discuss ↗</a>` : ''}
+              </div>
+            </div>
+          </div>`;
       }
     }
-  });
 
-  // Load reviews
-  async function load() {
-    const reviews = await getApprovedReviews(filters);
-    allReviews = reviews;
-    render(reviews);
-    document.getElementById('liveCount').textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
-    document.getElementById('countLabel').textContent =
-      reviews.length ? `${reviews.length} result${reviews.length !== 1 ? 's' : ''}` : '';
-  }
+    // ── Drawer ────────────────────────────────────────────────
+    window.openDrawer = function(id) {
+      const r = allReviews.find(x => x.id === id);
+      if (!r) return;
+      currentReview = r;
 
-  function render(reviews) {
-    const grid = document.getElementById('grid');
-    if (!reviews.length) {
-      grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
-        <div class="empty-title">No reviews yet</div>
-        <div class="empty-sub">Be the first to submit one.<br>Apply to become a contributor at <a href="/contributor.html" style="color:var(--white)">contributor.html</a></div>
-      </div>`;
-      return;
-    }
-    grid.innerHTML = reviews.map(r => `
-      <div class="card" onclick="openModal('${r.id}')">
-        <div class="card-img">${r.image_url ? `<img src="${r.image_url}" alt="${r.name}" loading="lazy">` : ''}</div>
-        <div class="card-body">
-          <div class="card-name">${r.name}</div>
-          <div class="card-loc">${r.location}</div>
-          <div class="card-meta">
-            <span>${RATINGS[r.rating] || ''}</span>
-            <span class="style-tag">${r.style}</span>
-          </div>
+      const rating  = RATINGS[r.rating] || RATINGS[1];
+      const handle  = r.users?.handle || 'contributor';
+      const date    = new Date(r.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      // Image
+      const imgEl = document.getElementById('drawerImg');
+      if (r.image_url) {
+        imgEl.innerHTML = `<img src="${r.image_url}" alt="${r.name}">`;
+        imgEl.style.display = 'block';
+      } else {
+        imgEl.innerHTML = `<div class="drawer-img-placeholder">🍕</div>`;
+        imgEl.style.display = 'block';
+      }
+
+      document.getElementById('drawerName').textContent = r.name;
+      document.getElementById('drawerRating').innerHTML =
+        `${rating.stars} <span style="font-size:14px;color:#FFB800;font-weight:700">${rating.label}</span>`;
+
+      // Tags
+      const tags = [];
+      tags.push({ text: r.location, highlight: false });
+      tags.push({ text: r.style, highlight: true });
+      if (r.experience) tags.push({ text: r.experience, highlight: false });
+      document.getElementById('drawerTags').innerHTML =
+        tags.map(t => `<span class="drawer-tag${t.highlight ? ' highlight' : ''}">${t.text}</span>`).join('');
+
+      document.getElementById('drawerNotes').textContent = r.notes || '';
+
+      // Reviewer section
+      const initials = handle[0].toUpperCase();
+      document.getElementById('drawerReviewer').innerHTML = `
+        <div class="reviewer-avatar">${initials}</div>
+        <div class="reviewer-info">
+          <div class="reviewer-handle">@${handle}</div>
+          <span class="reviewer-role-badge">Contributor</span>
         </div>
-      </div>`).join('');
-  }
+        <span style="font-size:11px;color:#7A5830;margin-left:auto">${date}</span>
+      `;
 
-  window.openModal = function(id) {
-    const r = allReviews.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('mTitle').textContent = r.name;
-    document.getElementById('mName').textContent = r.name;
-    document.getElementById('mRating').textContent = RATINGS[r.rating] || '';
-    document.getElementById('mNotes').textContent = r.notes || '';
-    document.getElementById('mContrib').textContent =
-      `Reviewed by @${r.users?.handle || 'contributor'} · ${r.location}`;
-    document.getElementById('mImg').innerHTML =
-      r.image_url ? `<img src="${r.image_url}" alt="${r.name}">` : '';
-    const fields = [
-      ['Style', r.style], ['Crust', r.crust], ['Char', r.char_level],
-      ['Sauce', r.sauce], ['Cheese', r.cheese], ['City', r.city],
-    ].filter(([,v]) => v);
-    document.getElementById('mFields').innerHTML =
-      fields.map(([k,v]) => `<div class="field"><span class="field-k">${k} </span><span class="field-v">${v}</span></div>`).join('');
-    document.getElementById('modal').classList.add('open');
-    document.getElementById('modalBg').classList.add('open');
-  };
+      // Actions
+      let actionsHtml = '';
+      if (r.bluesky_uri) {
+        const parts = r.bluesky_uri.split('/');
+        const bskyUrl = `${BSKY_BASE}/profile/${handle}/post/${parts[parts.length-1]}`;
+        actionsHtml += `<a href="${bskyUrl}" target="_blank" rel="noopener" class="drawer-btn drawer-btn-primary">Discuss on Bluesky ↗</a>`;
+      }
+      actionsHtml += `<button class="drawer-btn drawer-btn-outline" onclick="closeDrawer()">Close</button>`;
+      document.getElementById('drawerActions').innerHTML = actionsHtml;
 
-  window.closeModal = function() {
-    document.getElementById('modal').classList.remove('open');
-    document.getElementById('modalBg').classList.remove('open');
-  };
+      // Open
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('drawer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
 
-  // Filter buttons
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const type = btn.dataset.filter;
-      const value = btn.dataset.value;
-      document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filters[type] = value;
-      if (type === 'experience') filters.experience = value;
-      load();
+    window.closeDrawer = function() {
+      document.getElementById('overlay').classList.remove('open');
+      document.getElementById('drawer').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+    // ── Filters ───────────────────────────────────────────────
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.dataset.f;
+        document.querySelectorAll(`[data-f="${f}"]`).forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        filters[f] = btn.dataset.v;
+        render();
+      });
     });
-  });
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        sortMode = btn.dataset.sort;
+        render();
+      });
+    });
 
-  load();
-</script>
+    window.clearFilters = function() {
+      filters.rating = ''; filters.style = ''; filters.experience = '';
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('on', b.dataset.v === '');
+      });
+      render();
+      return false;
+    };
+
+    init();
+  </script>
 </body>
 </html>
