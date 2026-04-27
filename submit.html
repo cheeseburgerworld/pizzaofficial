@@ -562,38 +562,41 @@
     // ── Post to Bluesky ───────────────────────────────────────
     async function postToBluesky(reviewId, name, location, ratingVal, style, notes) {
       try {
-        const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
+        // Load both packages
+        const [{ BrowserOAuthClient }, { Agent }] = await Promise.all([
+          import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle'),
+          import('https://esm.sh/@atproto/api?bundle'),
+        ]);
+
         const client = await BrowserOAuthClient.load({
           clientId: 'https://pizzaofficial.biz/oauth/client-metadata.json',
           handleResolver: 'https://bsky.social',
         });
+
         const result = await client.init();
-        if (!result?.session) return null;
+        if (!result?.session) throw new Error('No active session — please sign in again');
 
-        const session = result.session;
+        // Use Agent — the correct way to post via ATProto OAuth
+        const agent = new Agent(result.session);
         const { text, facets } = buildPost(name, location, ratingVal, style, notes);
-        const record = { $type: 'app.bsky.feed.post', text, facets, createdAt: new Date().toISOString(), langs: ['en'] };
 
-        const resp = await session.fetchHandler(
-          'https://bsky.social/xrpc/com.atproto.repo.createRecord',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ repo: session.did, collection: 'app.bsky.feed.post', record }),
-          }
-        );
-        if (!resp.ok) throw new Error(`Bluesky ${resp.status}`);
-        const data = await resp.json();
+        const postResult = await agent.post({ text, facets, langs: ['en'] });
 
-        // Save URI back to review
-        if (reviewId) {
+        // Save URI back to review record
+        if (reviewId && postResult?.uri) {
           await fetch('/.netlify/functions/update-review-bluesky', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ did: currentDid, review_id: reviewId, bluesky_uri: data.uri, bluesky_cid: data.cid }),
+            body: JSON.stringify({
+              did: currentDid,
+              review_id: reviewId,
+              bluesky_uri: postResult.uri,
+              bluesky_cid: postResult.cid,
+            }),
           });
         }
-        return data;
+
+        return postResult;
       } catch (e) {
         console.warn('[submit] Bluesky post failed:', e.message);
         return null;
@@ -690,7 +693,7 @@
         : (document.getElementById('fCrosspost').checked ? '<br><br>Note: Bluesky post failed — review is saved.' : '');
 
       document.getElementById('successBody').innerHTML =
-        `Submitted for human approval. Once approved, it's in the database permanently.${bskyLine}<br><br>` +
+        `In the queue for approval. Once approved it's in the database permanently.${bskyLine}<br><br>` +
         `<a href="/submit.html">Submit another →</a> &nbsp;·&nbsp; <a href="/profile.html">View your profile →</a>`;
 
       document.getElementById('formWrap').style.display = 'none';
