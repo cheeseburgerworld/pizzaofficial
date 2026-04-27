@@ -5,23 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit a Review — PIZZA⚡OFFICIAL</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:     #0d0800;
-      --bg2:    #160D00;
-      --bg3:    #1E1400;
-      --body:   #E8D5A0;
-      --gold:   #FFB800;
-      --gold2:  #CC9200;
-      --muted:  #7A6040;
-      --red:    #FF3B30;
-      --red2:   #CC2F25;
-      --green:  #4ABA5A;
-      --border: #2E1C00;
-      --mono:   'IBM Plex Mono', monospace;
-    }
 
     body {
       background: var(--bg);
@@ -46,7 +31,7 @@
     .nav-links { display: flex; gap: 2px; }
     .nav-links a {
       font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--muted); text-decoration: none; padding: 6px 12px; transition: color .15s;
+      color: var(--text2); text-decoration: none; padding: 6px 12px; transition: color .15s;
     }
     .nav-links a:hover { color: var(--gold); }
     .nav-links a.active { color: var(--gold); }
@@ -67,7 +52,7 @@
       padding: 20px; display: none; margin-bottom: 24px;
     }
     .success-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
-    .success-sub { font-size: 11px; color: var(--muted); line-height: 1.7; }
+    .success-sub { font-size: 11px; color: var(--text2); line-height: 1.7; }
     .success-sub a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--border); }
 
     /* form */
@@ -78,7 +63,7 @@
       display: block; margin-bottom: 7px;
     }
     .field-label .req { color: var(--red); margin-left: 2px; }
-    .field-label .opt { color: var(--muted); font-weight: 400; font-size: 9px; margin-left: 4px; }
+    .field-label .opt { color: var(--text2); font-weight: 400; font-size: 11px; margin-left: 4px; }
 
     .field-input, .field-select, .field-textarea {
       width: 100%; background: var(--bg2); border: 1px solid var(--border);
@@ -86,7 +71,7 @@
       padding: 11px 13px; outline: none; transition: border-color .15s;
       -webkit-appearance: none; appearance: none;
     }
-    .field-input::placeholder, .field-textarea::placeholder { color: var(--muted); }
+    .field-input::placeholder, .field-textarea::placeholder { color: var(--text2); }
     .field-input:focus, .field-select:focus, .field-textarea:focus { border-color: var(--gold); }
     .field-select { cursor: pointer; }
     .field-select option { background: var(--bg2); color: var(--body); }
@@ -104,18 +89,18 @@
     .rating-opt span {
       display: block; font-family: var(--mono); font-size: 11px; font-weight: 700;
       padding: 8px 14px; border: 1px solid var(--border);
-      color: var(--muted); transition: all .15s;
+      color: var(--text2); transition: all .15s;
     }
     .rating-opt input:checked + span { border-color: var(--gold); color: var(--gold); }
     .rating-opt:hover span { border-color: var(--body); color: var(--body); }
 
     /* style hint */
-    .style-hint { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 1.6; min-height: 16px; }
+    .style-hint { font-size: 10px; color: var(--text2); margin-top: 5px; line-height: 1.6; min-height: 16px; }
 
     /* char counter */
     .char-row { display: flex; justify-content: flex-end; margin-top: 4px; }
     .char-count { font-size: 10px; }
-    .c-ok   { color: var(--muted); }
+    .c-ok   { color: var(--text2); }
     .c-warn { color: var(--gold); }
     .c-over { color: var(--red); }
 
@@ -127,7 +112,7 @@
     }
     .img-upload:hover { border-color: var(--gold2); }
     .img-upload input { display: none; }
-    .img-upload-txt { font-size: 11px; color: var(--muted); }
+    .img-upload-txt { font-size: 11px; color: var(--text2); }
     .img-upload-txt strong { color: var(--body); font-weight: 700; }
     .img-preview { margin-top: 12px; display: none; }
     .img-preview img { max-height: 180px; max-width: 100%; border: 1px solid var(--border); display: block; margin: 0 auto; }
@@ -138,9 +123,9 @@
       padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start;
     }
     .crosspost input { width: 14px; height: 14px; margin-top: 2px; accent-color: var(--red); flex-shrink: 0; cursor: pointer; }
-    .crosspost-txt { font-size: 11px; color: var(--muted); line-height: 1.65; }
+    .crosspost-txt { font-size: 11px; color: var(--text2); line-height: 1.65; }
     .crosspost-txt strong { color: var(--body); font-weight: 700; }
-    .crosspost-note { font-size: 9px; color: var(--muted); margin-top: 4px; }
+    .crosspost-note { font-size: 11px; color: var(--text2); margin-top: 4px; }
 
     /* submit */
     .submit-btn {
@@ -173,7 +158,7 @@
   <div class="success" id="successMsg">
     <div class="success-title">Review submitted</div>
     <div class="success-sub">
-      Nice! It'll appear in the database soon.<br><br>
+      It's in the queue for approval. Once approved it'll appear in the database.<br><br>
       <a href="/submit.html">Submit another →</a>
     </div>
   </div>
@@ -223,12 +208,24 @@
       <div class="style-hint" id="styleHint"></div>
     </div>
 
+    <div class="field">
+      <label class="field-label">Experience <span class="opt">— optional</span></label>
+      <select class="field-select" id="fExperience">
+        <option value="">Select experience type…</option>
+        <option>Slice / Counter</option>
+        <option>Casual Sit-Down</option>
+        <option>Full Service</option>
+        <option>Takeout / Delivery</option>
+      </select>
+      <div style="font-size:11px;color:#9A7850;margin-top:5px">How does visiting this place feel? See <a href="/format.html" style="color:#C8B090;text-decoration:none;border-bottom:1px solid #3a2400">format guide</a> for definitions.</div>
+    </div>
+
     <hr class="rule">
 
     <div class="field">
       <label class="field-label">Review <span class="req">*</span> <span class="opt">— 400 characters max</span></label>
       <textarea class="field-textarea" id="fNotes" maxlength="400" required
-        placeholder="Specific sensory detail. What to order. One punchy closer."
+        placeholder="Specific sensory detail. What to order."
         oninput="updateCharCount()"></textarea>
       <div class="char-row"><span class="char-count c-ok" id="charCount">0 / 400</span></div>
     </div>
@@ -247,8 +244,8 @@
     <div class="crosspost">
       <input type="checkbox" id="fCrosspost" checked>
       <div class="crosspost-txt">
-        <strong>Share to Bluesky</strong> — post this review with #PizzaOfficial after submitting.
-        <div class="crosspost-note">Optional. Your review goes to the database either way.</div>
+        <strong>Share to Bluesky</strong> — post this review to your Bluesky profile with #PizzaOfficial after submitting.
+        <div class="crosspost-note">Optional but appreciated — helps build the community. You can always post manually later.</div>
       </div>
     </div>
 
@@ -260,6 +257,272 @@
 
 <script type="module">
   import { requireContributor, getDb } from '/auth.js';
+
+  const HINTS = {
+    'NY Style':           'Wide, foldable. The standard slice.',
+    'Neapolitan':         'Wood-fired, blistered, soft center. Born in Naples.',
+    'Roman':              'Tonda (cracker-thin) or al Taglio (sold by weight). Note which.',
+    'Detroit / Sicilian': 'Thick, rectangular, pan-baked. Crispy-bottomed.',
+    'Deep Dish':          'Chicago. Deep pan. Cheese first, sauce on top.',
+    'Tavern':             'Midwest thin-crust, crackery, always square-cut.',
+    'Fast / Counter':     'Chains, heat-lamp slices, counter pizza.',
+  };
+
+  const RATING_LABELS = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
+  const RATING_NAMES  = { 3: 'Legendary', 2: 'Worth a Trip', 1: 'Solid', 0: 'Skip It' };
+
+  let currentDid     = null;
+  let currentSession = null;
+  let uploadedImageUrl  = null;
+  let uploadedImagePath = null;
+  let submittedReviewId = null;
+
+  async function main() {
+    const { requireContributor: rc } = await import('/auth.js');
+    // Use internal initAuth to also get the session
+    const { initAuth } = await import('/auth.js');
+    const auth = await initAuth();
+    if (!auth?.user) { location.href = '/'; return; }
+    if (auth.user.role !== 'contributor' && auth.user.role !== 'admin') {
+      location.href = '/contributor.html'; return;
+    }
+    currentDid     = auth.user.did;
+    currentSession = auth.session;
+  }
+
+  window.updateHint = function() {
+    const style = document.getElementById('fStyle').value;
+    document.getElementById('styleHint').textContent = HINTS[style] || '';
+  };
+
+  window.updateCharCount = function() {
+    const len = document.getElementById('fNotes').value.length;
+    const el = document.getElementById('charCount');
+    el.textContent = len + ' / 400';
+    el.className = 'char-count ' + (len > 380 ? 'c-over' : len > 320 ? 'c-warn' : 'c-ok');
+  };
+
+  window.previewImage = function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 2097152) { alert('Image must be under 2MB'); input.value = ''; return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('imgThumb').src = e.target.result;
+      document.getElementById('imgPreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── Build Bluesky post text with facet for #PizzaOfficial ──
+  function buildPostText(name, location, ratingVal, style, notes) {
+    const ratingEmoji = RATING_LABELS[ratingVal] || '';
+    const ratingName  = RATING_NAMES[ratingVal]  || '';
+
+    // Format: Rating emoji + name, location, style, truncated notes, hashtag
+    const header = `${ratingEmoji} ${ratingName} — ${name}`;
+    const meta   = `${location} · ${style}`;
+    // Leave room for header + meta + hashtag (≈80 chars) from 300 char limit
+    const maxNotes = 220;
+    const truncNotes = notes.length > maxNotes ? notes.slice(0, maxNotes) + '…' : notes;
+    const text = `${header}\n${meta}\n\n${truncNotes}\n\n#PizzaOfficial`;
+
+    // Calculate byte position of #PizzaOfficial for facet
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(text);
+    const tagStart = text.lastIndexOf('#PizzaOfficial');
+    const byteStart = encoder.encode(text.slice(0, tagStart)).length;
+    const byteEnd   = byteStart + encoder.encode('#PizzaOfficial').length;
+
+    const facets = [{
+      index: { byteStart, byteEnd },
+      features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }]
+    }];
+
+    return { text, facets };
+  }
+
+  // ── Post to Bluesky via ATProto API ───────────────────────
+  async function postToBluesky(reviewId, name, location, ratingVal, style, notes, imageUrl) {
+    try {
+      // Get a fresh OAuth session
+      const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
+      const client = await BrowserOAuthClient.load({
+        clientId: 'https://pizzaofficial.biz/oauth/client-metadata.json',
+        handleResolver: 'https://bsky.social',
+      });
+      const result = await client.init();
+      if (!result?.session) throw new Error('No active Bluesky session');
+
+      const session = result.session;
+      const { text, facets } = buildPostText(name, location, ratingVal, style, notes);
+
+      // Build the record
+      const record = {
+        $type: 'app.bsky.feed.post',
+        text,
+        facets,
+        createdAt: new Date().toISOString(),
+        langs: ['en'],
+      };
+
+      // If we have an image URL, embed it as an external link card
+      if (imageUrl) {
+        record.embed = {
+          $type: 'app.bsky.embed.external',
+          external: {
+            uri: `https://pizzaofficial.biz/database.html`,
+            title: `${name} — PIZZA⚡OFFICIAL`,
+            description: notes.slice(0, 200),
+          }
+        };
+      }
+
+      // Post via the ATProto session's fetch
+      const response = await session.fetchHandler(
+        'https://bsky.social/xrpc/com.atproto.repo.createRecord',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            repo: session.did,
+            collection: 'app.bsky.feed.post',
+            record,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Bluesky API error ${response.status}: ${errText}`);
+      }
+
+      const postData = await response.json();
+
+      // Save bluesky_uri + bluesky_cid back to the review record
+      if (reviewId) {
+        await fetch('/.netlify/functions/update-review-bluesky', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            did: currentDid,
+            review_id: reviewId,
+            bluesky_uri: postData.uri,
+            bluesky_cid: postData.cid,
+          }),
+        });
+      }
+
+      return { uri: postData.uri, cid: postData.cid };
+
+    } catch (err) {
+      console.error('[crosspost] Bluesky post failed:', err.message);
+      return null; // Non-fatal — review is already saved
+    }
+  }
+
+  // ── Main submit ────────────────────────────────────────────
+  window.submitReview = async function() {
+    const btn   = document.getElementById('submitBtn');
+    const errEl = document.getElementById('formErr');
+    errEl.style.display = 'none';
+
+    const name   = document.getElementById('fName').value.trim();
+    const city   = document.getElementById('fCity').value.trim();
+    const region = document.getElementById('fRegion').value.trim();
+    const rating = document.querySelector('input[name="rating"]:checked');
+    const style  = document.getElementById('fStyle').value;
+    const notes  = document.getElementById('fNotes').value.trim();
+    const exp    = document.getElementById('fExperience')?.value || null;
+
+    if (!name || !city || !region || !rating || !style || !notes) {
+      errEl.textContent = 'Please fill in all required fields.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    // Upload image if provided
+    const imageFile = document.getElementById('fImage').files[0];
+    if (imageFile) {
+      try {
+        btn.textContent = 'Uploading image…';
+        const db  = await getDb();
+        const ext = imageFile.name.split('.').pop();
+        const path = currentDid.replace(/[^a-z0-9]/gi, '-') + '/' + Date.now() + '.' + ext;
+        const { error } = await db.storage.from('pizza-images').upload(path, imageFile);
+        if (error) throw error;
+        const { data: urlData } = db.storage.from('pizza-images').getPublicUrl(path);
+        uploadedImageUrl  = urlData.publicUrl;
+        uploadedImagePath = path;
+      } catch (ex) {
+        errEl.textContent = 'Image upload failed: ' + ex.message;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit for approval';
+        return;
+      }
+    }
+
+    // Submit review to Supabase
+    let reviewId = null;
+    try {
+      btn.textContent = 'Saving review…';
+      const res = await fetch('/.netlify/functions/submit-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          did:        currentDid,
+          name, location: city + ', ' + region, city, region,
+          rating:     rating.value,
+          style,      notes,
+          experience: exp,
+          image_url:  uploadedImageUrl,
+          image_path: uploadedImagePath,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data || 'Submission failed');
+      reviewId = data.id;
+    } catch (ex) {
+      errEl.textContent = ex.message;
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit for approval';
+      return;
+    }
+
+    // Bluesky cross-post (optional, non-blocking)
+    const wantsCrosspost = document.getElementById('fCrosspost').checked;
+    let bskyResult = null;
+    if (wantsCrosspost) {
+      btn.textContent = 'Posting to Bluesky…';
+      bskyResult = await postToBluesky(
+        reviewId, name, city + ', ' + region,
+        parseInt(rating.value), style, notes, uploadedImageUrl
+      );
+    }
+
+    // Show success
+    const successEl = document.getElementById('successMsg');
+    const bskyLine = bskyResult?.uri
+      ? `<br><br>✓ Posted to Bluesky — <a href="https://bsky.app/profile/${currentDid}/post/${bskyResult.uri.split('/').pop()}" target="_blank" style="color:#FFB800;text-decoration:none">view post →</a>`
+      : (wantsCrosspost ? '<br><br>Note: Bluesky post failed, but your review was saved.' : '');
+
+    successEl.querySelector('.success-sub').innerHTML =
+      `It's in the queue for approval. Once approved it'll appear in the database.${bskyLine}<br><br><a href="/submit.html" style="color:#FFFFFF;text-decoration:none">Submit another →</a>`;
+
+    document.getElementById('reviewForm').style.display = 'none';
+    successEl.style.display = 'block';
+    window.scrollTo(0, 0);
+  };
+
+  main();
+</script>
+</body>
+</html>
 
   const HINTS = {
     'NY Style':           'Wide, foldable. The standard slice.',
