@@ -76,8 +76,9 @@ exports.handler = async (event) => {
     .eq('did', did)
     .maybeSingle();
 
-  // Determine role — never downgrade
-  let role = existing?.role || 'guest';
+  // Everyone who signs in is a contributor by default.
+  // Never downgrade an existing role (admin stays admin, etc).
+  let role = existing?.role || 'contributor';
   if (did === ADMIN_DID) role = 'admin';
 
   // Upsert — works for first-time users AND returning users
@@ -97,7 +98,7 @@ exports.handler = async (event) => {
         ignoreDuplicates:  false,
       }
     )
-    .select('did, handle, display_name, avatar_url, role')
+    .select('did, handle, display_name, avatar_url, role, agreed_at, created_at')
     .maybeSingle();
 
   if (error) {
