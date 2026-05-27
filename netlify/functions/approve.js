@@ -40,9 +40,15 @@ exports.handler = async (event) => {
           product_id: review.product_id,
           reference_id: id,
         });
-        // Update user rank
         await updateRank(review.contributor_did, review.product_id);
       }
+      // Trigger geocoding (non-fatal, fire and forget)
+      const baseUrl = process.env.URL || 'https://pizzaofficial.biz';
+      fetch(`${baseUrl}/.netlify/functions/geocode-review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ review_id: id }),
+      }).catch(e => console.warn('geocode trigger failed:', e.message));
     }
   }
 
