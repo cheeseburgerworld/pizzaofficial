@@ -54,7 +54,7 @@
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 32px;
     }
     @media (min-width: 500px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
-    .stat-card { background: #160D00; border: 1px solid #2E1C00; padding: 18px 20px; }
+    .stat-card { background: #1a1000; border: 1px solid #3a2000; padding: 18px 20px; }
     .stat-val { font-size: 30px; font-weight: 700; color: #FFB800; line-height: 1; margin-bottom: 6px; }
     .stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #E0D5C5; }
 
@@ -64,7 +64,7 @@
       gap: 8px; margin-bottom: 32px;
     }
     .style-card {
-      background: #160D00; border: 1px solid #2E1C00;
+      background: #1a1000; border: 1px solid #3a2000;
       padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
     }
     .style-name { font-size: 12px; font-weight: 700; color: #E0D5C5; }
@@ -79,7 +79,7 @@
 
     /* Admin queue */
     .queue-card {
-      background: #160D00; border: 1px solid #2E1C00;
+      background: #1a1000; border: 1px solid #3a2000;
       padding: 16px 18px; margin-bottom: 10px;
     }
     .queue-name { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 3px; }
@@ -171,6 +171,18 @@
         const reviews = queue.filter(q => q.queue_type === 'review');
         const apps    = queue.filter(q => q.queue_type === 'application');
 
+        // Geocode backfill tool
+        html += `
+          <div class="section-head">Map geocoding</div>
+          <div class="queue-card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <div class="queue-name">Backfill map coordinates</div>
+              <div class="queue-meta">Geocodes all approved reviews that are missing lat/lng so they appear on the map.</div>
+            </div>
+            <button class="q-approve" id="geocodeBtn" onclick="runBackfill(this)" style="flex-shrink:0">Run backfill</button>
+          </div>
+          <div id="geocodeLog" style="font-size:11px;color:#E0D5C5;margin-top:8px;line-height:1.8"></div>`;
+
         html += `<div class="section-head">Pending reviews (${reviews.length})</div>`;
         html += reviews.length === 0 ? `<div class="empty">All clear.</div>` :
           reviews.map(r => `
@@ -200,6 +212,64 @@
 
       content.innerHTML = html;
     }
+
+    window.runBackfill = async function(btn) {
+      btn.disabled = true;
+      btn.textContent = 'Running…';
+      const log = document.getElementById('geocodeLog');
+      log.textContent = 'Fetching reviews without coordinates…';
+
+      try {
+        const { getDb } = await import('/auth.js');
+        const db = await getDb();
+        const { data: reviews } = await db
+          .from('pizza_reviews')
+          .select('id, name, city, location')
+          .eq('status', 'approved')
+          .is('lat', null);
+
+        if (!reviews?.length) {
+          log.textContent = '✓ All approved reviews already have coordinates.';
+          btn.textContent = 'Run backfill';
+          btn.disabled = false;
+          return;
+        }
+
+        log.textContent = `Found ${reviews.length} review${reviews.length !== 1 ? 's' : ''} to geocode…\n`;
+
+        let done = 0, failed = 0;
+        for (const r of reviews) {
+          try {
+            const res = await fetch('/.netlify/functions/geocode-review', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ review_id: r.id }),
+            });
+            const data = await res.json();
+            if (res.ok && data.lat) {
+              done++;
+              log.textContent += `✓ ${r.name} → ${data.lat.toFixed(3)}, ${data.lng.toFixed(3)}\n`;
+            } else {
+              failed++;
+              log.textContent += `✗ ${r.name} — ${data || 'no coordinates found'}\n`;
+            }
+          } catch (e) {
+            failed++;
+            log.textContent += `✗ ${r.name} — ${e.message}\n`;
+          }
+          // Small delay to respect Nominatim rate limit (1 req/sec)
+          await new Promise(resolve => setTimeout(resolve, 1100));
+        }
+
+        log.textContent += `\nDone — ${done} geocoded, ${failed} failed.`;
+        btn.textContent = 'Run again';
+        btn.disabled = false;
+      } catch (e) {
+        log.textContent = 'Error: ' + e.message;
+        btn.textContent = 'Run backfill';
+        btn.disabled = false;
+      }
+    };
 
     window.act = async function(type, id, action, btn) {
       btn.disabled = true;
