@@ -1,11 +1,11 @@
 {
-  "client_id": "https://pizzaofficial.biz/oauth/client-metadata.json",
+  "client_id": "https://official.pizza/oauth/client-metadata.json",
   "client_name": "PIZZA⚡OFFICIAL",
-  "client_uri": "https://pizzaofficial.biz",
-  "tos_uri": "https://pizzaofficial.biz/about.html",
-  "policy_uri": "https://pizzaofficial.biz/about.html",
+  "client_uri": "https://official.pizza",
+  "tos_uri": "https://official.pizza/about.html",
+  "policy_uri": "https://official.pizza/about.html",
   "redirect_uris": [
-    "https://pizzaofficial.biz/oauth/callback"
+    "https://official.pizza/oauth/callback"
   ],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
