@@ -86,9 +86,14 @@ export default async function handler(req) {
   } catch (err) {
     console.error('[auth-start] error:', err);
     const msg = encodeURIComponent(err.message || 'Sign-in failed');
+    // Back to wherever the person actually clicked "sign in" from, not
+    // always the homepage — so the error shows up next to the form they
+    // were using, instead of silently landing on index.html with no clue.
+    const errDest = returnPath && returnPath.startsWith('/') ? returnPath : '/';
+    const sep = errDest.includes('?') ? '&' : '?';
     return new Response(null, {
       status: 302,
-      headers: { 'Location': `/?auth_error=${msg}` },
+      headers: { 'Location': `${errDest}${sep}auth_error=${msg}` },
     });
   }
 }
