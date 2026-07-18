@@ -95,7 +95,9 @@ export default async function handler(req) {
   } catch (err) {
     console.error('[auth-callback] login failed:', err);
     const msg = encodeURIComponent(err.message || 'Sign-in failed');
-    return redirect(`/?auth_error=${msg}`, [clearCookie(PKCE_COOKIE)]);
+    const errDest = returnPath && returnPath.startsWith('/') ? returnPath : '/';
+    const sep = errDest.includes('?') ? '&' : '?';
+    return redirect(`${errDest}${sep}auth_error=${msg}`, [clearCookie(PKCE_COOKIE)]);
   }
 }
 
