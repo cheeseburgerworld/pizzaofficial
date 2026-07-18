@@ -1,158 +1,134 @@
-// PIZZA⚡OFFICIAL — auth.js
-// Session persistence: user cached in sessionStorage for instant cross-page auth
-// OAuth session stored by ATProto client in localStorage
+// The OAuth mechanics below are ported from cheeseburger.world
 
-const SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
-const CLIENT_ID     = 'https://pizzaofficial.biz/oauth/client-metadata.json';
-const REDIRECT_URI  = 'https://pizzaofficial.biz/oauth/callback';
-const RESOLVER      = 'https://bsky.social';
-const SESSION_KEY   = 'pzof_user';
+// Shared session state the rest of the site reads via window.__pzof_state
+const state = (window.__pzof_state = window.__pzof_state || {
+  signedIn: false, did: null, handle: null, displayName: null, avatar: null,
+  role: 'guest', agreedAt: null,
+});
 
-let _db    = null;
-let _oauth = null;
-
+// Back-compat: some pages/older code may still read currentUser/currentSession
+// directly rather than the state object. Kept in sync below.
 export let currentUser    = null;
 export let currentSession = null;
 
-// ── Lazy singletons ───────────────────────────────────────────
-
-async function db() {
-  if (_db) return _db;
-  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
-  _db = createClient(SUPABASE_URL, SUPABASE_ANON);
-  return _db;
+function syncLegacyExports() {
+  currentUser = state.signedIn
+    ? { did: state.did, handle: state.handle, display_name: state.displayName, avatar_url: state.avatar, role: state.role, agreed_at: state.agreedAt }
+    : null;
+  currentSession = state.signedIn ? { did: state.did } : null;
 }
 
-async function oauth() {
-  if (_oauth) return _oauth;
-  const { BrowserOAuthClient } = await import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle');
-  _oauth = await BrowserOAuthClient.load({ clientId: CLIENT_ID, handleResolver: RESOLVER });
-  return _oauth;
-}
-
-export { db as getDb };
-
-// ── Session cache helpers ─────────────────────────────────────
-
-function getCachedUser() {
+// Paint instantly from localStorage cache before the async session fetch,
+// so signed-in users never flash as signed-out on page navigation.
+(function restoreCache() {
   try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch { return null; }
+    const c = JSON.parse(localStorage.getItem('pzof_auth') || 'null');
+    if (c && c.signedIn) Object.assign(state, c);
+  } catch {}
+})();
+syncLegacyExports();
+if (state.signedIn) {
+  window.dispatchEvent(new CustomEvent('pzof-auth', { detail: { ...state } }));
 }
 
-function setCachedUser(user) {
-  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); } catch {}
-}
+let initResolve;
+const initPromise = new Promise(res => { initResolve = res; });
 
-function clearCachedUser() {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+async function checkSession() {
+  try {
+    const res = await fetch('/auth/session', { credentials: 'include' });
+    if (!res.ok) throw new Error(`auth-session ${res.status}`);
+    const data = await res.json();
+
+    if (data.signedIn) {
+      Object.assign(state, {
+        signedIn: true, did: data.did, handle: data.handle,
+        displayName: data.displayName, avatar: data.avatar,
+        role: data.role || 'contributor', agreedAt: data.agreedAt || null,
+      });
+      try { localStorage.setItem('pzof_auth', JSON.stringify(state)); } catch {}
+    } else {
+      Object.assign(state, { signedIn: false, did: null, handle: null, displayName: null, avatar: null, role: 'guest', agreedAt: null });
+      try { localStorage.removeItem('pzof_auth'); } catch {}
+    }
+  } catch (err) {
+    console.warn('[pzof-auth] session check failed (keeping cached state):', err.message);
+  }
+
+  syncLegacyExports();
+  window.dispatchEvent(new CustomEvent('pzof-auth', { detail: { ...state } }));
+  initResolve();
+  return state;
 }
 
 // ── initAuth ──────────────────────────────────────────────────
-// Returns { user, session } or null.
-// Uses sessionStorage cache so cross-page auth is instant.
-
+// Kept as the same name/shape other pages already call: returns
+// { user, session } if signed in, or null. Internally now backed
+// by the BFF session check above instead of BrowserOAuthClient.
 export async function initAuth() {
-  // 1. Check session cache first — instant
-  const cached = getCachedUser();
-  if (cached) {
-    currentUser = cached;
-    // Validate OAuth session in background, update cache if needed
-    validateSessionBackground();
-    return { user: cached, session: null };
-  }
-
-  // 2. No cache — full OAuth init
-  try {
-    const client = await oauth();
-    const result = await client.init();
-    if (!result?.session) return null;
-    currentSession = result.session;
-    currentUser = await syncUser(currentSession.did);
-    if (currentUser) setCachedUser(currentUser);
-    return { user: currentUser, session: currentSession };
-  } catch (e) {
-    console.warn('[auth] initAuth:', e.message);
-    return null;
-  }
-}
-
-// Silently revalidate the OAuth session and refresh cache
-async function validateSessionBackground() {
-  try {
-    const client = await oauth();
-    const result = await client.init();
-    if (!result?.session) {
-      clearCachedUser();
-      currentUser = null;
-      return;
-    }
-    currentSession = result.session;
-    // Refresh user data from server
-    const fresh = await syncUser(currentSession.did);
-    if (fresh) {
-      currentUser = fresh;
-      setCachedUser(fresh);
-    }
-  } catch { /* silent */ }
+  await checkSession();
+  if (!state.signedIn) return null;
+  return {
+    user: { did: state.did, handle: state.handle, display_name: state.displayName, avatar_url: state.avatar, role: state.role, agreed_at: state.agreedAt },
+    session: { did: state.did },
+  };
 }
 
 // ── signIn ────────────────────────────────────────────────────
-
+// Redirects to the server-side auth start — the server handles
+// PKCE + DPoP + the Bluesky redirect entirely.
 export async function signIn(handle) {
-  const clean = handle.trim().replace(/^@/, '');
+  const clean = (handle || '').trim().replace(/^@/, '');
   if (!clean) throw new Error('Enter your Bluesky handle');
-  sessionStorage.setItem('pzof_return', location.pathname + location.search);
-  const client = await oauth();
-  await client.signIn(clean, { redirect_uri: REDIRECT_URI });
+  const params = new URLSearchParams({ handle: clean, return: location.pathname + location.search });
+  window.location.href = `/auth/start?${params}`;
 }
 
 // ── signOut ───────────────────────────────────────────────────
-
 export async function signOut() {
-  clearCachedUser();
-  try {
-    const client = await oauth();
-    if (currentSession?.signOut) await currentSession.signOut();
-  } catch {}
-  currentUser = null;
-  currentSession = null;
+  try { await fetch('/auth/signout', { method: 'POST', credentials: 'include' }); } catch {}
+  Object.assign(state, { signedIn: false, did: null, handle: null, displayName: null, avatar: null, role: 'guest', agreedAt: null });
+  try { localStorage.removeItem('pzof_auth'); } catch {}
+  syncLegacyExports();
+  window.dispatchEvent(new CustomEvent('pzof-auth', { detail: { ...state } }));
   location.href = '/';
 }
 
 // ── handleCallback ────────────────────────────────────────────
-
+// No longer does any work itself — the edge function at /oauth/callback
+// already completed the exchange and redirected here with a live session
+// cookie set. Kept only so oauth/callback.html (if it's ever hit — see
+// note below) doesn't need a different import shape. Just re-checks session.
 export async function handleCallback() {
-  const client = await oauth();
-  const result = await client.init();
-  if (!result?.session) throw new Error('No session returned from Bluesky');
-  currentSession = result.session;
-  currentUser = await syncUser(currentSession.did);
-  if (currentUser) setCachedUser(currentUser);
-  return { user: currentUser, session: currentSession };
+  await checkSession();
+  if (!state.signedIn) throw new Error('No session found after callback');
+  return {
+    user: { did: state.did, handle: state.handle, display_name: state.displayName, avatar_url: state.avatar, role: state.role },
+    session: { did: state.did },
+  };
 }
 
-// ── syncUser ──────────────────────────────────────────────────
-
-async function syncUser(did) {
-  try {
-    const res = await fetch('/.netlify/functions/auth-user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ did })
-    });
-    if (!res.ok) throw new Error('auth-user ' + res.status);
-    return await res.json();
-  } catch (e) {
-    console.error('[auth] syncUser:', e.message);
-    return { did, handle: did, role: 'guest' };
+// ── Proxy an authenticated Bluesky action through the server ──
+// action: 'post' | 'uploadBlob'. Nothing calls this yet (see auth-proxy.js
+// note) — kept available for when/if reviews start posting to Bluesky.
+export async function proxyAction(action, payload) {
+  await initPromise;
+  if (!state.signedIn) throw new Error('Not signed in');
+  const res = await fetch('/auth/proxy', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, payload }),
+  });
+  if (res.status === 401) {
+    await signOut();
+    throw new Error('Your session expired. Please sign in again.');
   }
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Proxy request failed (${res.status})`);
+  return data;
 }
 
 // ── Guards ────────────────────────────────────────────────────
-
 export async function requireAuth() {
   const auth = await initAuth();
   if (!auth) {
@@ -173,7 +149,52 @@ export async function requireContributor() {
   return auth;
 }
 
-// ── Data helpers ──────────────────────────────────────────────
+// ── refreshUser ───────────────────────────────────────────────
+// Call after role changes (e.g. after an application gets approved)
+// to force a fresh session check rather than trusting the cache.
+export async function refreshUser(did) {
+  await checkSession();
+  return state.signedIn
+    ? { did: state.did, handle: state.handle, display_name: state.displayName, avatar_url: state.avatar, role: state.role, agreed_at: state.agreedAt }
+    : null;
+}
+
+// Tab-wake: re-check session when user returns to the tab
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && state.signedIn) {
+    fetch('/auth/session', { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data && !data.signedIn) {
+          Object.assign(state, { signedIn: false, did: null, handle: null, displayName: null, avatar: null, role: 'guest', agreedAt: null });
+          try { localStorage.removeItem('pzof_auth'); } catch {}
+          syncLegacyExports();
+          window.dispatchEvent(new CustomEvent('pzof-auth', { detail: { ...state } }));
+        }
+      })
+      .catch(() => {});
+  }
+});
+
+// Auto-init on load
+checkSession().catch(e => console.error('[pzof-auth] init failed:', e));
+
+// ════════════════════════════════════════════════════════════════
+// Data helpers — UNCHANGED from the previous auth.js. Nothing below
+// this line has anything to do with authentication.
+// ════════════════════════════════════════════════════════════════
+
+const SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
+
+let _db = null;
+async function db() {
+  if (_db) return _db;
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2?bundle');
+  _db = createClient(SUPABASE_URL, SUPABASE_ANON);
+  return _db;
+}
+export { db as getDb };
 
 export async function getApprovedReviews(filters) {
   filters = filters || {};
@@ -217,17 +238,4 @@ export async function getAdminQueue() {
     .order('created_at', { ascending: true });
   if (error) return [];
   return data || [];
-}
-
-// ── refreshUser ───────────────────────────────────────────────
-// Call after role changes (e.g. after becoming contributor)
-// to update the cache.
-
-export async function refreshUser(did) {
-  const fresh = await syncUser(did);
-  if (fresh) {
-    currentUser = fresh;
-    setCachedUser(fresh);
-  }
-  return fresh;
 }
