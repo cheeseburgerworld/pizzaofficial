@@ -2,11 +2,29 @@
   "client_id": "https://pizzaofficial.biz/oauth/client-metadata.json",
   "client_name": "PIZZA⚡OFFICIAL",
   "client_uri": "https://pizzaofficial.biz",
-  "redirect_uris": ["https://pizzaofficial.biz/oauth/callback"],
+  "tos_uri": "https://pizzaofficial.biz/about.html",
+  "policy_uri": "https://pizzaofficial.biz/about.html",
+  "redirect_uris": [
+    "https://pizzaofficial.biz/oauth/callback"
+  ],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
   "scope": "atproto transition:generic",
-  "token_endpoint_auth_method": "none",
+  "token_endpoint_auth_method": "private_key_jwt",
+  "token_endpoint_auth_signing_alg": "ES256",
   "application_type": "web",
-  "dpop_bound_access_tokens": true
+  "dpop_bound_access_tokens": true,
+  "jwks": {
+    "keys": [
+      {
+        "kty": "EC",
+        "crv": "P-256",
+        "x": "ezbBZCcgPkwdwIv-qyBDe_uIOcCBydnzFdt-roXOwSw",
+        "y": "mQxmpOdG0h1dzUFiJTTWHjwURQ1gygRkHqrhzhWcrj8",
+        "kid": "pzof-a7cd4eb8",
+        "use": "sig",
+        "alg": "ES256"
+      }
+    ]
+  }
 }
