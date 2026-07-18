@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Pizza Official</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<style>
+  /* Token and base styles live in pizza-theme.css. Page-specific layout only, below. */
+  a.logo { text-decoration: none; }
+  a.tab { text-decoration: none; display: inline-block; }
+
+  /* ── DOC LAYOUT ── */
+  .doc-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 90px; }
+  .eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--presence); margin-bottom: 12px; }
+  h1 { font-family: var(--font-display); font-size: 42px; letter-spacing: 1.5px; color: var(--red); line-height: 1; margin-bottom: 8px; }
+  .doc-section { margin-top: 42px; padding-top: 28px; border-top: 1px solid var(--border); }
+  .doc-head { font-family: var(--font-display); font-size: 24px; letter-spacing: 1.5px; color: var(--red); margin-bottom: 16px; }
+  .doc-text { font-size: 14px; color: var(--text-2); line-height: 1.75; margin-bottom: 16px; }
+  .doc-text b { color: var(--text); }
+  .doc-pull { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; color: var(--text); margin: 6px 0 22px; line-height: 1.2; }
+
+  /* ── VS COMPARISON ── */
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); margin-bottom: 1px; }
+  .vs-them, .vs-us { padding: 14px 16px; font-size: 13px; line-height: 1.55; }
+  .vs-them { background: var(--surface); color: var(--text-3); }
+  .vs-us { background: var(--raised); color: var(--text-2); }
+
+  /* ── FOOTER ── */
+  .site-footer { border-top: 1px solid var(--border); background: var(--surface); margin-top: 40px; padding: 22px 20px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .footer-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .footer-links a { font-family: var(--font-body); font-size: 12px; letter-spacing: .5px; color: var(--text-2); text-decoration: none; }
+  .footer-links a:hover, .footer-links a.active { color: var(--red); }
+  .footer-copy { font-size: 11px; color: var(--text-3); }
+
+  @media (max-width: 760px) {
+    .nav { gap: 12px; }
+    .nav-left { gap: 14px; min-width: 0; flex: 1; }
+    .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 2px; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { flex: 0 0 auto; white-space: nowrap; padding: 8px 11px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .vs { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-left">
+    <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+    <div class="tabs">
+      <a class="tab" href="/database.html">Database</a>
+      <a class="tab" href="/map.html">Map</a>
+      <a class="tab" href="/submit.html">Post a Review</a>
+    </div>
+  </div>
+  <div id="navUser"></div>
+</div>
+
+<div class="doc-wrap">
+  <div class="eyebrow">◈ The Project</div>
+  <h1>About Pizza Official</h1>
+
+  <div class="doc-section" style="margin-top:24px; padding-top:0; border-top:none;">
+    <div class="doc-head">The idea</div>
+    <p class="doc-text">Every other pizza site is a feed built to sell you ads, not a tool built to help you.</p>
+    <p class="doc-text">Here, we flip that. You own your words. Nobody buys their way up. We're not participating in the online advertising economy.</p>
+    <p class="doc-pull">No ads. No algorithms. Just pizza.</p>
+    <p class="doc-text">This is an official record of the world's pizza, written by people who actually ate it. Find what's worth your time near you — and slices worth seeking out when you're somewhere new.</p>
+  </div>
+
+  <div class="doc-section">
+    <div class="doc-head">Different by design</div>
+    <div class="vs">
+      <div class="vs-them">Other platforms own your reviews. They can delete them.</div>
+      <div class="vs-us">You own yours. Only you can delete them.</div>
+    </div>
+    <div class="vs">
+      <div class="vs-them">Restaurants pay to bury the bad and boost fake or sponsored posts.</div>
+      <div class="vs-us">No paid placement. No suppression. Every rating public.</div>
+    </div>
+    <div class="vs">
+      <div class="vs-them">Anyone posts, ratings inflate, and five stars stop meaning anything.</div>
+      <div class="vs-us">Calibrated by real people. Legendary means legendary.</div>
+    </div>
+    <div class="vs">
+      <div class="vs-them">They force you to install an app just to read a review or see a photo.</div>
+      <div class="vs-us">Read everything in your browser. No app, no login.</div>
+    </div>
+    <div class="vs">
+      <div class="vs-them">Trackers follow you across the web. What you read and tap gets sold to advertisers.</div>
+      <div class="vs-us">No trackers, no collection, no ad business. Nothing to sell, because nothing's gathered.</div>
+    </div>
+    <div class="vs">
+      <div class="vs-them">A feed tuned to keep you scrolling, not to help you decide.</div>
+      <div class="vs-us">A database built to answer one question: where's a great slice?</div>
+    </div>
+  </div>
+
+  <div class="doc-section">
+    <div class="doc-head">Built in the Atmosphere</div>
+    <p class="doc-text">Your reviews aren't locked in our database and rented back to you. Each one is posted to your own account in the Atmosphere; what we keep is an index that points back at it — not a copy we control.</p>
+    <p class="doc-text">We don't profile or track you. No tracking pixels, no ad tech, no data to sell — not just as a promise, but because the architecture doesn't allow it. <b>Don't trust our privacy policy. Read our code.</b></p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/stats.html">Stats</a>
+      <a href="/about.html" class="active">About</a>
+      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
+      <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  const $ = id => document.getElementById(id);
+  function renderNavUser(u) {
+    if (!u) { $('navUser').innerHTML = ''; return; }
+    $('navUser').innerHTML = `
+      <a href="/profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
+        <span style="font-size:12px;font-weight:600;color:var(--text);">@${u.handle}</span>
+      </a>`;
+  }
+  (async () => {
+    try {
+      const { initAuth } = await import('/auth.js');
+      const auth = await initAuth();
+      if (auth?.user) renderNavUser(auth.user);
+    } catch {}
+  })();
+</script>
+</body>
+</html>
