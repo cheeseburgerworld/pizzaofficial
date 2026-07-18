@@ -1,768 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submit a Review — PIZZA⚡OFFICIAL</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-
-    /* ── SURFACE HIERARCHY (like Claude) ────────
-       Page:    #0d0800  (darkest)
-       Card:    #141008  (slightly lighter — separates sections)
-       Input:   #1c1408  (readable surface, inputs sit on this)
-       Border:  rgba(255,184,0,.12) (warm gold tint, very subtle)
-       Text:    #FFFFFF primary / #C8BFA8 secondary / #8A7A60 tertiary
-    ────────────────────────────────────────────── */
-
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800; color: #FFFFFF; min-height: 100vh;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
-    }
-
-    /* ── NAV ───────────────────────────────── */
-    .nav {
-      height: 54px; background: #0d0800;
-      border-bottom: 1px solid rgba(255,184,0,.1);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .r { color: #FF3B30; }
-    .nav-right { display: flex; align-items: center; gap: 2px; }
-    .nav-link {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #8A7A60; text-decoration: none; padding: 6px 10px; transition: color .15s;
-    }
-    .nav-link:hover { color: #FFB800; }
-    .nav-link.active { color: #FFB800; }
-
-    /* ── LAYOUT ────────────────────────────── */
-    .wrap { max-width: 600px; margin: 0 auto; padding: 40px 20px 72px; }
-
-    /* ── PAGE HEADER ───────────────────────── */
-    .page-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: .22em;
-      text-transform: uppercase; color: #FF3B30; margin-bottom: 10px;
-    }
-    .page-title {
-      font-size: clamp(28px, 7vw, 48px); font-weight: 700;
-      letter-spacing: -.03em; color: #FFFFFF; line-height: 1; margin-bottom: 10px;
-    }
-    .page-sub {
-      font-size: 14px; color: #C8BFA8; line-height: 1.7;
-      margin-bottom: 36px; max-width: 480px;
-    }
-    .page-sub a { color: #FFB800; text-decoration: none; }
-    .page-sub a:hover { text-decoration: underline; }
-
-    /* ── GATE ──────────────────────────────── */
-    .gate {
-      background: #141008; border: 1px solid rgba(255,184,0,.15);
-      border-left: 3px solid #8A7A60; padding: 24px;
-      display: none;
-    }
-    .gate-title { font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; }
-    .gate-sub   { font-size: 13px; color: #C8BFA8; line-height: 1.6; margin-bottom: 16px; }
-    .btn-red {
-      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 11px 24px;
-      background: #FF3B30; color: #FFFFFF; text-decoration: none;
-      border: none; cursor: pointer; transition: background .15s;
-    }
-    .btn-red:hover { background: #CC2F25; }
-    .btn-gold {
-      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 11px 24px;
-      background: #FFB800; color: #0d0800; text-decoration: none;
-      border: none; cursor: pointer; transition: background .15s;
-    }
-    .btn-gold:hover { background: #CC9200; }
-
-    /* ── SUCCESS ───────────────────────────── */
-    .success {
-      background: #141008; border: 1px solid rgba(74,186,90,.25);
-      border-left: 3px solid #4ABA5A; padding: 28px; display: none;
-    }
-    .success-icon  { font-size: 32px; margin-bottom: 12px; }
-    .success-title { font-size: 17px; font-weight: 700; color: #4ABA5A; margin-bottom: 8px; }
-    .success-body  { font-size: 13px; color: #C8BFA8; line-height: 1.7; }
-    .success-body a { color: #FFB800; text-decoration: none; }
-    .success-body a:hover { text-decoration: underline; }
-
-    /* ── FORM SECTIONS ─────────────────────── */
-    /* Each section is a card — clear separation on the dark page */
-    .form-section {
-      background: #141008;
-      border: 1px solid rgba(255,184,0,.1);
-      padding: 22px 22px 18px;
-      margin-bottom: 12px;
-    }
-    .section-head {
-      font-size: 10px; font-weight: 700; letter-spacing: .2em;
-      text-transform: uppercase; color: #FFB800;
-      margin-bottom: 18px; padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255,184,0,.1);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .section-head .step-num {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: rgba(255,184,0,.12); color: #FFB800;
-      font-size: 9px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* ── FIELDS ────────────────────────────── */
-    .field { margin-bottom: 16px; }
-    .field:last-child { margin-bottom: 0; }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
-
-    .field-label {
-      font-size: 11px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: #C8BFA8;
-      display: flex; align-items: baseline; gap: 6px;
-      margin-bottom: 7px;
-    }
-    .req { color: #FF3B30; font-size: 13px; }
-    .opt { color: #8A7A60; font-weight: 400; font-size: 10px;
-           letter-spacing: .04em; text-transform: none; }
-
-    .field-input, .field-select, .field-textarea {
-      width: 100%; background: #1c1408;
-      border: 1px solid rgba(255,255,255,.1);
-      color: #FFFFFF; font-family: inherit; font-size: 14px;
-      padding: 11px 14px; outline: none; line-height: 1.5;
-      transition: border-color .15s, background .15s;
-      -webkit-appearance: none; appearance: none;
-    }
-    .field-input::placeholder, .field-textarea::placeholder { color: #8A7A60; }
-    .field-input:focus, .field-select:focus, .field-textarea:focus {
-      border-color: rgba(255,184,0,.5); background: #221808;
-    }
-    .field-select { cursor: pointer; }
-    .field-select option { background: #1c1408; color: #FFFFFF; }
-    .field-textarea { resize: vertical; min-height: 110px; line-height: 1.65; }
-    .field-hint { font-size: 11px; color: #8A7A60; margin-top: 5px; line-height: 1.5; }
-
-    /* ── RATING TILES ──────────────────────── */
-    .tile-grid-4 {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-    }
-    @media (min-width: 420px) { .tile-grid-4 { grid-template-columns: repeat(4, 1fr); } }
-
-    .tile-opt { cursor: pointer; display: block; }
-    .tile-opt input { display: none; }
-    .tile-inner {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 5px; padding: 13px 8px;
-      background: #1c1408; border: 1px solid rgba(255,255,255,.08);
-      transition: all .15s; text-align: center;
-    }
-    .tile-opt:hover .tile-inner {
-      border-color: rgba(255,184,0,.35); background: #221808;
-    }
-    .tile-opt input:checked + .tile-inner {
-      border-color: #FFB800; background: #221808;
-      box-shadow: 0 0 0 1px #FFB800 inset;
-    }
-    .tile-icon { font-size: 15px; line-height: 1; }
-    .tile-name {
-      font-size: 9px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: #8A7A60; line-height: 1;
-    }
-    .tile-opt input:checked + .tile-inner .tile-name { color: #FFB800; }
-
-    /* ── PRICE TILES ───────────────────────── */
-    .tile-grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    }
-    .price-inner {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 4px; padding: 12px 8px;
-      background: #1c1408; border: 1px solid rgba(255,255,255,.08);
-      transition: all .15s; text-align: center; cursor: pointer;
-    }
-    .price-inner:hover { border-color: rgba(255,184,0,.35); background: #221808; }
-    input[name="price"]:checked + .price-inner {
-      border-color: #FFB800; background: #221808;
-      box-shadow: 0 0 0 1px #FFB800 inset;
-    }
-    .price-sym {
-      font-size: 18px; font-weight: 700; color: #C8BFA8; line-height: 1;
-    }
-    .price-lbl {
-      font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
-      color: #8A7A60;
-    }
-    input[name="price"]:checked + .price-inner .price-sym { color: #FFB800; }
-    input[name="price"]:checked + .price-inner .price-lbl { color: #CC9200; }
-
-    /* ── CHAR COUNTER ──────────────────────── */
-    .char-row { display: flex; justify-content: flex-end; margin-top: 5px; }
-    .char-count { font-size: 11px; }
-    .c-ok   { color: #8A7A60; }
-    .c-warn { color: #FFB800; }
-    .c-over { color: #FF3B30; }
-
-    /* ── UPLOAD ZONE ───────────────────────── */
-    .upload-zone {
-      border: 1px dashed rgba(255,255,255,.15); background: #1c1408;
-      padding: 28px 20px; text-align: center;
-      cursor: pointer; transition: all .15s; position: relative;
-    }
-    .upload-zone:hover {
-      border-color: rgba(255,184,0,.4); background: #221808;
-    }
-    .upload-zone input { display: none; }
-    .upload-icon  { font-size: 22px; margin-bottom: 8px; opacity: .5; }
-    .upload-title { font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
-    .upload-sub   { font-size: 11px; color: #8A7A60; }
-    .img-preview  { display: none; margin-top: 12px; }
-    .img-preview img {
-      max-height: 200px; max-width: 100%; display: block;
-      margin: 0 auto; border: 1px solid rgba(255,184,0,.15);
-    }
-    .img-remove {
-      display: block; font-family: inherit; font-size: 10px; font-weight: 700;
-      letter-spacing: .08em; text-transform: uppercase; margin-top: 8px;
-      background: none; border: none; color: #8A7A60; cursor: pointer; transition: color .15s;
-    }
-    .img-remove:hover { color: #FF3B30; }
-
-    /* ── CROSSPOST ─────────────────────────── */
-    .crosspost-box {
-      background: #141008; border: 1px solid rgba(255,255,255,.07);
-      padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
-    }
-    .crosspost-box input[type="checkbox"] {
-      width: 16px; height: 16px; margin-top: 2px;
-      accent-color: #FFB800; flex-shrink: 0; cursor: pointer;
-    }
-    .crosspost-title { font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 3px; }
-    .crosspost-sub   { font-size: 11px; color: #8A7A60; line-height: 1.55; }
-
-    /* ── CODE OF CONDUCT (first-time) ──────── */
-    #cocWrap {
-      background: #141008; border: 1px solid rgba(255,184,0,.2);
-      border-left: 3px solid #FFB800;
-      padding: 24px 22px; margin-bottom: 16px;
-    }
-    .coc-title {
-      font-size: 10px; font-weight: 700; letter-spacing: .2em;
-      text-transform: uppercase; color: #FFB800; margin-bottom: 16px;
-    }
-    .coc-rule {
-      display: flex; gap: 14px; padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-    .coc-rule:last-of-type { border-bottom: none; margin-bottom: 12px; }
-    .coc-n { font-size: 11px; font-weight: 700; color: #FFB800; min-width: 16px; flex-shrink: 0; padding-top: 2px; }
-    .coc-t { font-size: 13px; color: #C8BFA8; line-height: 1.6; }
-    .coc-t strong { color: #FFFFFF; }
-    .coc-checks { margin-bottom: 14px; }
-    .coc-check {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 11px 0; border-top: 1px solid rgba(255,255,255,.05); cursor: pointer;
-    }
-    .coc-check input {
-      width: 16px; height: 16px; min-width: 16px;
-      margin-top: 2px; accent-color: #FFB800; cursor: pointer;
-    }
-    .coc-check span { font-size: 13px; color: #C8BFA8; line-height: 1.6; }
-    .coc-check span strong { color: #FFFFFF; }
-    .sig-label {
-      font-size: 11px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: #C8BFA8;
-      display: block; margin-bottom: 7px;
-    }
-    .sig-input {
-      width: 100%; background: #1c1408; border: 1px solid rgba(255,255,255,.1);
-      color: #FFFFFF; font-family: inherit; font-size: 14px;
-      padding: 11px 14px; outline: none; transition: border-color .15s;
-      margin-bottom: 7px;
-    }
-    .sig-input::placeholder { color: #8A7A60; }
-    .sig-input:focus { border-color: rgba(255,184,0,.5); }
-    .sig-note { font-size: 11px; color: #8A7A60; line-height: 1.55; margin-bottom: 16px; }
-    .coc-err { font-size: 12px; color: #FF3B30; display: none; margin-bottom: 8px; }
-    .coc-btn {
-      width: 100%; font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      padding: 13px; background: #FFB800; color: #0d0800;
-      border: none; cursor: pointer; transition: background .15s;
-    }
-    .coc-btn:hover { background: #CC9200; }
-
-    /* ── SUBMIT BUTTON ─────────────────────── */
-    .submit-area { margin-top: 16px; }
-    .submit-btn {
-      width: 100%; font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-      padding: 16px; background: #FF3B30; color: #FFFFFF;
-      border: none; cursor: pointer; transition: background .15s;
-    }
-    .submit-btn:hover:not(:disabled) { background: #CC2F25; }
-    .submit-btn:disabled { opacity: .38; cursor: not-allowed; }
-    .form-err {
-      font-size: 12px; color: #FF3B30; margin-top: 10px;
-      display: none; line-height: 1.55;
-    }
-
-    @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post a Review — Pizza Official</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<style>
+  a.logo { text-decoration:none; } a.tab { text-decoration:none; display:inline-block; }
+  .submit-wrap { max-width:680px; margin:0 auto; padding:34px 20px 90px; }
+  h1 { font-family:var(--font-display); font-size:42px; letter-spacing:1.5px; color:var(--red); line-height:1; margin-bottom:8px; }
+  .intro { font-size:13px; color:var(--text-2); margin-bottom:30px; }
+  .gate { display:flex; flex-direction:column; align-items:center; text-align:center; gap:18px; border:1px solid var(--border); background:var(--surface); padding:48px 30px; }
+  .gate-title { font-family:var(--font-display); font-size:28px; letter-spacing:1px; color:var(--red); }
+  .gate-text { font-size:13px; color:var(--text-2); max-width:380px; line-height:1.65; }
+  .gate-text b { color:var(--text); }
+  .signin-btn { background:var(--bsky); color:#fff; border:none; font-family:var(--font-body); font-weight:600; font-size:14px; padding:13px 22px; cursor:pointer; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:9px; }
+  .signin-btn:hover { background:var(--bsky-hover); }
+  .signin-btn svg { width:18px; height:18px; flex-shrink:0; }
+  form { display:none; } form.show { display:block; }
+  .id-strip { display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); padding:12px 16px; margin-bottom:28px; }
+  .avatar { width:38px; height:38px; border-radius:50%; background:var(--raised); border:1px solid var(--red); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:20px; color:var(--red); flex-shrink:0; overflow:hidden; }
+  .avatar img { width:100%; height:100%; object-fit:cover; }
+  .id-strip .handle { font-size:13px; color:var(--text); }
+  .id-strip .role { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--presence); margin-top:3px; }
+  label.fl { display:block; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-2); margin-bottom:7px; }
+  label.fl .opt { color:var(--text-3); text-transform:none; letter-spacing:0; }
+  input[type=text], textarea, select { width:100%; background:var(--surface); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:14px; padding:11px 13px; margin-bottom:16px; border-radius:0; }
+  select { -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer; padding-right:38px; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M3 5l4 4 4-4' stroke='%23FF3B30' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; }
+  select:invalid { color:var(--text-3); }
+  textarea { resize:vertical; min-height:92px; line-height:1.6; }
+  input::placeholder, textarea::placeholder { color:var(--text-3); }
+  input:focus, textarea:focus, select:focus { outline:none; border-color:var(--red); }
+  .missing { border-color:var(--error) !important; box-shadow:0 0 0 1px var(--error); }
+  .posted-overlay { display:none; position:fixed; inset:0; background:rgba(8,6,3,0.9); z-index:300; align-items:center; justify-content:center; padding:20px; }
+  .posted-overlay.show { display:flex; }
+  .posted { text-align:center; padding:40px 28px; border:2px solid var(--red); background:var(--surface); max-width:440px; width:100%; }
+  .posted-check { font-size:48px; line-height:1; margin-bottom:14px; }
+  .posted-title { font-family:var(--font-display); font-size:40px; letter-spacing:1.5px; color:var(--red); line-height:1; margin-bottom:10px; }
+  .posted-sub { font-size:13px; color:var(--text-2); max-width:380px; margin:0 auto 26px; line-height:1.6; }
+  .posted-btn { display:block; max-width:340px; margin:0 auto 12px; padding:13px 18px; text-decoration:none; font-size:14px; font-weight:600; }
+  .posted-btn.bsky { background:var(--bsky); color:#fff; }
+  .posted-btn.bsky:hover { background:var(--bsky-hover); }
+  .posted-btn.map { background:var(--surface); color:var(--text); border:1px solid var(--border); }
+  .posted-btn.map:hover { border-color:var(--red); }
+  .posted-again { background:none; border:none; color:var(--text-3); font-family:var(--font-body); font-size:12px; cursor:pointer; text-decoration:underline; margin-top:8px; }
+  .posted-again:hover { color:var(--text); }
+  input[type=file] { width:100%; background:var(--surface); border:1px solid var(--border-interactive); color:var(--text-2); font-family:var(--font-body); font-size:13px; padding:10px 13px; margin-bottom:16px; }
+  input[type=file]::file-selector-button { background:var(--border); color:var(--text); border:none; font-family:var(--font-body); font-size:12px; padding:6px 12px; margin-right:12px; cursor:pointer; }
+  .bucket { margin-bottom:24px; }
+  .bucket-head { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+  .bucket-num { font-family:var(--font-display); font-size:22px; color:var(--presence); line-height:1; }
+  .bucket-label { font-family:var(--font-display); font-size:22px; letter-spacing:1px; color:var(--text); line-height:1; }
+  .bucket-hint { font-size:12px; color:var(--text-3); margin:0 0 10px 32px; }
+  .ratings { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+  .rating-opt { border:1px solid var(--border-interactive); background:var(--surface); padding:12px; cursor:pointer; text-align:center; transition:border-color .12s, background .12s; }
+  .rating-opt:hover { border-color:var(--red); }
+  .rating-opt.sel { border-color:var(--presence); background:var(--ground-selected); }
+  .rating-opt .glyph { font-size:16px; color:var(--gold); }
+  .rating-opt .name { font-family:var(--font-display); font-size:16px; letter-spacing:1px; color:var(--text); margin-top:4px; }
+  .crosspost { border:1px solid var(--border); background:var(--surface); padding:16px; margin:4px 0 18px; }
+  .cp-label { font-size:13px; color:var(--text); }
+  .cp-sub { font-size:11px; color:var(--text-3); margin-top:2px; }
+  .preview { display:none; margin-top:16px; }
+  .preview.show { display:block; }
+  .preview-tag { display:flex; justify-content:space-between; align-items:center; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--bsky); margin-bottom:10px; }
+  .cc { color:var(--text-3); } .cc.over { color:var(--error); font-weight:600; }
+  .preview-callout { border:1px solid var(--red); background:var(--inset); padding:14px 16px; margin-top:8px; }
+  .pc-title { font-family:var(--font-display); font-size:22px; letter-spacing:1px; color:var(--red); line-height:1; margin-bottom:7px; }
+  .pc-sub { font-size:12px; color:var(--text-2); line-height:1.6; margin-bottom:16px; }
+  .bsky-card { background:var(--inset); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+  .bsky-top { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+  .bsky-av { width:34px; height:34px; border-radius:50%; background:var(--raised); border:1px solid var(--bsky); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:17px; color:var(--bsky); }
+  .bsky-name { font-size:13px; font-weight:600; color:var(--text); }
+  .bsky-handle { font-size:12px; color:var(--text-3); }
+  .bsky-text { font-size:14px; color:var(--text); white-space:pre-line; line-height:1.5; }
+  .bsky-text .hash { color:var(--bsky); }
+  .bsky-img { margin-top:11px; border-radius:8px; height:150px; background:var(--raised); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-3); font-size:11px; background-size:cover; background-position:center; overflow:hidden; }
+  .bsky-altrow { display:flex; align-items:center; gap:7px; font-size:10px; color:var(--text-3); margin-top:8px; }
+  .alt-badge { background:var(--raised); border:1px solid var(--border); padding:2px 6px; letter-spacing:0.5px; color:var(--text-2); }
+  .alt-badge.warn { color:var(--gold); border-color:var(--gold); }
+  .submit-btn { width:100%; background:var(--red); color:var(--text-on-red); border:none; font-family:var(--font-display); font-size:26px; letter-spacing:2px; padding:14px; cursor:pointer; margin-top:8px; }
+  .submit-btn:hover { background:var(--red-hover); }
+  .submit-btn:disabled { opacity:.5; cursor:not-allowed; }
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(8,6,3,0.9); z-index:100; align-items:center; justify-content:center; padding:20px; }
+  .modal-bg.show { display:flex; }
+  .modal { background:var(--surface); border:2px solid var(--red); max-width:520px; width:100%; max-height:86vh; overflow-y:auto; padding:28px; }
+  .modal h2 { font-family:var(--font-display); font-size:30px; letter-spacing:1px; color:var(--red); margin-bottom:16px; }
+  .guideline { display:flex; gap:12px; margin-bottom:14px; }
+  .guideline .mark { color:var(--presence); font-weight:600; flex-shrink:0; }
+  .guideline .body { font-size:13px; color:var(--text-2); }
+  .guideline .body strong { color:var(--text); }
+  .coc { font-size:12px; color:var(--text-3); border-top:1px solid var(--border); padding-top:14px; margin-top:18px; line-height:1.65; }
+  .agree-btn { width:100%; background:var(--presence); color:var(--text-on-red); border:none; font-family:var(--font-display); font-size:22px; letter-spacing:1.5px; padding:12px; cursor:pointer; margin-top:18px; }
+  .agree-btn:hover { background:var(--presence-hover); }
+  .field-help { background:var(--inset); border:1px solid var(--border); padding:12px 14px; margin-bottom:12px; }
+  .fh-row { font-size:12px; color:var(--text-2); line-height:1.5; padding:3px 0; }
+  .fh-row b { color:var(--text); }
+  .fh-glyph { display:inline-block; min-width:54px; }
+  .site-footer { border-top:1px solid var(--border); background:var(--surface); margin-top:40px; padding:22px 20px; }
+  .footer-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .footer-links { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .footer-links a { font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; color:var(--text-2); text-decoration:none; }
+  .footer-links a:hover { color:var(--red); }
+  .footer-copy { font-size:11px; color:var(--text-3); }
+  @media (max-width:760px) {
+    .nav { gap:12px; } .nav-left { gap:14px; min-width:0; flex:1; }
+    .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; gap:2px; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { flex:0 0 auto; white-space:nowrap; padding:8px 11px; }
+    .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+    .ratings { flex-wrap:wrap; }
+    .posted { padding:30px 20px; } .posted-title { font-size:34px; }
+  }
+</style>
 </head>
 <body>
-
-  <nav class="nav">
-    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-right" id="navRight">
-      <a href="/database.html" class="nav-link">Database</a>
-      <a href="/submit.html" class="nav-link active">Submit</a>
-    </div>
-  </nav>
-
-  <div class="wrap">
-
-    <!-- Gate: not signed in -->
-    <div class="gate" id="gateLogin">
-      <div class="gate-title">Sign in to submit a review</div>
-      <div class="gate-sub">You need a Bluesky account. Your account is your identity here — no separate password.</div>
-      <a href="/" class="btn-red">Sign in with Bluesky</a>
-    </div>
-
-    <!-- Success -->
-    <div class="success" id="successMsg">
-      <div class="success-icon">🍕</div>
-      <div class="success-title">Review submitted</div>
-      <div class="success-body" id="successBody">
-        In the queue for approval. Once approved it's in the database permanently.<br><br>
-        <a href="/submit.html">Submit another →</a> &nbsp;·&nbsp;
-        <a href="/profile.html">View your profile →</a>
-      </div>
-    </div>
-
-    <!-- First-time code of conduct -->
-    <div id="cocWrap" style="display:none">
-      <div class="coc-title">Before your first review — code of conduct</div>
-      <div class="coc-rule"><div class="coc-n">1</div><div class="coc-t"><strong>Be honest.</strong> Only review places you've actually been. No paid posts, no fake reviews.</div></div>
-      <div class="coc-rule"><div class="coc-n">2</div><div class="coc-t"><strong>Be specific.</strong> Describe what you tasted. Give someone a real reason to go or skip it.</div></div>
-      <div class="coc-rule"><div class="coc-n">3</div><div class="coc-t"><strong>Be fair.</strong> Criticize the pizza, not the person who made it.</div></div>
-      <div class="coc-rule"><div class="coc-n">4</div><div class="coc-t"><strong>Your reviews stay yours.</strong> Pizza Official indexes them — delete any time.</div></div>
-      <div class="coc-checks">
-        <label class="coc-check"><input type="checkbox" id="cocChk1"><span>I've read the code of conduct and will follow it.</span></label>
-        <label class="coc-check"><input type="checkbox" id="cocChk2"><span>I'll only review places I've <strong>actually visited and eaten at</strong>.</span></label>
-        <label class="coc-check"><input type="checkbox" id="cocChk3"><span>I understand every review goes through approval before appearing publicly.</span></label>
-      </div>
-      <label class="sig-label" for="cocSig">Your name <span style="color:#FF3B30">*</span></label>
-      <input type="text" class="sig-input" id="cocSig" placeholder="Full name" autocomplete="name">
-      <div class="sig-note">Shown once. Saves to your account so you never see this again.</div>
-      <div class="coc-err" id="cocErr"></div>
-      <button class="coc-btn" onclick="agreeAndContinue()">Agree and open the review form</button>
-    </div>
-
-    <!-- The form -->
-    <div id="formWrap" style="display:none">
-
-      <div class="page-eyebrow">◈ Contributor</div>
-      <div class="page-title">SUBMIT A REVIEW</div>
-      <div class="page-sub">400 characters max. Specific beats vague. <a href="/format.html" target="_blank">Format guide →</a></div>
-
-      <!-- SECTION 1: Location -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">1</span>
-          Location
-        </div>
-        <div class="field">
-          <label class="field-label">Restaurant name <span class="req">*</span></label>
-          <input type="text" class="field-input" id="fName" placeholder="Ken's Artisan Pizza" autocomplete="off">
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label class="field-label">City <span class="req">*</span></label>
-            <input type="text" class="field-input" id="fCity" placeholder="Portland" autocomplete="off">
-          </div>
-          <div class="field">
-            <label class="field-label">State / Region <span class="req">*</span></label>
-            <input type="text" class="field-input" id="fRegion" placeholder="OR" autocomplete="off">
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 2: Rating -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">2</span>
-          Rating
-        </div>
-        <div class="tile-grid-4">
-          <label class="tile-opt">
-            <input type="radio" name="rating" value="3" required>
-            <div class="tile-inner">
-              <div class="tile-icon">⭐⭐⭐</div>
-              <div class="tile-name">Legendary</div>
-            </div>
-          </label>
-          <label class="tile-opt">
-            <input type="radio" name="rating" value="2">
-            <div class="tile-inner">
-              <div class="tile-icon">⭐⭐</div>
-              <div class="tile-name">Worth a Trip</div>
-            </div>
-          </label>
-          <label class="tile-opt">
-            <input type="radio" name="rating" value="1">
-            <div class="tile-inner">
-              <div class="tile-icon">⭐</div>
-              <div class="tile-name">Solid</div>
-            </div>
-          </label>
-          <label class="tile-opt">
-            <input type="radio" name="rating" value="0">
-            <div class="tile-inner">
-              <div class="tile-icon">ㄨ</div>
-              <div class="tile-name">Skip It</div>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <!-- SECTION 3: Classification -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">3</span>
-          Classification
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label class="field-label">Style <span class="req">*</span></label>
-            <select class="field-select" id="fStyle" required onchange="updateHint()">
-              <option value="">Select a style…</option>
-              <option>NY Style</option>
-              <option>Neapolitan</option>
-              <option>Roman</option>
-              <option>Detroit</option>
-              <option>Deep Dish</option>
-              <option>Tavern</option>
-              <option>Fast</option>
-            </select>
-            <div class="field-hint" id="styleHint"></div>
-          </div>
-          <div class="field">
-            <label class="field-label">Experience <span class="opt">optional</span></label>
-            <select class="field-select" id="fExperience">
-              <option value="">Select…</option>
-              <option>Slice</option>
-              <option>Casual Sit-Down</option>
-              <option>Full Service</option>
-              <option>Takeout</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label">Price <span class="opt">optional</span></label>
-          <div class="tile-grid-3">
-            <label style="cursor:pointer">
-              <input type="radio" name="price" value="$" style="display:none">
-              <div class="price-inner">
-                <div class="price-sym">$</div>
-                <div class="price-lbl">Under $15</div>
-              </div>
-            </label>
-            <label style="cursor:pointer">
-              <input type="radio" name="price" value="$$" style="display:none">
-              <div class="price-inner">
-                <div class="price-sym">$$</div>
-                <div class="price-lbl">$15 – 30</div>
-              </div>
-            </label>
-            <label style="cursor:pointer">
-              <input type="radio" name="price" value="$$$" style="display:none">
-              <div class="price-inner">
-                <div class="price-sym">$$$</div>
-                <div class="price-lbl">Over $30</div>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 4: Review -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">4</span>
-          Your review
-        </div>
-        <div class="field">
-          <label class="field-label">
-            Review <span class="req">*</span>
-            <span class="opt">400 characters max</span>
-          </label>
-          <textarea class="field-textarea" id="fNotes" maxlength="400" required
-            placeholder="Describe the crust, char, and what to order. Specific beats vague every time."
-            oninput="updateChar()"></textarea>
-          <div class="char-row">
-            <span class="char-count c-ok" id="charCount">0 / 400</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 5: Photo -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">5</span>
-          Photo <span style="font-size:9px;font-weight:400;color:#8A7A60;letter-spacing:0;text-transform:none;margin-left:4px">optional · max 2MB</span>
-        </div>
-        <div class="upload-zone" id="uploadZone"
-          onclick="document.getElementById('fImage').click()"
-          ondragover="event.preventDefault()" ondrop="handleDrop(event)">
-          <input type="file" id="fImage" accept="image/jpeg,image/png,image/webp" onchange="previewImage(this)">
-          <div id="uploadDefault">
-            <div class="upload-icon">📷</div>
-            <div class="upload-title">Click to upload or drag & drop</div>
-            <div class="upload-sub">JPG, PNG, or WebP · under 2MB</div>
-          </div>
-          <div class="img-preview" id="imgPreview">
-            <img id="imgThumb" src="" alt="preview">
-            <button class="img-remove" onclick="removeImage(event)">Remove photo</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 6: Share -->
-      <div class="form-section">
-        <div class="section-head">
-          <span class="step-num">6</span>
-          Share
-        </div>
-        <div class="crosspost-box">
-          <input type="checkbox" id="fCrosspost" checked>
-          <div>
-            <div class="crosspost-title">Post to Bluesky with #PizzaOfficial</div>
-            <div class="crosspost-sub">Share to your Bluesky profile after submitting. Builds the community. Optional.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="submit-area">
-        <div class="form-err" id="formErr"></div>
-        <button type="button" class="submit-btn" id="submitBtn" onclick="submitReview()">
-          Submit for approval
-        </button>
-      </div>
-
+<div class="nav">
+  <div class="nav-left">
+    <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+    <div class="tabs">
+      <a class="tab" href="/database.html">Database</a>
+      <a class="tab" href="/map.html">Map</a>
+      <a class="tab active" href="/submit.html">Post a Review</a>
     </div>
   </div>
+  <div id="navUser"></div>
+</div>
 
-  <script type="module">
+<div class="submit-wrap">
+  <h1>Post a Review</h1>
+  <p class="intro">Two paragraphs. First the pizza — crust, sauce, cheese, toppings. Then the take — value, the visit, why this rating. Be specific. Note what it cost the day you went.</p>
 
-    const STYLE_HINTS = {
-      'NY Style':     'Wide, foldable. If you folded the slice, it\'s NY Style.',
-      'Neapolitan':   'Wood-fired, blistered, soft center. Born in Naples.',
-      'Roman':        'Tonda (cracker-thin) or al Taglio (by weight). Note which.',
-      'Detroit':      'Thick, rectangular, pan-baked. Crispy-bottomed.',
-      'Deep Dish':    'Chicago. Deep pan. Cheese first, sauce on top.',
-      'Tavern':       'Midwest thin-crust, crackery, always square-cut.',
-      'Fast':         'Chains, heat-lamp slices, counter pizza.',
-    };
+  <div class="gate" id="gate">
+    <div class="gate-title">Sign in to contribute</div>
+    <div class="gate-text">Pizza Official runs on Bluesky. Your reviews live on your profile — <b>you own them, we just index them.</b></div>
+    <div style="display:flex; gap:8px; width:100%; max-width:340px;">
+      <input type="text" id="gateHandle" placeholder="you.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false"
+        style="flex:1; min-width:0; margin-bottom:0; background:var(--inset); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:14px; padding:11px 13px;">
+      <button class="signin-btn" onclick="doSignIn()" style="flex-shrink:0;">Sign in</button>
+    </div>
+    <div class="gate-fine" id="gateErr" style="color:var(--error); display:none;"></div>
+  </div>
 
-    const RATING_LABELS = { 3: '⭐⭐⭐ Legendary', 2: '⭐⭐ Worth a Trip', 1: '⭐ Solid', 0: 'ㄨ Skip It' };
+  <form id="reviewForm">
+    <div class="id-strip" id="idStrip"></div>
 
-    let currentDid = null;
-    let uploadedUrl = null;
-    let uploadedPath = null;
+    <label class="fl" for="f_restaurant">Restaurant</label>
+    <input type="text" id="f_restaurant" name="restaurant" placeholder="Tony's Pizza Napoletana" required>
 
-    async function init() {
+    <label class="fl" for="f_location">Location</label>
+    <input type="text" id="f_location" name="location" placeholder="San Francisco, CA" required>
+
+    <label class="fl" for="f_style">Style</label>
+    <select id="f_style" name="style" required>
+      <option value="">Select…</option>
+      <option>NY Style</option>
+      <option>Neapolitan</option>
+      <option>Roman</option>
+      <option>Detroit / Sicilian</option>
+      <option>Deep Dish</option>
+      <option>Tavern</option>
+      <option>Fast / Counter</option>
+    </select>
+
+    <label class="fl" for="f_tier">Price tier</label>
+    <select id="f_tier" name="tier" required>
+      <option value="">Select…</option>
+      <option value="$">$ — under $15</option>
+      <option value="$$">$$ — $15–30</option>
+      <option value="$$$">$$$ — $30+</option>
+    </select>
+
+    <div class="bucket">
+      <div class="bucket-head"><span class="bucket-num">1</span><span class="bucket-label">The Pizza</span></div>
+      <p class="bucket-hint">Crust, sauce, cheese, toppings, how it's cooked. Call out anything house-made. Describe the pie you ate, tell us what stood out.</p>
+      <textarea id="f_pizza" name="pizza" aria-label="The Pizza — crust, sauce, cheese, toppings" required></textarea>
+    </div>
+
+    <div class="bucket">
+      <div class="bucket-head"><span class="bucket-num">2</span><span class="bucket-label">The Take</span></div>
+      <p class="bucket-hint">Why'd you land on your rating? The value, the wait, the visit overall.</p>
+      <textarea id="f_value" name="value" aria-label="The Take — why you rated it, value, the visit" required></textarea>
+    </div>
+
+    <span class="fl" id="ratingLabel">Rating</span>
+    <div class="field-help">
+      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-legendary)">⭐⭐⭐</span><b>Legendary</b> — Ruins other pizza. A benchmark.</div>
+      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-worth)">⭐⭐</span><b>Worth A Trip</b> — Notably good. You'd drive across town.</div>
+      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-solid)">⭐</span><b>Solid</b> — Worth knowing about. Order it if you're there.</div>
+      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-skip-text)">ㄨ</span><b>Skip It</b> — Don't bother.</div>
+    </div>
+    <div class="ratings" id="ratings" role="radiogroup" aria-labelledby="ratingLabel">
+      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="skip" data-glyph="ㄨ"><div class="glyph">ㄨ</div><div class="name">Skip It</div></div>
+      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="solid" data-glyph="⭐"><div class="glyph">⭐</div><div class="name">Solid</div></div>
+      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="trip" data-glyph="⭐⭐"><div class="glyph">⭐⭐</div><div class="name">Worth A Trip</div></div>
+      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="legendary" data-glyph="⭐⭐⭐"><div class="glyph">⭐⭐⭐</div><div class="name">Legendary</div></div>
+    </div>
+    <input type="hidden" name="rating" id="ratingInput" required>
+
+    <label class="fl" for="f_photo">Photo <span class="opt">(a photo of the pizza from your visit)</span></label>
+    <input type="file" id="f_photo" name="photo" accept="image/*" onchange="onPhoto(event)">
+    <label class="fl" for="f_alt">Photo description <span class="opt">(alt text — describe it for screen readers)</span></label>
+    <input type="text" id="f_alt" name="alt" placeholder="A wood-fired Margherita with charred crust and fresh basil.">
+
+    <div class="crosspost">
+      <div class="cp-label">Your review posts to Bluesky</div>
+      <div class="cp-sub">It goes to your profile, tagged #PizzaOfficial. Pizza Official indexes it from there.</div>
+      <div class="preview-callout">
+        <div class="pc-title">Review Preview</div>
+        <div class="pc-sub">Confirm this looks right before posting. If words are cut off, tighten your review — keep it within these limits to maintain quality.</div>
+        <div class="preview show" id="preview">
+          <div class="preview-tag"><span>Your Bluesky post</span><span class="cc" id="cc">0 / 300 · whole post</span></div>
+          <div class="bsky-card">
+            <div class="bsky-top">
+              <div class="bsky-av" id="bAv">?</div>
+              <div><div class="bsky-name" id="bName">You</div><div class="bsky-handle" id="bHandle">@you.bsky.social</div></div>
+            </div>
+            <div class="bsky-text" id="bskyText"></div>
+            <div class="bsky-img" id="bskyImg">No photo attached yet</div>
+            <div class="bsky-altrow" id="bskyAltRow" style="display:none;"><span class="alt-badge" id="altBadge">ALT</span><span id="altText"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Post Review</button>
+  </form>
+
+  <div class="posted-overlay" id="postedOverlay">
+    <div class="posted" id="postedPanel">
+      <div class="posted-check">🍕</div>
+      <div class="posted-title">Posted!</div>
+      <div class="posted-sub" id="postedSub">Your review is live on your Bluesky profile and in the database.</div>
+      <a class="posted-btn bsky" id="postedBsky" href="#" target="_blank" rel="noopener">View &amp; discuss on Bluesky →</a>
+      <a class="posted-btn map" href="/map.html">See it on the map →</a>
+      <button class="posted-again" onclick="postAnother()">Post another review</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="guidelinesModal">
+  <div class="modal">
+    <h2>Before your first review</h2>
+    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Report, don't sell.</strong> "Wood-fired, blistered crust, good char" tells more than "amazing." The goal is to be helpful.</div></div>
+    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Price it honestly.</strong> Pick the tier that matches what you actually paid.</div></div>
+    <div class="guideline"><span class="mark">→</span><div class="body"><strong>That pizza, that visit.</strong> Review what you actually ordered the day you went. Don't post a photo you found online.</div></div>
+    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Don't be a jerk.</strong> Be fair — don't tank a great pizza over a slammed kitchen.</div></div>
+    <div class="coc">Your review lives on your own Bluesky profile under your DID. You can delete it anytime. By posting you agree to keep it honest.</div>
+    <button class="agree-btn" onclick="acceptGuidelines()">I agree — let me post</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/stats.html">Stats</a>
+      <a href="/about.html">About</a>
+      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
+      <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initAuth, signIn, proxyAction } from '/auth.js';
+
+const PZOF_SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
+const PZOF_SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
+
+const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null, agreedAt:null, rating:null, ratingGlyph:null, photoURL:null };
+
+window.doSignIn = async () => {
+  const input = document.getElementById('gateHandle');
+  const err = document.getElementById('gateErr');
+  const handle = (input.value || '').trim();
+  if (!handle) {
+    err.textContent = 'Enter your Bluesky handle';
+    err.style.display = 'block';
+    input.focus();
+    return;
+  }
+  err.style.display = 'none';
+  try { await signIn(handle); }
+  catch (e) { err.textContent = e.message || 'Sign-in failed'; err.style.display = 'block'; }
+};
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('gateHandle');
+  if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
+});
+
+function renderNavUser(u) {
+  const el = document.getElementById('navUser');
+  if (!u) { el.innerHTML = ''; return; }
+  el.innerHTML = `<a href="/profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
+    <span style="font-size:12px;font-weight:600;color:var(--text);">@${u.handle}</span></a>`;
+}
+
+function paintSignedIn() {
+  const gate = document.getElementById('gate');
+  const form = document.getElementById('reviewForm');
+  if (state.signedIn) {
+    gate.style.display = 'none';
+    form.classList.add('show');
+    const initial = (state.displayName || state.handle || '?').charAt(0).toUpperCase();
+    const strip = document.getElementById('idStrip');
+    strip.innerHTML = state.avatar
+      ? `<div class="avatar"><img src="${state.avatar}" alt=""></div><div><div class="handle">@${state.handle}</div></div>`
+      : `<div class="avatar">${initial}</div><div><div class="handle">@${state.handle}</div></div>`;
+    const bAv = document.getElementById('bAv');
+    if (state.avatar) { bAv.style.overflow='hidden'; bAv.style.padding='0'; bAv.innerHTML=`<img src="${state.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;">`; }
+    else { bAv.textContent = initial; }
+    document.getElementById('bName').textContent = state.displayName || state.handle;
+    document.getElementById('bHandle').textContent = '@' + state.handle;
+    renderPreview();
+  } else {
+    gate.style.display = '';
+    form.classList.remove('show');
+  }
+}
+
+async function boot() {
+  const auth = await initAuth();
+  if (auth?.user) {
+    Object.assign(state, {
+      signedIn: true, did: auth.user.did, handle: auth.user.handle,
+      displayName: auth.user.display_name || auth.user.handle, avatar: auth.user.avatar_url,
+    });
+    renderNavUser({ handle: state.handle });
+  }
+  await restoreAgreement();
+  paintSignedIn();
+}
+
+const seg = (typeof Intl !== 'undefined' && Intl.Segmenter) ? new Intl.Segmenter('en', { granularity: 'grapheme' }) : null;
+function graphemes(str) { if (seg) { let n = 0; for (const _ of seg.segment(str)) n++; return n; } return [...str].length; }
+
+window.onPhoto = function (e) {
+  const f = e.target.files[0];
+  if (!f) return;
+  state.photoURL = URL.createObjectURL(f);
+  renderPreview();
+};
+
+function bytesToBase64(bytes) {
+  const CHUNK = 0x8000;
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += CHUNK) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+  return btoa(binary);
+}
+
+async function prepareImage(file) {
+  const MAX_DIM = 1600, TARGET_BYTES = 950000;
+  const img = await new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => res(im);
+    im.onerror = () => rej(new Error('Could not read image'));
+    im.src = URL.createObjectURL(file);
+  });
+  let w = img.naturalWidth, h = img.naturalHeight;
+  if (Math.max(w, h) > MAX_DIM) { const scale = MAX_DIM / Math.max(w, h); w = Math.round(w * scale); h = Math.round(h * scale); }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  let quality = 0.9, blob = null;
+  for (let i = 0; i < 6; i++) {
+    blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', quality));
+    if (blob && blob.size <= TARGET_BYTES) break;
+    quality -= 0.13;
+  }
+  if (!blob) throw new Error('Could not compress image');
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  return { bytes, width: w, height: h };
+}
+
+function renderPreview() {
+  try {
+    const f = document.getElementById('reviewForm');
+    if (!f) return;
+    const get = n => f.elements[n] ? String(f.elements[n].value || '').trim() : '';
+    const restaurant = get('restaurant') || '[Restaurant name]';
+    const loc = get('location') || '[City, State]';
+    const glyph = state.ratingGlyph || '[rating]';
+    const tier = get('tier') || '[$]';
+    const summary = get('pizza') || '[Review summary]';
+    const valueText = get('value') || '';
+    const header = restaurant + '\n' + loc + '\n' + glyph + '\n' + tier + '\n\n';
+    const tail = '\n\n#PizzaOfficial';
+    let body = summary + (valueText ? '\n\n' + valueText : '');
+    const budget = 300 - graphemes(header) - graphemes(tail);
+    if (graphemes(body) > budget) {
+      let out = '', count = 0;
+      for (const g of (seg ? seg.segment(body) : body)) { const ch = seg ? g.segment : g; if (count >= budget - 1) break; out += ch; count++; }
+      body = out.trimEnd() + '…';
+    }
+    const count = graphemes(header) + graphemes(body) + graphemes(tail);
+    const cc = document.getElementById('cc');
+    cc.textContent = count + ' / 300 · whole post';
+    cc.classList.toggle('over', count > 300);
+    document.getElementById('bskyText').innerHTML = (header + body).replace(/\n/g, '<br>') + '<br><br><span class="hash">#PizzaOfficial</span>';
+    const img = document.getElementById('bskyImg');
+    const alt = get('alt');
+    const altRow = document.getElementById('bskyAltRow');
+    if (state.photoURL) {
+      img.style.backgroundImage = "url('" + state.photoURL + "')"; img.textContent = '';
+      altRow.style.display = 'flex';
+      const badge = document.getElementById('altBadge');
+      if (alt) { badge.classList.remove('warn'); document.getElementById('altText').textContent = alt; }
+      else { badge.classList.add('warn'); document.getElementById('altText').innerHTML = '<span style="color:var(--gold)">Add a description above for screen readers</span>'; }
+    } else { img.style.backgroundImage = ''; img.textContent = 'No photo attached yet'; altRow.style.display = 'none'; }
+  } catch (err) { console.error('renderPreview error:', err); }
+}
+
+window.acceptGuidelines = function () {
+  state.agreedAt = new Date().toISOString();
+  try { if (state.did) localStorage.setItem('pzof_agreed_' + state.did, state.agreedAt); } catch (e) {}
+  if (state.did) {
+    fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors', {
+      method: 'POST',
+      headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify({ did: state.did, handle: state.handle, display_name: state.displayName, avatar: state.avatar || null, agreed_at: state.agreedAt }),
+    }).catch(e => console.warn('Could not persist agreement:', e));
+  }
+  document.getElementById('guidelinesModal').classList.remove('show');
+  postReview();
+};
+
+async function restoreAgreement() {
+  if (!state.did) return;
+  try { const a = localStorage.getItem('pzof_agreed_' + state.did); if (a) state.agreedAt = a; } catch (e) {}
+  try {
+    const res = await fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors?select=agreed_at&did=eq.' + encodeURIComponent(state.did),
+      { headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON } });
+    if (res.ok) {
+      const rows = await res.json();
+      if (rows?.[0]?.agreed_at) { state.agreedAt = rows[0].agreed_at; try { localStorage.setItem('pzof_agreed_' + state.did, state.agreedAt); } catch (e) {} }
+    }
+  } catch (e) {}
+}
+
+async function postReview() {
+  const f = document.getElementById('reviewForm');
+  const get = n => f.elements[n] ? f.elements[n].value.trim() : '';
+
+  if (!state.signedIn) { alert('Please sign in with Bluesky first.'); return; }
+
+  const btn = f.querySelector('.submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Posting…'; }
+  let photoUrl = '', bskyUri = '';
+  try {
+    const restaurant = get('restaurant'), loc = get('location');
+    const tier = get('tier'), glyph = state.ratingGlyph || '';
+    const pizzaText = get('pizza'), valueText = get('value');
+    const header = restaurant + '\n' + loc + '\n' + glyph + '\n' + tier + '\n\n';
+    const tail = '\n\n#PizzaOfficial';
+    const fixed = graphemes(header) + graphemes(tail);
+    let body = pizzaText + (valueText ? '\n\n' + valueText : '');
+    const budget = 300 - fixed;
+    if (graphemes(body) > budget) body = [...body].slice(0, budget - 1).join('') + '…';
+    const text = header + body + tail;
+    const tagStart = new TextEncoder().encode(header + body + '\n\n').length;
+    const tagEnd = new TextEncoder().encode(text).length;
+    const facets = [{ index: { byteStart: tagStart + 1, byteEnd: tagEnd }, features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }] }];
+
+    let embed;
+    const photoInput = f.elements['photo'];
+    if (photoInput && photoInput.files[0]) {
       try {
-        const { initAuth } = await import('/auth.js');
-        const auth = await initAuth();
-        if (!auth?.user) { document.getElementById('gateLogin').style.display = 'block'; return; }
-        const u = auth.user;
-        currentDid = u.did;
-
-        // Add @handle to nav
-        const nr = document.getElementById('navRight');
-        const a = document.createElement('a');
-        a.href = '/profile.html'; a.className = 'nav-link'; a.textContent = '@' + u.handle;
-        nr.appendChild(a);
-
-        // First-time CoC check
-        if (!u.agreed_at) {
-          document.getElementById('cocWrap').style.display = 'block';
-        } else {
-          document.getElementById('formWrap').style.display = 'block';
-        }
-      } catch (e) {
-        console.error(e);
-        document.getElementById('gateLogin').style.display = 'block';
+        const prepared = await prepareImage(photoInput.files[0]);
+        const base64 = bytesToBase64(prepared.bytes);
+        const up = await proxyAction('uploadBlob', { data: base64, mimeType: 'image/jpeg' });
+        const blob = up.blob;
+        const imageRecord = { image: blob, alt: get('alt') || restaurant };
+        if (prepared.width && prepared.height) imageRecord.aspectRatio = { width: prepared.width, height: prepared.height };
+        embed = { $type: 'app.bsky.embed.images', images: [imageRecord] };
+        const cid = (blob.ref && (blob.ref.$link || blob.ref.toString())) || '';
+        photoUrl = cid ? 'https://cdn.bsky.app/img/feed_fullsize/plain/' + state.did + '/' + cid + '@jpeg' : '';
+      } catch (upErr) {
+        console.error('Image upload failed — posting review without photo:', upErr);
+        embed = undefined; photoUrl = '';
+        alert('Heads up: the photo could not be uploaded, so your review will post without it. You can add a photo by editing the post on Bluesky.');
       }
     }
 
-    window.agreeAndContinue = async function() {
-      const errEl = document.getElementById('cocErr');
-      errEl.style.display = 'none';
-      if (!document.getElementById('cocChk1').checked || !document.getElementById('cocChk2').checked || !document.getElementById('cocChk3').checked) {
-        errEl.textContent = 'Please check all three boxes.'; errEl.style.display = 'block'; return;
-      }
-      const sig = document.getElementById('cocSig').value.trim();
-      if (!sig) { errEl.textContent = 'Please type your name.'; errEl.style.display = 'block'; document.getElementById('cocSig').focus(); return; }
-      const btn = event.currentTarget || event.target;
-      btn.disabled = true; btn.textContent = 'Saving…';
-      try {
-        const res = await fetch('/.netlify/functions/agree', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ did: currentDid, signature_name: sig }),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        try { const c = JSON.parse(sessionStorage.getItem('pzof_user') || '{}'); c.agreed_at = new Date().toISOString(); sessionStorage.setItem('pzof_user', JSON.stringify(c)); } catch {}
-        document.getElementById('cocWrap').style.display = 'none';
-        document.getElementById('formWrap').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch (e) {
-        btn.disabled = false; btn.textContent = 'Agree and open the review form';
-        errEl.textContent = 'Error: ' + e.message; errEl.style.display = 'block';
-      }
-    };
+    const postPayload = { text, facets, createdAt: new Date().toISOString() };
+    if (embed) postPayload.embed = embed;
+    const rt = await proxyAction('post', postPayload);
+    bskyUri = rt.uri;
 
-    window.updateHint = () => {
-      document.getElementById('styleHint').textContent = STYLE_HINTS[document.getElementById('fStyle').value] || '';
-    };
-    window.updateChar = () => {
-      const len = document.getElementById('fNotes').value.length;
-      const el = document.getElementById('charCount');
-      el.textContent = len + ' / 400';
-      el.className = 'char-count ' + (len > 380 ? 'c-over' : len > 300 ? 'c-warn' : 'c-ok');
-    };
-    window.previewImage = (input) => {
-      const file = input.files[0]; if (!file) return;
-      if (file.size > 2097152) { alert('Image must be under 2MB'); input.value = ''; return; }
-      const r = new FileReader();
-      r.onload = e => { document.getElementById('imgThumb').src = e.target.result; document.getElementById('uploadDefault').style.display = 'none'; document.getElementById('imgPreview').style.display = 'block'; };
-      r.readAsDataURL(file);
-    };
-    window.handleDrop = (e) => {
-      e.preventDefault(); const file = e.dataTransfer.files[0]; if (!file) return;
-      const input = document.getElementById('fImage'); const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files; previewImage(input);
-    };
-    window.removeImage = (e) => {
-      e.stopPropagation(); document.getElementById('fImage').value = ''; document.getElementById('imgThumb').src = ''; document.getElementById('uploadDefault').style.display = 'block'; document.getElementById('imgPreview').style.display = 'none'; uploadedUrl = null; uploadedPath = null;
-    };
-
-    function buildPost(name, location, ratingVal, style, notes) {
-      const label = RATING_LABELS[ratingVal] || '⭐ Solid';
-      const body = notes.length > 220 ? notes.slice(0, 220) + '…' : notes;
-      const text = `${label} — ${name}\n${location} · ${style}\n\n${body}\n\n#PizzaOfficial`;
-      const enc = new TextEncoder();
-      const tagStart = text.lastIndexOf('#PizzaOfficial');
-      const bs = enc.encode(text.slice(0, tagStart)).length;
-      const be = bs + enc.encode('#PizzaOfficial').length;
-      return { text, facets: [{ index: { byteStart: bs, byteEnd: be }, features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }] }] };
+    let lat = null, lng = null;
+    async function geo(q) {
+      const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), { headers: { Accept: 'application/json' } });
+      const j = await r.json();
+      return (j && j[0]) ? { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) } : null;
     }
+    try {
+      let hit = await geo(restaurant + ', ' + loc);
+      if (!hit) hit = await geo(loc);
+      if (hit) { lat = hit.lat; lng = hit.lng; }
+    } catch (geoErr) { console.warn('Geocode failed (review still saves, no map pin):', geoErr); }
 
-    async function postToBluesky(reviewId, name, location, ratingVal, style, notes) {
-      try {
-        const [{ BrowserOAuthClient }, { Agent }] = await Promise.all([
-          import('https://esm.sh/@atproto/oauth-client-browser@0.3.37?bundle'),
-          import('https://esm.sh/@atproto/api?bundle'),
-        ]);
-        const client = await BrowserOAuthClient.load({ clientId: 'https://pizzaofficial.biz/oauth/client-metadata.json', handleResolver: 'https://bsky.social' });
-        const result = await client.init();
-        if (!result?.session) return null;
-        const agent = new Agent(result.session);
-        const { text, facets } = buildPost(name, location, ratingVal, style, notes);
-        const postResult = await agent.post({ text, facets, langs: ['en'] });
-        if (reviewId && postResult?.uri) {
-          await fetch('/.netlify/functions/update-review-bluesky', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ did: currentDid, review_id: reviewId, bluesky_uri: postResult.uri, bluesky_cid: postResult.cid }),
-          });
-        }
-        return postResult;
-      } catch (e) { console.warn('[submit] bsky:', e.message); return null; }
-    }
-
-    window.submitReview = async function() {
-      const btn = document.getElementById('submitBtn');
-      const errEl = document.getElementById('formErr');
-      errEl.style.display = 'none';
-      const name   = document.getElementById('fName').value.trim();
-      const city   = document.getElementById('fCity').value.trim();
-      const region = document.getElementById('fRegion').value.trim();
-      const rating = document.querySelector('input[name="rating"]:checked');
-      const style  = document.getElementById('fStyle').value;
-      const exp    = document.getElementById('fExperience').value || null;
-      const price  = document.querySelector('input[name="price"]:checked')?.value || null;
-      const notes  = document.getElementById('fNotes').value.trim();
-      if (!name || !city || !region || !rating || !style || !notes) {
-        errEl.textContent = 'Please fill in all required fields.'; errEl.style.display = 'block'; return;
-      }
-      btn.disabled = true; btn.textContent = 'Submitting…';
-
-      // Upload image
-      const imgFile = document.getElementById('fImage').files[0];
-      if (imgFile && !uploadedUrl) {
-        try {
-          btn.textContent = 'Uploading photo…';
-          const { getDb } = await import('/auth.js');
-          const db = await getDb();
-          const ext = imgFile.name.split('.').pop();
-          const path = currentDid.replace(/[^a-z0-9]/gi, '-') + '/' + Date.now() + '.' + ext;
-          const { error: upErr } = await db.storage.from('pizza-images').upload(path, imgFile);
-          if (upErr) throw upErr;
-          const { data: urlData } = db.storage.from('pizza-images').getPublicUrl(path);
-          uploadedUrl = urlData.publicUrl; uploadedPath = path;
-        } catch (ex) {
-          const proceed = confirm('Photo upload failed (' + ex.message + ').\n\nSubmit the review without the photo?');
-          if (!proceed) { btn.disabled = false; btn.textContent = 'Submit for approval'; return; }
-          uploadedUrl = null; uploadedPath = null;
-        }
-      }
-
-      // Save review
-      let reviewId = null;
-      try {
-        btn.textContent = 'Saving…';
-        const res = await fetch('/.netlify/functions/submit-review', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ did: currentDid, name, location: city + ', ' + region, city, region, rating: rating.value, style, experience: exp, price, notes, image_url: uploadedUrl, image_path: uploadedPath }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(typeof data === 'string' ? data : JSON.stringify(data));
-        reviewId = data.id;
-      } catch (ex) {
-        errEl.textContent = ex.message; errEl.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Submit for approval'; return;
-      }
-
-      // Bluesky
-      let bskyResult = null;
-      if (document.getElementById('fCrosspost').checked) {
-        btn.textContent = 'Posting to Bluesky…';
-        bskyResult = await postToBluesky(reviewId, name, city + ', ' + region, parseInt(rating.value), style, notes);
-      }
-
-      const bskyLine = bskyResult?.uri
-        ? `<br><br>✓ Posted to Bluesky with <a href="https://bsky.app/search?q=%23PizzaOfficial" target="_blank">#PizzaOfficial</a>`
-        : (document.getElementById('fCrosspost').checked ? '<br><br>Note: Bluesky post failed — review is saved.' : '');
-
-      document.getElementById('successBody').innerHTML =
-        `In the queue for approval. Once approved it's in the database permanently.${bskyLine}<br><br>` +
-        `<a href="/submit.html">Submit another →</a> &nbsp;·&nbsp; <a href="/profile.html">View your profile →</a>`;
-      document.getElementById('formWrap').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const row = {
+      author_did: state.did, bsky_uri: bskyUri, bsky_post_uri: bskyUri,
+      restaurant, location: loc, lat, lng,
+      style: get('style'), price_tier: tier, rating: state.rating,
+      pizza: get('pizza'), value_experience: get('value'),
+      photo_url: photoUrl, photo_alt: get('alt'), agreed_at: state.agreedAt,
     };
+    await fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors', {
+      method: 'POST',
+      headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: JSON.stringify({ did: state.did, handle: state.handle, display_name: state.displayName, avatar: state.avatar || null }),
+    });
+    const res = await fetch(PZOF_SUPABASE_URL + '/rest/v1/reviews', {
+      method: 'POST',
+      headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row),
+    });
+    if (!res.ok) console.warn('Supabase insert failed', await res.text());
 
-    init();
-  </script>
+    f.reset();
+    document.querySelectorAll('.rating-opt').forEach(o => { o.classList.remove('sel'); o.setAttribute('aria-checked', 'false'); });
+    state.rating = null; state.ratingGlyph = null; state.photoURL = null;
+    const bskyUrl = bskyUri && bskyUri.startsWith('at://') ? 'https://bsky.app/profile/' + state.handle + '/post/' + bskyUri.split('/').pop() : '';
+    showPosted(restaurant, bskyUrl);
+  } catch (e) {
+    alert('Something went wrong posting your review: ' + (e.message || e));
+    console.error(e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Post Review'; }
+  }
+}
+
+function showPosted(restaurant, bskyUrl) {
+  document.getElementById('postedSub').textContent = (restaurant ? 'Your review of ' + restaurant + ' is live' : 'Your review is live') + ' on your Bluesky profile and in the database.';
+  const b = document.getElementById('postedBsky');
+  if (bskyUrl) { b.href = bskyUrl; b.style.display = 'block'; } else { b.style.display = 'none'; }
+  document.getElementById('postedOverlay').classList.add('show');
+}
+window.postAnother = function () {
+  document.getElementById('postedOverlay').classList.remove('show');
+  renderPreview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+function selectRating(opt) {
+  document.querySelectorAll('.rating-opt').forEach(o => { o.classList.remove('sel'); o.setAttribute('aria-checked', 'false'); });
+  opt.classList.add('sel'); opt.setAttribute('aria-checked', 'true');
+  state.rating = opt.dataset.val; state.ratingGlyph = opt.dataset.glyph;
+  document.getElementById('ratingInput').value = opt.dataset.val;
+  renderPreview();
+}
+document.querySelectorAll('.rating-opt').forEach(opt => {
+  opt.addEventListener('click', () => selectRating(opt));
+  opt.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectRating(opt); } });
+});
+document.getElementById('reviewForm').addEventListener('input', renderPreview);
+
+function flagMissing(el) {
+  el.classList.add('missing'); el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.addEventListener('change', () => el.classList.remove('missing'), { once: true });
+}
+document.getElementById('reviewForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  for (const name of ['restaurant', 'location', 'style', 'tier', 'pizza', 'value']) {
+    const el = f.elements[name];
+    if (el && !el.value.trim()) { flagMissing(el); return; }
+  }
+  if (!state.rating) { alert('Pick a rating.'); return; }
+  if (!state.agreedAt) { document.getElementById('guidelinesModal').classList.add('show'); return; }
+  postReview();
+});
+
+boot();
+</script>
 </body>
 </html>
