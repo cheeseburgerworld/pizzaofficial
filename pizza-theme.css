@@ -9,9 +9,6 @@
 
    Contrast verified (WCAG 2.1): text tokens ≥ 7:1 on ground/
    surface (AA/AAA), --border-interactive ≥ 3:1 (SC 1.4.11).
-
-   Scope note: this file currently defines only the tokens used by
-   index.html and about.html. Need to add per tier rating system later.
    ============================================================ */
 
 :root {
@@ -45,6 +42,22 @@
 
   /* ---- Accent / error ---- */
   --error: #ff5a4e;
+  --ground-selected: #1f1f00;  /* selected/active state (gold-tinted dark) */
+
+  /* ---- Rating tiers ----
+     Deliberately not reusing --red here: red is already pizza's primary
+     action color everywhere (buttons, nav border), so using it for
+     Legendary too would make the tier badge visually indistinguishable
+     from an ordinary button. Gold reads as "rare" without colliding.
+     Whether red should become a reserved/sacred color the way CBDB's
+     green is (bolt + Legendary ONLY, never a button) is still an open
+     question — flagged, not decided, since it'd mean re-skinning every
+     existing red button sitewide. */
+  --rate-legendary:  #ffd60a;
+  --rate-worth:      #ffb800;
+  --rate-solid:      #e8843c;
+  --rate-skip-fill:  #6b4a2f;
+  --rate-skip-text:  #d4a878;
 
   /* ---- Type ---- */
   --font-display: 'Bebas Neue', sans-serif;    /* headings, logo — tall, condensed, loud */
