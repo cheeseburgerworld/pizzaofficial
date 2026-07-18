@@ -579,6 +579,19 @@ document.getElementById('reviewForm').addEventListener('submit', e => {
   postReview();
 });
 
+// Surface a sign-in failure returned from /auth/start or /oauth/callback —
+// previously this landed back here silently with no visible error at all.
+(function showReturnedAuthError() {
+  const params = new URLSearchParams(location.search);
+  const err = params.get('auth_error');
+  if (!err) return;
+  const el = document.getElementById('gateErr');
+  if (el) { el.textContent = 'Sign-in failed: ' + decodeURIComponent(err); el.style.display = 'block'; }
+  params.delete('auth_error');
+  const clean = location.pathname + (params.toString() ? '?' + params.toString() : '');
+  history.replaceState(null, '', clean);
+})();
+
 boot();
 </script>
 </body>
