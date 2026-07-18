@@ -1,379 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Map — PIZZA⚡OFFICIAL</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800; color: #FFFFFF;
-      height: 100vh; height: 100dvh;
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.03) 3px, rgba(0,0,0,.03) 4px);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map — Pizza Official</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  a.logo { text-decoration:none; } a.tab { text-decoration:none; display:inline-block; }
+  html, body { height:auto; min-height:100%; }
+  body { overflow-y:auto; }
 
-    /* NAV */
-    .nav {
-      height: 54px; background: #0d0800;
-      border-bottom: 1px solid rgba(255,184,0,.1);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; flex-shrink: 0; z-index: 50; position: relative;
-    }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .r { color: #FF3B30; }
-    .nav-links { display: flex; gap: 2px; }
-    .nav-link {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #8A7A60; text-decoration: none; padding: 6px 10px; transition: color .15s;
-    }
-    .nav-link:hover { color: #FFB800; }
-    .nav-link.active { color: #FFB800; }
+  /* ── MAP VIEW ── */
+  #mapView { height:calc(100vh - 55px); }
+  .map-layout { display:flex; height:100%; position:relative; }
+  #map { flex:1; background:var(--ground); }
+  #map .leaflet-tile-pane { filter:brightness(1.7) contrast(1.05) saturate(1.1); }
 
-    /* MAP FILLS REMAINING HEIGHT */
-    #map {
-      flex: 1;
-      background: #1a1000;
-    }
+  .panel { width:380px; flex-shrink:0; background:var(--surface); border-left:1px solid var(--border); overflow-y:auto; display:flex; flex-direction:column; }
+  .panel-empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 30px; }
+  .pe-bolt { font-size:34px; margin-bottom:16px; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; opacity:0.9; }
+  .pe-title { font-family:var(--font-display); font-size:26px; letter-spacing:1px; color:var(--text); margin-bottom:10px; }
+  .pe-sub { font-size:13px; color:var(--text-3); line-height:1.6; max-width:240px; }
+  .review-backdrop { display:none; }
+  .review { display:none; }
+  .review.show { display:block; }
+  .panel.has-review .panel-empty { display:none; }
+  .rv-header { position:sticky; top:0; z-index:30; display:flex; align-items:center; justify-content:flex-end; height:30px; padding:0 9px; background:var(--inset); border-bottom:1px solid var(--raised); }
+  .rv-close { width:22px; height:22px; border:none; background:none; color:#fff; font-size:20px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .rv-close:hover { color:var(--red); }
+  .rv-namerow { display:flex; align-items:center; gap:10px; }
+  .rv-nav { display:none; flex-shrink:0; }
+  .review.multi .rv-nav { display:flex; }
+  .rv-arrow { width:32px; height:32px; border:none; border-radius:50%; background:var(--red); color:var(--text-on-red); font-size:19px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .12s; }
+  .rv-arrow:hover { background:var(--red-hover); }
+  .rv-arrow:active { transform:translateY(1px); }
+  .rv-count { display:none; font-size:11px; color:var(--text-3); letter-spacing:1px; margin:5px 0 0; }
+  .review.multi .rv-count { display:block; }
+  .rv-photo { width:100%; height:240px; background:var(--inset); background-size:contain; background-repeat:no-repeat; background-position:center; border-bottom:1px solid var(--border); }
+  .rv-head { padding:22px 26px 16px; border-bottom:1px solid var(--border); }
+  .rv-name { font-family:var(--font-display); font-size:34px; letter-spacing:1px; color:var(--text); line-height:1; flex:1; min-width:0; }
+  .rv-loc { font-size:12px; color:var(--text-2); margin-top:5px; }
+  .rv-meta { display:flex; gap:12px; margin-top:14px; align-items:center; flex-wrap:wrap; }
+  .rv-rating { font-size:15px; display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:4px; }
+  .rv-rating .lab { font-family:var(--font-display); font-size:15px; letter-spacing:1px; }
+  .rv-tier { font-size:14px; color:var(--text); font-weight:600; }
+  .rv-style { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-2); border:1px solid var(--border); padding:3px 8px; }
+  .rv-bucket { padding:16px 26px; border-bottom:1px solid var(--raised); }
+  .rv-bucket-label { font-family:var(--font-display); font-size:15px; letter-spacing:1.5px; color:var(--text); margin-bottom:7px; }
+  .rv-bucket-text { font-size:13px; color:var(--text-2); line-height:1.6; }
+  .rv-by { padding:16px 26px 3px; font-size:13px; color:var(--text-2); letter-spacing:0.3px; }
+  .rv-by b { color:var(--text); font-weight:600; }
+  .rv-date { display:block; padding:0 26px 16px; font-size:12px; color:var(--text-3); letter-spacing:0.5px; }
+  .rv-bsky { display:block; margin:4px 26px 22px; padding:11px 14px; background:var(--bsky); color:#fff; text-decoration:none; font-size:13px; text-align:center; font-weight:600; }
+  .rv-bsky:hover { background:var(--bsky-hover); }
+  .cb-pin { border-radius:50%; border:3px solid var(--ground); box-shadow:0 0 0 1px rgba(0,0,0,0.6), 0 1px 6px rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+  .rv-name-bolt { color:var(--rate-legendary); font-size:0.7em; vertical-align:middle; margin-left:6px; }
+  .pin-skip { background:var(--rate-skip-fill); width:14px; height:14px; }
+  .pin-solid { background:var(--rate-solid); width:18px; height:18px; }
+  .pin-trip { background:var(--rate-worth); width:22px; height:22px; }
+  .pin-legendary { background:var(--rate-legendary); width:30px; height:30px; box-shadow:0 0 0 1px rgba(0,0,0,0.6), 0 0 12px rgba(255,214,10,0.4); }
+  .pin-legendary .pin-bolt { color:var(--inset); font-size:13px; font-weight:700; line-height:1; }
+  .pin-count { position:absolute; top:-5px; right:-5px; min-width:15px; height:15px; padding:0 3px; border-radius:8px; background:var(--red); color:var(--text-on-red); font-size:10px; font-weight:700; line-height:15px; text-align:center; border:1.5px solid var(--ground); }
+  .leaflet-popup-content-wrapper { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:0; font-family:var(--font-body); }
+  .leaflet-popup-content { margin:10px 14px; }
+  .leaflet-popup-tip { background:var(--surface); }
+  .pop-name { font-family:var(--font-display); font-size:18px; letter-spacing:1px; color:var(--text); text-align:center; }
+  .pop-rating { font-size:12px; color:var(--text); margin-top:2px; text-align:center; }
+  .pop-price { font-size:12px; color:var(--text); margin-top:2px; letter-spacing:1px; text-align:center; }
 
-    /* Override Leaflet defaults for dark theme */
-    .leaflet-container {
-      background: #1a1000;
-      font-family: 'IBM Plex Mono', monospace;
-    }
-    .leaflet-tile-pane { filter: brightness(.7) saturate(.6) hue-rotate(15deg); }
-    .leaflet-control-zoom a {
-      background: #1a1000 !important; color: #C8BFA8 !important;
-      border-color: rgba(255,184,0,.2) !important;
-      font-family: 'IBM Plex Mono', monospace !important;
-    }
-    .leaflet-control-zoom a:hover { background: #221808 !important; color: #FFB800 !important; }
-    .leaflet-control-attribution {
-      background: rgba(13,8,0,.8) !important; color: #8A7A60 !important;
-      font-size: 9px;
-    }
-    .leaflet-control-attribution a { color: #8A7A60 !important; }
+  /* ── MAP FILTER + LEGEND ── */
+  .map-filter { position:absolute; top:14px; left:14px; z-index:1100; background:rgba(13,8,0,0.96); border:1px solid var(--border); padding:9px 12px; display:flex; align-items:center; gap:9px; }
+  .mf-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); }
+  #citySelect { background:var(--inset); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:13px; padding:6px 9px; cursor:pointer; }
+  #citySelect:focus { outline:none; border-color:var(--red); }
+  .legend { position:absolute; bottom:18px; left:18px; z-index:1100; background:rgba(13,8,0,0.94); border:1px solid var(--border); padding:11px 13px; pointer-events:none; }
+  .legend-title { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:8px; }
+  .legend-row { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-2); margin-bottom:5px; }
+  .legend-row:last-child { margin-bottom:0; }
+  .legend-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
 
-    /* CUSTOM MARKERS */
-    .pizza-marker {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; cursor: pointer;
-      border: 2px solid rgba(255,184,0,.4);
-      transition: transform .15s, border-color .15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,.5);
+  .site-footer { border-top:1px solid var(--border); background:var(--surface); margin-top:40px; padding:22px 20px; }
+  .footer-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .footer-links { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .footer-links a { font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; color:var(--text-2); text-decoration:none; }
+  .footer-links a:hover { color:var(--red); }
+  .footer-copy { font-size:11px; color:var(--text-3); }
+
+  @media (max-width:760px) {
+    .nav { gap:12px; } .nav-left { gap:14px; min-width:0; flex:1; }
+    .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; gap:2px; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { flex:0 0 auto; white-space:nowrap; padding:8px 11px; }
+    .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+    .map-layout { flex-direction:column; }
+    #map { flex:1; min-height:0; }
+    #mapView { height:calc(100vh - 130px); display:flex; flex-direction:column; }
+    .map-filter { top:14px; left:14px; bottom:auto; right:auto; transform:none; }
+    .legend { display:none; }
+    .panel { width:auto; border:none; background:transparent; display:contents; }
+    .panel-empty { display:none; }
+    .review-backdrop { display:none; position:fixed; inset:0; background:rgba(8,6,3,0.82); z-index:1250; }
+    .review-backdrop.show { display:block; }
+    .review.show {
+      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:calc(100% - 28px); max-width:440px; max-height:82vh; overflow-y:auto;
+      background:var(--surface); border:1px solid var(--text); box-shadow:0 14px 44px rgba(0,0,0,0.6);
+      z-index:1300;
     }
-    .pizza-marker.r3 { background: #221808; border-color: #FFB800; }
-    .pizza-marker.r2 { background: #1c1408; border-color: rgba(255,184,0,.5); }
-    .pizza-marker.r1 { background: #181008; border-color: rgba(255,184,0,.25); }
-    .pizza-marker.r0 { background: #181008; border-color: rgba(255,255,255,.15); }
-    .pizza-marker:hover { transform: scale(1.2); border-color: #FFB800; }
-
-    /* REVIEW DRAWER */
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.6); z-index: 400;
+    .review.show::after {
+      content:''; position:sticky; bottom:0; left:0; display:block; height:30px; margin-top:-30px;
+      background:linear-gradient(to bottom, rgba(13,8,0,0), var(--surface)); pointer-events:none;
     }
-    .overlay.open { display: block; }
-
-    .drawer {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #141008; border-top: 1px solid rgba(255,184,0,.15);
-      z-index: 500; max-height: 85vh; overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform .28s cubic-bezier(.4,0,.2,1);
-    }
-    .drawer.open { transform: translateY(0); }
-
-    @media (min-width: 640px) {
-      .drawer {
-        left: auto; top: 54px; bottom: 0; right: 0; width: 380px;
-        max-height: calc(100vh - 54px); border-top: none;
-        border-left: 1px solid rgba(255,184,0,.15);
-        transform: translateX(100%);
-      }
-      .drawer.open { transform: translateX(0); }
-    }
-
-    .drawer-handle {
-      width: 36px; height: 4px; background: rgba(255,184,0,.2);
-      border-radius: 2px; margin: 12px auto 0;
-    }
-    @media (min-width: 640px) { .drawer-handle { display: none; } }
-
-    .drawer-img {
-      width: 100%; aspect-ratio: 16/9; background: #0d0800;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .drawer-img img { width: 100%; height: 100%; object-fit: cover; }
-    .drawer-placeholder { font-size: 48px; opacity: .15; }
-
-    .drawer-body { padding: 18px 20px 28px; }
-
-    .d-rating { font-size: 16px; margin-bottom: 6px; }
-    .d-rating-lbl { font-size: 12px; font-weight: 700; color: #FFB800; }
-
-    .d-name { font-size: 20px; font-weight: 700; color: #FFFFFF; margin-bottom: 10px; line-height: 1.2; }
-
-    .d-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .d-tag {
-      font-size: 9px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; padding: 3px 9px;
-      border: 1px solid rgba(255,184,0,.2); color: #C8BFA8;
-    }
-    .d-tag.hi { border-color: #FFB800; color: #FFB800; }
-    .d-price-tag { color: #C8BFA8; border-color: rgba(255,255,255,.15); }
-
-    .d-hr { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 12px 0; }
-
-    .d-notes { font-size: 13px; color: #FFFFFF; line-height: 1.75; margin-bottom: 16px; }
-
-    .d-reviewer {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-    }
-    .d-av {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: #1c1408; border: 1px solid rgba(255,184,0,.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #8A7A60; flex-shrink: 0;
-    }
-    .d-reviewer-handle { font-size: 12px; font-weight: 700; color: #C8BFA8; }
-    .d-reviewer-date { font-size: 11px; color: #8A7A60; margin-left: auto; }
-
-    .d-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .d-btn {
-      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      padding: 9px 18px; text-decoration: none; cursor: pointer;
-      transition: all .15s; border: none; white-space: nowrap;
-    }
-    .d-btn-gold { background: #FFB800; color: #0d0800; }
-    .d-btn-gold:hover { background: #CC9200; }
-    .d-btn-outline { background: transparent; color: #C8BFA8; border: 1px solid rgba(255,255,255,.15); }
-    .d-btn-outline:hover { border-color: #C8BFA8; color: #FFFFFF; }
-
-    /* STATS BAR */
-    .map-stats {
-      position: absolute; top: 68px; left: 12px;
-      background: rgba(13,8,0,.9); border: 1px solid rgba(255,184,0,.2);
-      padding: 8px 14px; z-index: 200; backdrop-filter: blur(8px);
-      font-size: 11px; font-weight: 700; color: #C8BFA8;
-      display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
-    }
-    .map-stats .live-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #4ABA5A;
-      animation: pulse 2s ease-in-out infinite; flex-shrink: 0;
-    }
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(74,186,90,.5); }
-      50%      { box-shadow: 0 0 0 5px rgba(74,186,90,0); }
-    }
-
-    /* NO GEO NOTICE */
-    .no-geo {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center; z-index: 200;
-      background: rgba(13,8,0,.9); border: 1px solid rgba(255,184,0,.2);
-      padding: 24px 28px; max-width: 320px;
-    }
-    .no-geo-title { font-size: 14px; font-weight: 700; color: #FFB800; margin-bottom: 8px; }
-    .no-geo-sub { font-size: 12px; color: #C8BFA8; line-height: 1.65; }
-  </style>
+    body.review-open .map-filter, body.review-open .leaflet-control-zoom { display:none !important; }
+    .rv-name { font-size:28px; }
+  }
+</style>
 </head>
 <body>
-
-  <nav class="nav">
-    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-links">
-      <a href="/database.html" class="nav-link">List</a>
-      <a href="/map.html" class="nav-link active">Map</a>
-      <a href="/stats.html" class="nav-link">Stats</a>
-    </div>
-  </nav>
-
-  <div id="map"></div>
-
-  <!-- Stats bar -->
-  <div class="map-stats" id="mapStats" style="display:none">
-    <div class="live-dot"></div>
-    <span id="statsText">Loading…</span>
-  </div>
-
-  <!-- Overlay + Drawer -->
-  <div class="overlay" id="overlay" onclick="closeDrawer()"></div>
-  <div class="drawer" id="drawer">
-    <div class="drawer-handle"></div>
-    <div class="drawer-img" id="dImg"></div>
-    <div class="drawer-body">
-      <div class="d-rating" id="dRating"></div>
-      <div class="d-name"   id="dName"></div>
-      <div class="d-tags"   id="dTags"></div>
-      <hr class="d-hr">
-      <div class="d-notes"    id="dNotes"></div>
-      <div class="d-reviewer" id="dReviewer"></div>
-      <div class="d-actions"  id="dActions"></div>
+<div class="nav">
+  <div class="nav-left">
+    <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+    <div class="tabs">
+      <a class="tab" href="/database.html">Database</a>
+      <a class="tab active" href="/map.html">Map</a>
+      <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
+  <a href="/profile.html" style="text-decoration:none;"><div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div></a>
+</div>
 
-  <script type="module">
-    const RATINGS = {
-      3: { s: '⭐⭐⭐', l: 'Legendary' },
-      2: { s: '⭐⭐',  l: 'Worth a Trip' },
-      1: { s: '⭐',    l: 'Solid' },
-      0: { s: 'ㄨ',    l: 'Skip It' },
-    };
-    const BSKY = 'https://bsky.app';
+<div id="mapView">
+  <div class="map-layout">
+    <div id="map"></div>
+    <div class="map-filter">
+      <label class="mf-label">City</label>
+      <select id="citySelect" onchange="filterCity(this.value)"></select>
+    </div>
+    <div class="legend">
+      <div class="legend-title">Rating</div>
+      <div class="legend-row"><span class="legend-dot" style="background:var(--rate-legendary)"></span>Legendary</div>
+      <div class="legend-row"><span class="legend-dot" style="background:var(--rate-worth)"></span>Worth A Trip</div>
+      <div class="legend-row"><span class="legend-dot" style="background:var(--rate-solid)"></span>Solid</div>
+      <div class="legend-row"><span class="legend-dot" style="background:var(--rate-skip-fill)"></span>Skip It</div>
+    </div>
+    <div class="panel" id="panel">
+      <div class="panel-empty" id="panelEmpty">
+        <div class="pe-bolt">🍕</div>
+        <div class="pe-title" id="peTitle">Loading pizza…</div>
+        <div class="pe-sub" id="peSub">Pulling the latest reviews.</div>
+      </div>
+      <div class="review" id="review">
+        <div class="rv-header"><button class="rv-close" onclick="closeReview()" aria-label="Close">×</button></div>
+        <div class="rv-photo" id="rPhoto"></div>
+        <div class="rv-head">
+          <div class="rv-namerow">
+            <div class="rv-name" id="rName"></div>
+            <div class="rv-nav"><button class="rv-arrow" id="rNext" onclick="stackStep(1)" aria-label="Next review">›</button></div>
+          </div>
+          <div class="rv-count" id="rStackCount"></div>
+          <div class="rv-loc" id="rLoc"></div>
+          <div class="rv-meta">
+            <span class="rv-rating"><span id="rGlyph"></span><span class="lab" id="rLabel"></span></span>
+            <span class="rv-tier" id="rTier"></span>
+            <span class="rv-style" id="rStyle"></span>
+          </div>
+        </div>
+        <div class="rv-bucket"><div class="rv-bucket-label">The Pizza</div><div class="rv-bucket-text" id="rPizza"></div></div>
+        <div class="rv-bucket"><div class="rv-bucket-label">The Take</div><div class="rv-bucket-text" id="rValue"></div></div>
+        <div class="rv-by">Reviewed by <b id="rBy"></b></div>
+        <div class="rv-date" id="rDate"></div>
+        <a class="rv-bsky" id="rBsky" href="#" target="_blank" rel="noopener" style="display:none;">View &amp; discuss on Bluesky →</a>
+      </div>
+    </div>
+    <div class="review-backdrop" id="reviewBackdrop" onclick="closeReview()"></div>
+  </div>
+</div>
 
-    // Dark tile layer — CartoDB Dark Matter
-    const map = L.map('map', {
-      center: [30, 0], zoom: 2,
-      zoomControl: true,
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="pizza-config.js"></script>
+<script type="module">
+  import { initAuth } from '/auth.js';
+  (async () => {
+    try {
+      const auth = await initAuth();
+      if (auth?.user) {
+        document.getElementById('navId').innerHTML = '<span class="dot"></span>@' + auth.user.handle;
+      }
+    } catch {}
+  })();
+</script>
+<script>
+  const map = L.map('map',{zoomControl:false});
+  L.control.zoom({ position:'topright' }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
+
+  let stackReviews = [];
+  let stackIndex = 0;
+  function showReview(r){
+    stackReviews = reviews.filter(x => x.name===r.name && x.loc===r.loc)
+      .sort((a,b)=>{
+        const ta=a.createdAt?new Date(a.createdAt).getTime():0;
+        const tb=b.createdAt?new Date(b.createdAt).getTime():0;
+        return tb-ta;
+      });
+    if(!stackReviews.length) stackReviews=[r];
+    const idx = stackReviews.findIndex(x=>x===r);
+    stackIndex = idx>=0 ? idx : 0;
+    document.getElementById('review').classList.add('show');
+    document.getElementById('panel').classList.add('has-review');
+    document.body.classList.add('review-open');
+    document.getElementById('reviewBackdrop').classList.add('show');
+    const pnl=document.getElementById('panel'); if(pnl) pnl.scrollTop=0;
+    paintReview();
+  }
+  function stackStep(delta){
+    stackIndex = (stackIndex + delta + stackReviews.length) % stackReviews.length;
+    paintReview();
+  }
+  function paintReview(){
+    const r = stackReviews[stackIndex];
+    const rt=RATING[r.rating];
+    const card=document.getElementById('review');
+    if(stackReviews.length>1){
+      card.classList.add('multi');
+      document.getElementById('rStackCount').textContent=(stackIndex+1)+' of '+stackReviews.length+' reviews';
+    } else {
+      card.classList.remove('multi');
+    }
+    const isLeg = r.legendaryCanonical === true;
+    rName.innerHTML = r.name + (isLeg?'<span class="rv-name-bolt">⭐</span>':'');
+    rLoc.textContent=r.loc; rGlyph.textContent=rt.glyph; rLabel.textContent=rt.label;
+    const chip=document.querySelector('.rv-rating');
+    if(chip){ chip.style.background=rt.color; chip.style.color=(rt.text||'var(--inset)'); }
+    const lab=document.getElementById('rLabel'); if(lab) lab.style.color=(rt.text||'var(--inset)');
+    rTier.textContent=r.tier; rStyle.textContent=r.style; rPizza.textContent=r.pizza;
+    rValue.textContent=r.value; rBy.textContent=r.by;
+    const rd=document.getElementById('rDate');
+    if(rd) rd.textContent=(typeof shortDate==='function')?shortDate(r.createdAt):'';
+    const bsky=document.getElementById('rBsky');
+    const url=(typeof bskyWebUrl==='function')?bskyWebUrl(r.bskyUri, r.by):'';
+    if(bsky){ if(url){ bsky.href=url; bsky.style.display='block'; } else { bsky.style.display='none'; } }
+    const ph=document.getElementById('rPhoto');
+    if(ph){
+      if(r.photoUrl){ ph.style.display='block'; ph.style.backgroundImage="url('"+r.photoUrl+"')"; }
+      else { ph.style.display='none'; }
+    }
+    document.getElementById('review').scrollTop=0;
+  }
+  const markers=[];
+  const RANK_ORDER={skip:0,solid:1,trip:2,legendary:3};
+  function buildMarkers(){
+    markers.length=0;
+    const groups={};
+    reviews.forEach(r=>{
+      if(r.lat==null || r.lng==null) return;
+      const key=r.name+'|'+r.loc;
+      (groups[key]=groups[key]||[]).push(r);
     });
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© <a href="https://carto.com">CARTO</a> © <a href="https://openstreetmap.org">OpenStreetMap</a>',
-      subdomains: 'abcd', maxZoom: 19,
-    }).addTo(map);
-
-    async function loadReviews() {
-      const { getDb } = await import('/auth.js');
-      const db = await getDb();
-
-      const { data: reviews, error } = await db
-        .from('pizza_reviews')
-        .select('id, name, location, city, rating, style, experience, price, notes, image_url, created_at, bluesky_uri, lat, lng, users!pizza_reviews_contributor_did_fkey(handle)')
-        .eq('status', 'approved')
-        .not('lat', 'is', null)
-        .not('lng', 'is', null);
-
-      if (error) { console.error(error); return []; }
-      return reviews || [];
-    }
-
-    function makeMarker(r) {
-      const html = `<div class="pizza-marker r${r.rating}">🍕</div>`;
-      const icon = L.divIcon({
-        html, className: '', iconSize: [32, 32], iconAnchor: [16, 16],
+    Object.values(groups).forEach(group=>{
+      const best=group.reduce((a,b)=>(RANK_ORDER[b.rating]>RANK_ORDER[a.rating]?b:a));
+      const rt=RATING[best.rating];
+      const canonicalLeg=group.some(r=>r.legendaryCanonical===true);
+      const count=group.length;
+      const boltHtml = (canonicalLeg) ? '<span class="pin-bolt">⭐</span>' : '';
+      const countHtml = count>1 ? '<span class="pin-count">'+count+'</span>' : '';
+      const size = best.rating==='legendary'?30:best.rating==='trip'?22:best.rating==='solid'?18:14;
+      const icon=L.divIcon({
+        className:'',
+        html:'<div style="position:relative;">'+
+             '<div class="cb-pin '+rt.cls+'">'+boltHtml+'</div>'+countHtml+
+             '</div>',
+        iconSize:[size,size], iconAnchor:[size/2,size/2]
       });
-      return L.marker([r.lat, r.lng], { icon });
+      const r0=group[0];
+      const m=L.marker([r0.lat,r0.lng],{icon}).addTo(map);
+      const popName = r0.name + (canonicalLeg?' ⭐':'');
+      const popSub = count>1 ? (count+' reviews · best: '+rt.label) : (rt.glyph+' '+rt.label);
+      const popPrice = count>1 ? '' : ('<div class="pop-price">'+r0.tier+'</div>');
+      m.bindPopup('<div class="pop-name">'+popName+'</div><div class="pop-rating">'+popSub+'</div>'+popPrice);
+      m.on('click',()=>{m.openPopup();showReview(r0);});
+      markers.push({marker:m, review:r0, group:group});
+    });
+  }
+  function fitAll(){
+    if(!markers.length){ map.setView([40.7128,-74.006],11); return; }
+    const byCity={};
+    markers.forEach(x=>{ const c=x.review.loc; (byCity[c]=byCity[c]||[]).push(x); });
+    let topCity=null, topN=0;
+    Object.keys(byCity).forEach(c=>{ if(byCity[c].length>topN){ topN=byCity[c].length; topCity=c; } });
+    const focusMarkers = topCity ? byCity[topCity] : markers;
+    const grp=L.featureGroup(focusMarkers.map(x=>x.marker));
+    if(focusMarkers.length===1){
+      const r=focusMarkers[0].review; map.setView([r.lat,r.lng],13);
+    } else {
+      map.fitBounds(grp.getBounds().pad(0.3));
     }
-
-    function openDrawer(r) {
-      const rt = RATINGS[r.rating] || RATINGS[1];
-      const handle = r.users?.handle || 'contributor';
-      const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-      // Image
-      const dImg = document.getElementById('dImg');
-      dImg.innerHTML = r.image_url
-        ? `<img src="${r.image_url}" alt="${r.name}">`
-        : `<div class="drawer-placeholder">🍕</div>`;
-
-      document.getElementById('dRating').innerHTML =
-        `${rt.s} <span class="d-rating-lbl">${rt.l}</span>`;
-      document.getElementById('dName').textContent = r.name;
-
-      const tags = [
-        { t: r.location, hi: false },
-        { t: r.style, hi: true },
-        r.experience ? { t: r.experience, hi: false } : null,
-        r.price      ? { t: r.price, hi: false, cls: 'd-price-tag' } : null,
-      ].filter(Boolean);
-      document.getElementById('dTags').innerHTML =
-        tags.map(({ t, hi, cls }) =>
-          `<span class="d-tag ${hi ? 'hi' : ''} ${cls || ''}">${t}</span>`
-        ).join('');
-
-      document.getElementById('dNotes').textContent = r.notes || '';
-
-      document.getElementById('dReviewer').innerHTML = `
-        <div class="d-av">${handle[0].toUpperCase()}</div>
-        <div class="d-reviewer-handle">@${handle}</div>
-        <div class="d-reviewer-date">${date}</div>`;
-
-      let actions = '<a href="/database.html" class="d-btn d-btn-outline">All reviews</a>';
-      if (r.bluesky_uri) {
-        const parts = r.bluesky_uri.split('/');
-        const bskyUrl = `${BSKY}/profile/${handle}/post/${parts[parts.length-1]}`;
-        actions = `<a href="${bskyUrl}" target="_blank" rel="noopener" class="d-btn d-btn-gold">Discuss on Bluesky ↗</a>` + actions;
-      }
-      document.getElementById('dActions').innerHTML = actions;
-
-      document.getElementById('overlay').classList.add('open');
-      document.getElementById('drawer').classList.add('open');
+  }
+  function closeReview(){
+    document.getElementById('review').classList.remove('show');
+    document.getElementById('panel').classList.remove('has-review');
+    document.getElementById('reviewBackdrop').classList.remove('show');
+    document.body.classList.remove('review-open');
+    map.closePopup();
+  }
+  function buildCityDropdown(){
+    const cityCounts={};
+    reviews.forEach(r=>{ cityCounts[r.loc]=(cityCounts[r.loc]||0)+1; });
+    const cities=Object.entries(cityCounts).sort((a,b)=>b[1]-a[1]);
+    const sel=document.getElementById('citySelect');
+    sel.innerHTML='<option value="all">All cities ('+reviews.length+')</option>'+
+      cities.map(([c,n])=>'<option value="'+c+'">'+c+' ('+n+')</option>').join('');
+  }
+  function filterCity(city){
+    const shown=[];
+    markers.forEach(x=>{
+      const vis = city==='all' || x.review.loc===city;
+      if(vis){ x.marker.addTo(map); shown.push(x.marker); } else { map.removeLayer(x.marker); }
+    });
+    if(shown.length){
+      const grp=L.featureGroup(shown);
+      map.fitBounds(grp.getBounds().pad(shown.length===1?2:0.25));
     }
-
-    window.closeDrawer = function() {
-      document.getElementById('overlay').classList.remove('open');
-      document.getElementById('drawer').classList.remove('open');
-    };
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
-
-    async function init() {
-      // Auth (non-blocking)
-      try {
-        const { initAuth } = await import('/auth.js');
-        const auth = await initAuth();
-        if (auth?.user) {
-          const nav = document.querySelector('.nav-links');
-          const a = document.createElement('a');
-          a.href = '/profile.html'; a.className = 'nav-link';
-          a.textContent = '@' + auth.user.handle;
-          nav.appendChild(a);
-        }
-      } catch {}
-
-      const reviews = await loadReviews();
-
-      if (!reviews.length) {
-        const noGeo = document.createElement('div');
-        noGeo.className = 'no-geo';
-        noGeo.innerHTML = `
-          <div class="no-geo-title">No mapped reviews yet</div>
-          <div class="no-geo-sub">Reviews get placed on the map when they're approved.
-          Coordinates are geocoded automatically from the city + region you submit.</div>`;
-        document.getElementById('map').appendChild(noGeo);
-        return;
-      }
-
-      // Add markers
-      const markers = [];
-      reviews.forEach(r => {
-        const m = makeMarker(r);
-        m.on('click', () => openDrawer(r));
-        m.addTo(map);
-        markers.push(m);
-      });
-
-      // Fit bounds to all markers
-      if (markers.length > 1) {
-        const group = L.featureGroup(markers);
-        map.fitBounds(group.getBounds().pad(.15), { maxZoom: 12 });
-      } else if (markers.length === 1) {
-        map.setView([reviews[0].lat, reviews[0].lng], 13);
-      }
-
-      // Stats bar
-      const cities = new Set(reviews.map(r => r.city || r.location?.split(',')[0]).filter(Boolean));
-      document.getElementById('statsText').textContent =
-        `${reviews.length} review${reviews.length !== 1 ? 's' : ''} · ${cities.size} city${cities.size !== 1 ? 'ies' : 'y'}`;
-      document.getElementById('mapStats').style.display = 'flex';
+  }
+  (async()=>{
+    await loadReviews();
+    buildMarkers();
+    buildCityDropdown();
+    const peTitle=document.getElementById('peTitle'), peSub=document.getElementById('peSub');
+    if(peTitle) peTitle.textContent='Explore the map';
+    if(peSub) peSub.textContent='Tap any pin to read its review. Bigger pins are better pizza — the gold one is Legendary.';
+    if(!reviews.length){
+      map.setView([40.7128,-74.006],11);
+      return;
     }
+    const qp=new URLSearchParams(location.search);
+    if(qp.has('r')){
+      const idx=+qp.get('r'); const r=reviews[idx];
+      if(r && r.lat!=null && r.lng!=null){ map.setView([r.lat,r.lng],15); showReview(r); }
+      else { fitAll(); if(r) showReview(r); }
+    }
+    else { fitAll(); }
+  })();
+</script>
 
-    init();
-  </script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/stats.html">Stats</a>
+      <a href="/about.html">About</a>
+      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="footer-links">
+      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
+      <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
