@@ -1,6 +1,32 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+
+# ── OAuth BFF routes ──────────────────────────────────────────
+# New: these run before static files / the functions above, on Deno,
+# separate from the existing netlify/functions Lambda directory so
+# nothing there (agree, approve, auth-user, submit-review, etc.) is
+# touched by this change.
+[[edge_functions]]
+  path = "/auth/start"
+  function = "auth-start"
+
+[[edge_functions]]
+  path = "/auth/session"
+  function = "auth-session"
+
+[[edge_functions]]
+  path = "/auth/proxy"
+  function = "auth-proxy"
+
+[[edge_functions]]
+  path = "/auth/signout"
+  function = "auth-signout"
+
+[[edge_functions]]
+  path = "/oauth/callback"
+  function = "auth-callback"
 
 # Correct content-type for ATProto OAuth metadata
 [[headers]]
