@@ -9,29 +9,57 @@ import { createHmac, randomBytes, createHash } from 'node:crypto';
 import { SignJWT, importJWK, exportJWK, generateKeyPair } from 'https://esm.sh/jose@6.0.10';
 
 // ─── Secrets / env ──────────────────────────────────────────────────────────
+// Netlify.env is the documented API for edge functions; Deno.env is a
+// working fallback (confirmed via Netlify's own docs + forum reports),
+// process.env last for anywhere neither exists. Previously this only
+// tried Deno.env, and read every secret at module top level — meaning
+// a missing var didn't just fail a request, it could throw during the
+// bundler's own evaluation of the module, before a real request (or
+// its runtime env) was even involved. Everything below is now lazy:
+// nothing throws until the value is actually needed.
 function env(name) {
-  return typeof Deno !== 'undefined' ? Deno.env.get(name) : process.env[name];
+  try { if (typeof Netlify !== 'undefined' && Netlify.env) {
+    const v = Netlify.env.get(name);
+    if (v) return v;
+  } } catch {}
+  try { if (typeof Deno !== 'undefined') {
+    const v = Deno.env.get(name);
+    if (v) return v;
+  } } catch {}
+  try { if (typeof process !== 'undefined' && process.env) return process.env[name]; } catch {}
+  return undefined;
 }
 
-const SECRET = env('PZOF_COOKIE_SECRET') || '';
-if (!SECRET) throw new Error('PZOF_COOKIE_SECRET env var is not set');
+function required(name) {
+  const v = env(name);
+  if (!v) throw new Error(`${name} env var is not set (check Site configuration → Environment variables — scope must include "Functions")`);
+  return v;
+}
 
-const SUPABASE_URL = 'https://imhgcbirrtewxuusqcat.supabase.co';
-const SUPABASE_SERVICE_KEY = env('SUPABASE_SERVICE_ROLE_KEY') || '';
-if (!SUPABASE_SERVICE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY env var is not set');
+let _secret;
+function getSecret() { return _secret ??= required('PZOF_COOKIE_SECRET'); }
+
+const SUPABASE_URL = 'https://nchgwskvhbvsistqrdst.supabase.co';
+let _serviceKey;
+function getServiceKey() { return _serviceKey ??= required('SUPABASE_SERVICE_ROLE_KEY'); }
 
 // This app's own signing key (confidential client authentication) — one
 // static keypair for the whole app, distinct from the per-session DPoP
 // keypair generated in generateDPoPKeypair() below. Public half is
 // published in oauth/client-metadata.json's `jwks`.
-const CLIENT_PRIVATE_JWK_RAW = env('PZOF_CLIENT_PRIVATE_JWK') || '';
-if (!CLIENT_PRIVATE_JWK_RAW) throw new Error('PZOF_CLIENT_PRIVATE_JWK env var is not set');
-const CLIENT_PRIVATE_JWK = JSON.parse(CLIENT_PRIVATE_JWK_RAW);
-const CLIENT_KEY_ID = CLIENT_PRIVATE_JWK.kid;
-if (!CLIENT_KEY_ID) throw new Error('PZOF_CLIENT_PRIVATE_JWK is missing a "kid"');
+let _clientJwk, _clientKid;
+function getClientJwk() {
+  if (_clientJwk) return _clientJwk;
+  const raw = required('PZOF_CLIENT_PRIVATE_JWK');
+  _clientJwk = JSON.parse(raw);
+  _clientKid = _clientJwk.kid;
+  if (!_clientKid) throw new Error('PZOF_CLIENT_PRIVATE_JWK is missing a "kid"');
+  return _clientJwk;
+}
+function getClientKid() { getClientJwk(); return _clientKid; }
 
-export const CLIENT_ID    = 'https://pizzaofficial.biz/oauth/client-metadata.json';
-export const REDIRECT_URI = 'https://pizzaofficial.biz/oauth/callback';
+export const CLIENT_ID    = 'https://official.pizza/oauth/client-metadata.json';
+export const REDIRECT_URI = 'https://official.pizza/oauth/callback';
 
 // ─── Cookie names ─────────────────────────────────────────────────────────────
 export const PKCE_COOKIE    = 'pzof_pkce';     // short-lived, signed, holds PKCE+DPoP state during login
@@ -52,7 +80,7 @@ function fromBase64url(str) {
 
 export function signPayload(payload) {
   const data = toBase64url(JSON.stringify(payload));
-  const sig  = createHmac('sha256', SECRET).update(data).digest('base64url');
+  const sig  = createHmac('sha256', getSecret()).update(data).digest('base64url');
   return `${data}.${sig}`;
 }
 
@@ -62,7 +90,7 @@ export function verifyPayload(value) {
   if (dot < 0) return null;
   const data = value.slice(0, dot);
   const sig  = value.slice(dot + 1);
-  const expected = createHmac('sha256', SECRET).update(data).digest('base64url');
+  const expected = createHmac('sha256', getSecret()).update(data).digest('base64url');
   if (sig.length !== expected.length) return null;
   let diff = 0;
   for (let i = 0; i < sig.length; i++) diff |= sig.charCodeAt(i) ^ expected.charCodeAt(i);
@@ -143,9 +171,9 @@ export async function buildDPoPProof({ privateJwk, publicJwk, method, url, nonce
 // aud = the auth server's issuer, not the specific endpoint being called
 // (see CBDB's _auth-utils.js for the verification note on this).
 export async function buildClientAssertion({ issuer }) {
-  const privateKey = await importJWK(CLIENT_PRIVATE_JWK, 'ES256');
+  const privateKey = await importJWK(getClientJwk(), 'ES256');
   return new SignJWT({ iss: CLIENT_ID, sub: CLIENT_ID })
-    .setProtectedHeader({ alg: 'ES256', kid: CLIENT_KEY_ID })
+    .setProtectedHeader({ alg: 'ES256', kid: getClientKid() })
     .setAudience(issuer)
     .setIssuedAt()
     .setExpirationTime('60s')
@@ -313,8 +341,8 @@ export async function revokeToken({ token, tokenTypeHint, revocationEndpoint, pr
 
 function supabaseHeaders(extra = {}) {
   return {
-    apikey: SUPABASE_SERVICE_KEY,
-    Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+    apikey: getServiceKey(),
+    Authorization: `Bearer ${getServiceKey()}`,
     'Content-Type': 'application/json',
     ...extra,
   };
