@@ -16,9 +16,18 @@ import {
 const REFRESH_THRESHOLD_SECS = 90 * 60;
 
 function env(name) {
-  return typeof Deno !== 'undefined' ? Deno.env.get(name) : process.env[name];
+  try { if (typeof Netlify !== 'undefined' && Netlify.env) {
+    const v = Netlify.env.get(name);
+    if (v) return v;
+  } } catch {}
+  try { if (typeof Deno !== 'undefined') {
+    const v = Deno.env.get(name);
+    if (v) return v;
+  } } catch {}
+  try { if (typeof process !== 'undefined' && process.env) return process.env[name]; } catch {}
+  return undefined;
 }
-const SUPABASE_URL = 'https://imhgcbirrtewxuusqcat.supabase.co';
+const SUPABASE_URL = 'https://nchgwskvhbvsistqrdst.supabase.co';
 const SUPABASE_SERVICE_KEY = env('SUPABASE_SERVICE_ROLE_KEY') || '';
 
 export default async function handler(req) {
