@@ -1,438 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIZZA⚡OFFICIAL — The world's pizza, documented.</title>
-  <meta name="description" content="The world's pizza, documented. Community-built. ATProto-native. No algorithms. No ads.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizza Official</title>
+<meta name="description" content="A community-built record of the world's pizza. Posted to Bluesky, indexed here. No ads, no algorithms.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<style>
+  /* Token and base styles live in pizza-theme.css. Page-specific layout only, below. */
+  body { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
 
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800;
-      color: #FFFFFF;
-      min-height: 100vh; min-height: 100dvh;
-      display: flex; flex-direction: column;
-    }
+  /* ── HERO ── */
+  .hero { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
+  .hero-inner { width: 100%; max-width: 480px; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--presence); margin-bottom: 24px; }
+  .hero-title { font-family: var(--font-display); font-size: clamp(48px, 11vw, 84px); line-height: 0.95; letter-spacing: 2px; color: var(--text); margin-bottom: 18px; }
+  .hero-title .bolt { color: var(--red); }
+  .hero-sub { font-size: 14px; color: var(--text-2); line-height: 1.7; max-width: 420px; margin: 0 auto 34px; }
 
-    /* ── NAV — minimal, just logo ───────────── */
-    .nav {
-      height: 54px;
-      background: #0d0800;
-      border-bottom: 1px solid #3a2400;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo {
-      font-size: 14px; font-weight: 700;
-      color: #FFFFFF; text-decoration: none;
-      letter-spacing: -.01em;
-    }
-    .nav-logo .bolt { color: #FF3B30; }
+  /* ── SIGN-IN CARD ── */
+  .signin-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; margin-bottom: 12px; text-align: left; }
+  .signin-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); margin-bottom: 13px; }
+  .signin-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .signin-input { flex: 1; min-width: 0; background: var(--inset); border: 1px solid var(--border-interactive); border-radius: 6px; color: var(--text); font-family: var(--font-body); font-size: 15px; padding: 12px 14px; outline: none; transition: border-color .15s; }
+  .signin-input::placeholder { color: var(--text-3); }
+  .signin-input:focus { border-color: var(--red); }
+  .signin-btn { font-family: var(--font-body); font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 12px 22px; background: var(--red); color: var(--text-on-red); border: none; border-radius: 6px; cursor: pointer; flex-shrink: 0; transition: background .15s; white-space: nowrap; }
+  .signin-btn:hover:not(:disabled) { background: var(--red-hover); }
+  .signin-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .signin-note { font-size: 12px; color: var(--text-3); line-height: 1.6; }
+  .signin-note a { color: var(--text-2); border-bottom: 1px solid var(--border-interactive); }
+  .signin-note a:hover { color: var(--text); border-color: var(--red); }
+  .signin-err { font-size: 12px; color: var(--error); margin-top: 8px; display: none; }
 
-    /* Nav user pill (shown when logged in) */
-    .nav-user {
-      display: flex; align-items: center; gap: 8px;
-      text-decoration: none;
-      padding: 6px 12px;
-      border: 1px solid #4a3010;
-      border-radius: 20px;
-      transition: border-color .15s;
-    }
-    .nav-user:hover { border-color: #FFB800; }
-    .nav-handle { font-size: 12px; font-weight: 700; color: #FFFFFF; }
-    .nav-role {
-      font-size: 9px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; padding: 2px 8px; border-radius: 10px;
-    }
-    .role-member      { background: #2a1200; color: #FF8C00; }
-    .role-contributor { background: #2a1e00; color: #FFB800; }
-    .role-admin       { background: #001a00; color: #39FF14; }
+  /* ── USER CARD (signed in) ── */
+  .user-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 12px; display: none; text-align: left; }
+  .uc-top { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .uc-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--raised); border: 1px solid var(--border-interactive); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 18px; color: var(--gold); overflow: hidden; flex-shrink: 0; }
+  .uc-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .uc-handle { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .uc-role { font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; background: var(--raised); color: var(--gold); }
+  .uc-actions { display: flex; flex-direction: column; gap: 2px; }
+  .uc-btn { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-body); font-size: 13px; font-weight: 600; padding: 11px 14px; border-radius: 7px; cursor: pointer; text-decoration: none; transition: background .15s, color .15s; width: 100%; border: none; text-align: left; }
+  .uc-btn .arr { font-size: 12px; opacity: .4; transition: all .15s; }
+  .uc-btn:hover .arr { opacity: 1; transform: translateX(3px); }
+  .uc-primary { background: var(--red); color: var(--text-on-red); margin-bottom: 6px; }
+  .uc-primary:hover { background: var(--red-hover); }
+  .uc-primary .arr { opacity: .7; }
+  .uc-secondary { color: var(--text-2); background: transparent; }
+  .uc-secondary:hover { background: var(--raised); color: var(--text); }
+  .uc-signout { color: var(--text-3); background: transparent; font-size: 12px; }
+  .uc-signout:hover { background: rgba(255,90,78,.08); color: var(--error); }
+  .uc-signout .arr { display: none; }
 
-    /* ── SPLASH — centered, full height ─────── */
-    .splash {
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
-      padding: 48px 24px;
-      text-align: center;
-    }
-    .splash-inner { width: 100%; max-width: 460px; }
+  /* ── GUEST CTA ROW ── */
+  .cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hero-btn { display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 14px; border-radius: 8px; text-decoration: none; transition: all .15s; }
+  .hero-btn.primary { background: var(--gold); color: var(--text-on-red); }
+  .hero-btn.primary:hover { background: var(--gold-hover); }
+  .hero-btn.secondary { background: var(--surface); color: var(--text-2); border: 1px solid var(--border); }
+  .hero-btn.secondary:hover { border-color: var(--border-interactive); color: var(--text); }
 
-    /* Eyebrow */
-    .eyebrow {
-      font-size: 11px; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: #B09878;
-      margin-bottom: 24px;
-    }
+  /* ── FOOTER ── */
+  .site-footer { border-top: 1px solid var(--border); background: var(--surface); padding: 22px 20px; flex-shrink: 0; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .footer-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .footer-links a { font-family: var(--font-body); font-size: 12px; letter-spacing: .5px; color: var(--text-2); text-decoration: none; }
+  .footer-links a:hover { color: var(--red); }
+  .footer-copy { font-size: 11px; color: var(--text-3); }
 
-    /* Logo */
-    .logo {
-      font-size: clamp(36px, 10vw, 96px);
-      font-weight: 700; letter-spacing: -.03em; line-height: 1;
-      color: #FFFFFF;
-      margin-bottom: 20px;
-      /* table centering avoids letter-spacing optical shift */
-      display: table; margin-left: auto; margin-right: auto;
-    }
-    .logo .bolt { color: #FF3B30; }
-
-    /* Tagline */
-    .tagline {
-      font-size: clamp(16px, 3vw, 20px);
-      font-weight: 700; color: #FFB800;
-      margin-bottom: 8px;
-    }
-    .sub {
-      font-size: 14px; color: #C8B090;
-      line-height: 1.75; margin-bottom: 36px;
-    }
-
-    /* ── SIGN-IN CARD — the focal point ─────── */
-    .signin-card {
-      background: #1E1200;
-      border: 2px solid #FFB800;
-      border-radius: 10px;
-      padding: 24px;
-      margin-bottom: 12px;
-      /* warm glow to draw the eye */
-      box-shadow:
-        0 0 0 1px rgba(255,184,0,.15),
-        0 4px 32px rgba(255,184,0,.10),
-        0 1px 3px rgba(0,0,0,.4);
-    }
-    .signin-label {
-      font-size: 12px; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: #FFB800; margin-bottom: 14px;
-    }
-    .signin-row { display: flex; gap: 8px; margin-bottom: 10px; }
-    .signin-input {
-      flex: 1; min-width: 0;
-      background: #0d0800;
-      border: 1px solid #7A5830;
-      border-radius: 6px;
-      color: #FFFFFF;
-      font-family: inherit; font-size: 15px;
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .signin-input::placeholder { color: #6a4820; }
-    .signin-input:focus {
-      border-color: #FFB800;
-      box-shadow: 0 0 0 3px rgba(255,184,0,.12);
-    }
-    .signin-btn {
-      font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      padding: 12px 22px;
-      background: #FF3B30; color: #FFFFFF;
-      border: none; border-radius: 6px;
-      cursor: pointer; flex-shrink: 0;
-      transition: background .15s;
-      white-space: nowrap;
-    }
-    .signin-btn:hover:not(:disabled) { background: #CC2F25; }
-    .signin-btn:disabled { opacity: .35; cursor: not-allowed; }
-    .signin-note {
-      font-size: 12px; color: #C8B090; line-height: 1.65;
-    }
-    .signin-note a {
-      color: #FFFFFF; text-decoration: none;
-      border-bottom: 1px solid #7A5830;
-      transition: border-color .15s;
-    }
-    .signin-note a:hover { border-color: #FFB800; }
-    .signin-err { font-size: 12px; color: #FF3B30; margin-top: 8px; display: none; }
-
-    /* ── USER CARD (logged in) ───────────────── */
-    .user-card {
-      background: #1a1000;
-      border: 1px solid #4a3010;
-      border-radius: 10px;
-      padding: 20px 22px;
-      margin-bottom: 12px;
-      display: none;
-      text-align: left;
-      box-shadow: 0 4px 20px rgba(0,0,0,.3);
-    }
-    .uc-top {
-      display: flex; align-items: center; gap: 12px;
-      padding-bottom: 16px; margin-bottom: 16px;
-      border-bottom: 1px solid #3a2400;
-    }
-    .uc-avatar {
-      width: 42px; height: 42px; border-radius: 50%;
-      background: #2a1800; border: 1px solid #5a3a10;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 700; color: #CC9200;
-      overflow: hidden; flex-shrink: 0;
-    }
-    .uc-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .uc-handle { font-size: 16px; font-weight: 700; color: #FFFFFF; margin-bottom: 5px; }
-
-    /* Stacked action list */
-    .uc-actions { display: flex; flex-direction: column; gap: 2px; }
-    .uc-btn {
-      display: flex; align-items: center; justify-content: space-between;
-      font-family: inherit; font-size: 14px; font-weight: 700;
-      padding: 11px 14px; border-radius: 7px;
-      cursor: pointer; text-decoration: none;
-      transition: background .15s, color .15s;
-      width: 100%; border: none; text-align: left;
-    }
-    .uc-btn .arr { font-size: 12px; opacity: .4; transition: all .15s; }
-    .uc-btn:hover .arr { opacity: 1; transform: translateX(3px); }
-
-    /* Primary — red, stands out */
-    .uc-primary {
-      background: #FF3B30; color: #FFFFFF;
-      margin-bottom: 6px;
-    }
-    .uc-primary:hover { background: #CC2F25; }
-    .uc-primary .arr { opacity: .7; }
-
-    /* Secondary rows */
-    .uc-secondary { color: #E0D5C5; background: transparent; }
-    .uc-secondary:hover { background: #2a1a08; color: #FFFFFF; }
-
-    /* Sign out */
-    .uc-signout { color: #7A5830; background: transparent; font-size: 13px; }
-    .uc-signout:hover { background: rgba(255,59,48,.08); color: #FF3B30; }
-    .uc-signout .arr { display: none; }
-
-    /* ── GUEST CTAs ──────────────────────────── */
-    .cta-row {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .cta-browse {
-      display: flex; align-items: center; justify-content: center;
-      font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      padding: 14px; border-radius: 8px; text-decoration: none;
-      background: #FFB800; color: #0d0800;
-      transition: background .15s;
-    }
-    .cta-browse:hover { background: #CC9200; }
-    .cta-secondary {
-      display: flex; align-items: center; justify-content: center;
-      font-family: inherit; font-size: 13px; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      padding: 14px; border-radius: 8px; text-decoration: none;
-      background: #1a1000; color: #C8B090;
-      border: 1px solid #4a3010;
-      transition: all .15s;
-    }
-    .cta-secondary:hover { border-color: #8a6030; color: #FFFFFF; }
-
-    /* ── FOOTER ──────────────────────────────── */
-    .footer {
-      border-top: 1px solid #2E1C00;
-      padding: 16px 24px;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap; gap: 12px;
-      flex-shrink: 0;
-    }
-    .footer-links, .footer-right {
-      display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
-    }
-    .footer-links a, .footer-right a {
-      font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-      color: #7A5830; text-decoration: none; transition: color .15s;
-    }
-    .footer-links a:hover, .footer-right a:hover { color: #C8B090; }
-    .footer-copy { font-size: 10px; color: #4a2e00; white-space: nowrap; }
-
-    /* Animations */
-    @keyframes up {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .a0 { animation: up .45s ease both; }
-    .a1 { animation: up .45s .08s ease both; }
-    .a2 { animation: up .45s .16s ease both; }
-    .a3 { animation: up .45s .24s ease both; }
-
-    @media (max-width: 440px) {
-      .signin-row { flex-direction: column; }
-      .signin-btn { width: 100%; text-align: center; }
-      .cta-row { grid-template-columns: 1fr; }
-      .footer { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
+  @media (max-width: 440px) {
+    .signin-row { flex-direction: column; }
+    .signin-btn { width: 100%; text-align: center; }
+    .cta-row { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
 </head>
 <body>
 
-  <nav class="nav">
-    <a href="/" class="nav-logo">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
-    <div id="navUser"></div>
-  </nav>
+<nav class="nav">
+  <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+  <div id="navUser"></div>
+</nav>
 
-  <main class="splash">
-    <div class="splash-inner">
+<main class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Decentralized · Open Source · No Algorithms</div>
+    <h1 class="hero-title">PIZZA<span class="bolt">⚡</span>OFFICIAL</h1>
+    <p class="hero-sub">A community-built record of the world's pizza. Posted to Bluesky, indexed here. No endless scrolling. No ads.</p>
 
-      <div class="eyebrow a0">
-        ATProto-native &nbsp;·&nbsp; No Algorithms &nbsp;·&nbsp; Open Source
+    <!-- SIGN-IN CARD (default) -->
+    <div class="signin-card" id="signinCard">
+      <div class="signin-label">Sign in with Bluesky</div>
+      <div class="signin-row">
+        <input
+          type="text" class="signin-input" id="handleInput"
+          placeholder="you.bsky.social"
+          autocomplete="off" autocapitalize="off" spellcheck="false"
+        >
+        <button class="signin-btn" id="signinBtn" onclick="doSignIn()">Sign In</button>
       </div>
-
-      <div class="logo a0">PIZZA<span class="bolt">⚡</span>OFFICIAL</div>
-
-      <div class="tagline a1">The world's pizza, documented.</div>
-      <div class="sub a1">Community-built. No algorithms. No ads.</div>
-
-      <!-- SIGN-IN CARD (default, gold border = focal point) -->
-      <div class="signin-card a2" id="signinCard">
-        <div class="signin-label">Sign in with Bluesky</div>
-        <div class="signin-row">
-          <input
-            type="text" class="signin-input" id="handleInput"
-            placeholder="you.bsky.social"
-            autocomplete="off" autocapitalize="off" spellcheck="false"
-          >
-          <button class="signin-btn" id="signinBtn" onclick="doSignIn()">Sign In</button>
-        </div>
-        <div class="signin-err" id="signinErr"></div>
-        <div class="signin-note">
-          Your Bluesky handle — no password shared with us. &nbsp;
-          <a href="https://bsky.app" target="_blank" rel="noopener">No account? Create one →</a>
-        </div>
+      <div class="signin-err" id="signinErr"></div>
+      <div class="signin-note">
+        Your Bluesky handle — no password shared with us. &nbsp;
+        <a href="https://bsky.app" target="_blank" rel="noopener">No account? Create one →</a>
       </div>
-
-      <!-- USER CARD (shown when logged in) -->
-      <div class="user-card" id="userCard">
-        <div class="uc-top">
-          <div class="uc-avatar" id="ucAvatar"></div>
-          <div>
-            <div class="uc-handle" id="ucHandle"></div>
-            <span class="nav-role" id="ucRole"></span>
-          </div>
-        </div>
-        <div class="uc-actions" id="ucActions"></div>
-      </div>
-
-      <!-- CTAs — only shown when logged out -->
-      <div class="cta-row a3" id="ctaRow">
-        <a href="/database.html" class="cta-browse">Browse Database</a>
-        <a href="/format.html" class="cta-secondary">Rating Guide</a>
-      </div>
-
     </div>
-  </main>
 
-  <footer class="footer">
+    <!-- USER CARD (signed in) -->
+    <div class="user-card" id="userCard">
+      <div class="uc-top">
+        <div class="uc-avatar" id="ucAvatar"></div>
+        <div>
+          <div class="uc-handle" id="ucHandle"></div>
+          <span class="uc-role" id="ucRole"></span>
+        </div>
+      </div>
+      <div class="uc-actions" id="ucActions"></div>
+    </div>
+
+    <!-- CTAs — logged-out only -->
+    <div class="cta-row" id="ctaRow">
+      <a href="/database.html" class="hero-btn primary">Browse Database</a>
+      <a href="/format.html" class="hero-btn secondary">Rating Guide</a>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
     <div class="footer-links">
       <a href="/database.html">Database</a>
       <a href="/map.html">Map</a>
       <a href="/stats.html">Stats</a>
+      <a href="/about.html">About</a>
       <a href="/format.html">Format</a>
     </div>
-    <div class="footer-right">
+    <div class="footer-links">
       <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
       <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
       <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <script type="module">
-    const $ = id => document.getElementById(id);
-    const ROLE_LABEL = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
-    const ROLE_CLS   = { guest: 'role-member', contributor: 'role-contributor', admin: 'role-admin' };
+<script type="module">
+  const $ = id => document.getElementById(id);
+  const ROLE_LABEL = { guest: 'Member', contributor: 'Contributor', admin: 'Admin' };
 
-    function renderNavUser(u) {
-      if (!u) { $('navUser').innerHTML = ''; return; }
-      $('navUser').innerHTML = `
-        <a href="/profile.html" class="nav-user">
-          <span class="nav-handle">@${u.handle}</span>
-          <span class="nav-role ${ROLE_CLS[u.role]||'role-member'}">${ROLE_LABEL[u.role]||'Member'}</span>
-        </a>`;
+  function renderNavUser(u) {
+    if (!u) { $('navUser').innerHTML = ''; return; }
+    $('navUser').innerHTML = `
+      <a href="/profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
+        <span style="font-size:12px;font-weight:600;color:var(--text);">@${u.handle}</span>
+      </a>`;
+  }
+
+  function renderUserCard(u) {
+    $('signinCard').style.display = 'none';
+    $('ctaRow').style.display = 'none';
+    $('userCard').style.display = 'block';
+
+    const av = $('ucAvatar');
+    if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" alt="${u.handle}">`;
+    else av.textContent = u.handle[0].toUpperCase();
+
+    $('ucHandle').textContent = '@' + u.handle;
+    $('ucRole').textContent = ROLE_LABEL[u.role] || 'Member';
+
+    const canSubmit = u.role === 'contributor' || u.role === 'admin';
+    $('ucActions').innerHTML = `
+      <a href="${canSubmit ? '/submit.html' : '/contributor.html'}" class="uc-btn uc-primary">
+        <span>${canSubmit ? 'Post a Review' : 'Start Contributing'}</span>
+        <span class="arr">→</span>
+      </a>
+      <a href="/database.html" class="uc-btn uc-secondary">
+        <span>Browse Database</span>
+        <span class="arr">→</span>
+      </a>
+      <a href="/profile.html" class="uc-btn uc-secondary">
+        <span>Profile</span>
+        <span class="arr">→</span>
+      </a>
+      <a href="/stats.html" class="uc-btn uc-secondary">
+        <span>Stats</span>
+        <span class="arr">→</span>
+      </a>
+      <button class="uc-btn uc-signout" onclick="doSignOut()">
+        <span>Sign out</span>
+      </button>`;
+  }
+
+  async function checkAuth() {
+    try {
+      const { initAuth } = await import('/auth.js');
+      const auth = await initAuth();
+      if (auth?.user) { renderNavUser(auth.user); renderUserCard(auth.user); }
+    } catch {}
+  }
+
+  window.doSignIn = async function() {
+    const handle = $('handleInput').value.trim();
+    const btn = $('signinBtn'), err = $('signinErr');
+    err.style.display = 'none';
+    if (!handle) {
+      err.textContent = 'Enter your Bluesky handle';
+      err.style.display = 'block';
+      $('handleInput').focus(); return;
     }
-
-    function renderUserCard(u) {
-      $('signinCard').style.display = 'none';
-      $('ctaRow').style.display = 'none';
-      $('userCard').style.display = 'block';
-
-      // Avatar
-      const av = $('ucAvatar');
-      if (u.avatar_url) av.innerHTML = `<img src="${u.avatar_url}" alt="${u.handle}">`;
-      else av.textContent = u.handle[0].toUpperCase();
-
-      $('ucHandle').textContent = '@' + u.handle;
-      const role = $('ucRole');
-      role.textContent = ROLE_LABEL[u.role] || 'Member';
-      role.className = 'nav-role ' + (ROLE_CLS[u.role] || 'role-member');
-
-      const canSubmit = u.role === 'contributor' || u.role === 'admin';
-      $('ucActions').innerHTML = `
-        <a href="${canSubmit ? '/submit.html' : '/contributor.html'}"
-           class="uc-btn uc-primary">
-          <span>${canSubmit ? 'Submit a Review' : 'Start Contributing'}</span>
-          <span class="arr">→</span>
-        </a>
-        <a href="/database.html" class="uc-btn uc-secondary">
-          <span>Browse Database</span>
-          <span class="arr">→</span>
-        </a>
-        <a href="/profile.html" class="uc-btn uc-secondary">
-          <span>Profile</span>
-          <span class="arr">→</span>
-        </a>
-        <a href="/stats.html" class="uc-btn uc-secondary">
-          <span>Stats</span>
-          <span class="arr">→</span>
-        </a>
-        <button class="uc-btn uc-signout" onclick="doSignOut()">
-          <span>Sign out</span>
-        </button>`;
+    btn.disabled = true; btn.textContent = 'Connecting…';
+    try {
+      const { signIn } = await import('/auth.js');
+      await signIn(handle);
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Sign In';
+      err.textContent = e.message?.includes('resolve')
+        ? 'Handle not found — check spelling'
+        : 'Failed: ' + e.message;
+      err.style.display = 'block';
     }
+  };
 
-    async function checkAuth() {
-      try {
-        const { initAuth } = await import('/auth.js');
-        const auth = await initAuth();
-        if (auth?.user) { renderNavUser(auth.user); renderUserCard(auth.user); }
-      } catch {}
-    }
+  $('handleInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSignIn(); });
 
-    window.doSignIn = async function() {
-      const handle = $('handleInput').value.trim();
-      const btn = $('signinBtn'), err = $('signinErr');
-      err.style.display = 'none';
-      if (!handle) {
-        err.textContent = 'Enter your Bluesky handle';
-        err.style.display = 'block';
-        $('handleInput').focus(); return;
-      }
-      btn.disabled = true; btn.textContent = 'Connecting…';
-      try {
-        const { signIn } = await import('/auth.js');
-        await signIn(handle);
-      } catch (e) {
-        btn.disabled = false; btn.textContent = 'Sign In';
-        err.textContent = e.message?.includes('resolve')
-          ? 'Handle not found — check spelling'
-          : 'Failed: ' + e.message;
-        err.style.display = 'block';
-      }
-    };
+  window.doSignOut = async function() {
+    try { const { signOut } = await import('/auth.js'); await signOut(); }
+    catch { location.href = '/'; }
+  };
 
-    $('handleInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSignIn(); });
-
-    window.doSignOut = async function() {
-      try { const { signOut } = await import('/auth.js'); await signOut(); }
-      catch { location.href = '/'; }
-    };
-
-    renderNavUser(null);
-    checkAuth();
-  </script>
+  renderNavUser(null);
+  checkAuth();
+</script>
 </body>
 </html>
