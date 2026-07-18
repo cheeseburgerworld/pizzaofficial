@@ -1,0 +1,111 @@
+/* ============================================================
+   pizza-theme.css — PIZZA⚡OFFICIAL design tokens
+   Ported from cheeseburger.world's cbdb-theme.css: same token
+   names and structure, values adapted to the Pizza Official
+   palette (warm near-black ground, red bolt/primary, gold as
+   secondary accent — matching what's already live on
+   database.html / map.html / profile.html). Do not hardcode hex
+   in page styles — reference a var.
+
+   Contrast verified (WCAG 2.1): text tokens ≥ 7:1 on ground/
+   surface (AA/AAA), --border-interactive ≥ 3:1 (SC 1.4.11).
+
+   Scope note: this file currently defines only the tokens used by
+   index.html and about.html. Need to add per tier rating system later.
+   ============================================================ */
+
+:root {
+  /* ---- Ground surfaces (backgrounds, darkest to lightest) ---- */
+  --ground:   #0d0800;  /* page background — unchanged from current live pages */
+  --surface:  #1a1000;  /* cards, nav, raised panels */
+  --raised:   #241600;  /* nested cards, hover rows */
+  --inset:    #150d00;  /* inputs, wells, tiles */
+
+  /* ---- Borders ---- */
+  --border:             #3a2400;  /* decorative hairlines, dividers (non-text, exempt) */
+  --border-interactive: #7a5830;  /* control outlines: inputs, focusable boxes — 3.1:1, meets 1.4.11 */
+
+  /* ---- Text (AA+ on ground/surface) ---- */
+  --text:       #ffffff;  /* primary — 19.9:1, AAA */
+  --text-2:     #c8b090;  /* secondary body — 9.5:1, AAA */
+  --text-3:     #b09878;  /* meta, labels, muted — 7.2:1, AA/AAA */
+  --text-on-red: #150d00; /* text sitting ON a red fill (buttons) */
+
+  /* ---- Brand ---- */
+  --red:        #ff3b30;  /* PRIMARY brand action + the bolt: buttons, links, headings, accents — 5.6:1 */
+  --red-hover:  #ff5347;
+  --gold:       #ffb800;  /* secondary accent: taglines, secondary CTAs — 11.5:1 */
+  --gold-hover: #ffc933;
+  --bsky:       #3b9af8;  /* Bluesky-specific UI only — unchanged across Cheeseburger World LLC properties */
+  --bsky-hover: #5aabfa;
+
+  /* ---- Presence (shared UI convention, not a brand color) ---- */
+  --presence:       #4ade52;  /* online dot — same value as cheeseburger.world, deliberately brand-neutral */
+  --presence-hover:  #5ee866;
+
+  /* ---- Accent / error ---- */
+  --error: #ff5a4e;
+
+  /* ---- Type ---- */
+  --font-display: 'Bebas Neue', sans-serif;    /* headings, logo — tall, condensed, loud */
+  --font-body:    'IBM Plex Mono', monospace;  /* everything else */
+
+  /* ---- Focus ring (keyboard accessibility, SC 2.4.7) ---- */
+  --focus-ring: #ff3b30;
+}
+
+/* ------------------------------------------------------------
+   Base resets + element defaults shared by every page.
+   ------------------------------------------------------------ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--red); text-decoration: none; }
+a:hover { color: var(--red-hover); }
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   Shared nav (identical markup across pages).
+   ------------------------------------------------------------ */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface);
+  border-bottom: 2px solid var(--red);
+  padding: 12px 20px;
+}
+.nav-left { display: flex; align-items: center; gap: 22px; }
+.logo {
+  font-family: var(--font-display);
+  font-size: 30px; letter-spacing: 2px;
+  color: var(--text); line-height: 1;
+}
+.logo .bolt { color: var(--red); }
+.tabs { display: flex; gap: 4px; }
+.tab {
+  font-family: var(--font-body);
+  font-size: 12px; letter-spacing: .5px; text-transform: uppercase;
+  color: var(--text);
+  background: none; border: 1px solid transparent;
+  padding: 8px 14px; cursor: pointer;
+}
+.tab.active {
+  color: var(--text-on-red);
+  background: var(--red);
+  font-weight: 600;
+}
+.nav-id { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
+.nav-id .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--presence); flex-shrink: 0; }
+.nav-id .dot.out { background: var(--text-3); }
