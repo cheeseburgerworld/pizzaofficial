@@ -1,4 +1,12 @@
-// The OAuth mechanics below are ported from cheeseburger.world
+// PIZZA⚡OFFICIAL — auth.js (BFF version)
+// The OAuth mechanics below are ported from cheeseburger.world's BFF
+// auth.js: session lives server-side (Netlify edge functions), this file
+// is a thin client — no BrowserOAuthClient, no crypto.subtle, no IndexedDB.
+//
+// Everything from "Data helpers" down is UNCHANGED pizza-specific code
+// (getApprovedReviews, getMyReviews, getAdminQueue, etc.) — database.html,
+// profile.html, stats.html, and contributor.html import these and none of
+// that changes. Only how we learn who's signed in changes.
 
 // Shared session state the rest of the site reads via window.__pzof_state
 const state = (window.__pzof_state = window.__pzof_state || {
@@ -184,8 +192,8 @@ checkSession().catch(e => console.error('[pzof-auth] init failed:', e));
 // this line has anything to do with authentication.
 // ════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL  = 'https://imhgcbirrtewxuusqcat.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_oxuCF_UbJXDgem1cyUNGWQ_46LnIBhT';
+const SUPABASE_URL  = 'https://nchgwskvhbvsistqrdst.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_7nIM5JBTjoYE3Gq4jUwUGA_Ne_yXGj7';
 
 let _db = null;
 async function db() {
