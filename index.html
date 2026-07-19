@@ -90,15 +90,23 @@
 </footer>
 
 <script type="module">
-  (async () => {
-    try {
-      const { initAuth } = await import('/auth.js');
-      const auth = await initAuth();
-      const navId = document.getElementById('navId');
-      if (auth?.user) {
-        navId.innerHTML = '<span class="dot"></span>@' + auth.user.handle;
-      }
-    } catch {}
+  import '/auth.js';
+  (function () {
+    const el = document.getElementById('navId');
+    function paint() {
+      const st = window.__pzof_state;
+      el.innerHTML = st?.signedIn
+        ? '<span class="dot"></span>@' + st.handle
+        : '<span class="dot out"></span>Not signed in';
+    }
+    // auth.js's static import above has already run its synchronous
+    // localStorage cache-restore by this point (ES module import
+    // ordering guarantees it) — paint from that immediately instead of
+    // waiting on a network round trip, so a returning signed-in user
+    // never sees a "Not signed in" flash. pzof-auth re-fires once the
+    // session is confirmed against the server, correcting this if stale.
+    paint();
+    window.addEventListener('pzof-auth', paint);
   })();
 </script>
 </body>
