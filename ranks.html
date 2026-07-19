@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranks — Pizza Official</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<style>
+  a.logo { text-decoration:none; } a.tab { text-decoration:none; display:inline-block; }
+
+  .rk-wrap { max-width:720px; margin:0 auto; padding:40px 20px 90px; }
+  .eyebrow { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--presence); margin-bottom:12px; }
+  .rk-title { font-family:var(--font-display); font-size:48px; letter-spacing:1.5px; color:var(--red); line-height:1; margin-bottom:14px; }
+  .rk-lead { font-size:15px; color:var(--text-2); line-height:1.7; max-width:600px; margin-bottom:8px; }
+  .rk-lead b { color:var(--text); }
+
+  .rk-ladder { margin-top:40px; display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); }
+  .rk-row { display:flex; align-items:center; gap:18px; background:var(--surface); padding:20px 22px; position:relative; border-left:4px solid transparent; }
+  .rk-row.here { background:var(--ground-selected); border-left:4px solid var(--red); padding-left:18px; }
+  .rk-badge { width:48px; height:48px; border-radius:8px; background:var(--inset); display:flex; align-items:center; justify-content:center; font-size:26px; line-height:1; flex-shrink:0; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .rk-badge.locked { border:1px dashed var(--border); filter:grayscale(1) opacity(0.45); }
+  .rk-badge.earned { border:1px solid rgba(255,59,48,0.4); }
+  .rk-badge.here { border:2px solid var(--red); }
+  .rk-badge.reveal { border:2px solid var(--rate-legendary); }
+  .rk-info { flex:1; min-width:0; }
+  .rk-name { font-family:var(--font-display); font-size:24px; letter-spacing:1px; color:var(--text); line-height:1; }
+  .rk-row.here .rk-name { color:var(--red); }
+  .rk-desc { font-size:13px; color:var(--text-2); line-height:1.55; margin-top:4px; }
+  .rk-next-line { font-size:12px; color:var(--presence); margin-top:5px; }
+  .rk-thresh { font-family:var(--font-display); font-size:18px; letter-spacing:1px; color:var(--red); flex-shrink:0; text-align:right; }
+  .rk-thresh span { display:block; font-family:var(--font-body); font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); margin-top:2px; }
+
+  .rk-section { margin-top:42px; padding-top:28px; border-top:1px solid var(--border); }
+  .rk-head { font-family:var(--font-display); font-size:24px; letter-spacing:1.5px; color:var(--red); margin-bottom:16px; }
+  .rk-text { font-size:14px; color:var(--text-2); line-height:1.75; margin-bottom:16px; }
+  .rk-text b { color:var(--text); }
+  .rk-cta { display:inline-block; margin-top:6px; background:var(--red); color:var(--text-on-red); font-family:var(--font-body); font-weight:600; font-size:14px; letter-spacing:0.5px; text-decoration:none; padding:13px 24px; }
+  .rk-cta:hover { background:var(--red-hover); }
+
+  .site-footer { border-top:1px solid var(--border); background:var(--surface); margin-top:40px; padding:22px 20px; }
+  .footer-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .footer-links { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .footer-links a { font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; color:var(--text-2); text-decoration:none; }
+  .footer-links a:hover { color:var(--red); }
+  .footer-copy { font-size:11px; color:var(--text-3); }
+
+  @media (max-width:760px) {
+    .nav { gap:12px; } .nav-left { gap:14px; min-width:0; flex:1; }
+    .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; gap:2px; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { flex:0 0 auto; white-space:nowrap; padding:8px 11px; }
+    .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+    .rk-row { gap:14px; padding:16px 16px; }
+    .rk-thresh { font-size:16px; }
+    .rk-title { font-size:38px; }
+  }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-left">
+    <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+    <div class="tabs">
+      <a class="tab" href="/database.html">Database</a>
+      <a class="tab" href="/map.html">Map</a>
+      <a class="tab" href="/submit.html">Post a Review</a>
+    </div>
+  </div>
+  <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
+</div>
+
+<div class="rk-wrap">
+  <div class="eyebrow">◈ Recognition</div>
+  <h1 class="rk-title">Ranks</h1>
+  <p class="rk-lead">Ranks track what you've contributed to the database. Every live review moves you up. <b>The top rank comes with something the others don't — you'll know it when you get there.</b></p>
+
+  <div class="rk-ladder" id="rkLadder"></div>
+
+  <div class="rk-section">
+    <div class="rk-head">How it works</div>
+    <p class="rk-text">Post a review and the moment it's indexed, it counts. Your reviews live on your own Bluesky profile under your DID.</p>
+  </div>
+
+  <div class="rk-section">
+    <div class="rk-head">Get on the board</div>
+    <p class="rk-text">Post your first review and you're a Reviewer. Everything else builds from there.</p>
+    <a class="rk-cta" href="/submit.html">Post a Review →</a>
+  </div>
+</div>
+
+<script src="pizza-config.js"></script>
+<script type="module">
+import { initAuth } from '/auth.js';
+
+const state = { signedIn:false, did:null, handle:null };
+
+function renderLadder(){
+  const mine = (typeof myReviews==='function') ? myReviews(state) : [];
+  const count = state.signedIn ? mine.length : null;
+  const current = count!=null ? rankFor(count) : null;
+  const nx = count!=null ? nextRank(count) : null;
+  document.getElementById('rkLadder').innerHTML = RANKS.map(r=>{
+    const here = current && current.name===r.name;
+    const top = r.name==='Pizza Master';
+    let state_ = 'earned';
+    if(count!=null){
+      if(top) state_ = count>=r.min ? 'reveal' : 'locked';
+      else if(here) state_ = 'here';
+      else state_ = count>=r.min ? 'earned' : 'locked';
+    }
+    const badge = '<div class="rk-badge '+state_+'">'+r.badge+'</div>';
+    const thresh = r.min===0 ? '' : r.min+'<span>review'+(r.min>1?'s':'')+'</span>';
+    const name = here ? r.name+' — you are here' : r.name;
+    const nextLine = here
+      ? '<div class="rk-next-line">'+(nx ? (nx.min-count)+' more to '+nx.name+'.' : 'Top of the ladder.')+'</div>'
+      : '';
+    return '<div class="rk-row'+(here?' here':'')+'">'+
+      badge+
+      '<div class="rk-info"><div class="rk-name">'+name+'</div><div class="rk-desc">'+r.desc+'</div>'+nextLine+'</div>'+
+      '<div class="rk-thresh">'+thresh+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+(async()=>{
+  renderLadder();
+  try {
+    const auth = await initAuth();
+    if (auth?.user) {
+      Object.assign(state, { signedIn:true, did:auth.user.did, handle:auth.user.handle });
+      document.getElementById('navId').innerHTML = '<span class="dot"></span>@' + auth.user.handle;
+    }
+  } catch(e) { console.warn('ranks: auth check failed', e); }
+  await loadReviews();
+  renderLadder();
+})();
+</script>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/stats.html">Stats</a>
+      <a href="/about.html">About</a>
+      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
+  </div>
+</footer>
+</body>
+</html>
