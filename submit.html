@@ -177,7 +177,7 @@
 
     <div class="bucket">
       <div class="bucket-head"><span class="bucket-num">1</span><span class="bucket-label">The Pizza</span></div>
-      <p class="bucket-hint">Crust, sauce, cheese, toppings, how it's cooked. Call out anything house-made. Describe the pie you ate, tell us what stood out.</p>
+      <p class="bucket-hint">Crust, sauce, cheese, toppings, how it's prepared. Describe the pie you ate, tell us what stood out.</p>
       <textarea id="f_pizza" name="pizza" aria-label="The Pizza — crust, sauce, cheese, toppings" required></textarea>
     </div>
 
@@ -189,7 +189,7 @@
 
     <span class="fl" id="ratingLabel">Rating</span>
     <div class="field-help">
-      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-legendary)">⭐⭐⭐</span><b>Legendary</b> — Ruins other pizza. A benchmark.</div>
+      <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-legendary)">⚡</span><b>Legendary</b> — Ruins other pizza. A benchmark.</div>
       <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-worth)">⭐⭐</span><b>Worth A Trip</b> — Notably good. You'd drive across town.</div>
       <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-solid)">⭐</span><b>Solid</b> — Worth knowing about. Order it if you're there.</div>
       <div class="fh-row"><span class="fh-glyph" style="color:var(--rate-skip-text)">ㄨ</span><b>Skip It</b> — Don't bother.</div>
@@ -198,7 +198,7 @@
       <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="skip" data-glyph="ㄨ"><div class="glyph">ㄨ</div><div class="name">Skip It</div></div>
       <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="solid" data-glyph="⭐"><div class="glyph">⭐</div><div class="name">Solid</div></div>
       <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="trip" data-glyph="⭐⭐"><div class="glyph">⭐⭐</div><div class="name">Worth A Trip</div></div>
-      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="legendary" data-glyph="⭐⭐⭐"><div class="glyph">⭐⭐⭐</div><div class="name">Legendary</div></div>
+      <div class="rating-opt" role="radio" tabindex="0" aria-checked="false" data-val="legendary" data-glyph="⚡"><div class="glyph">⚡</div><div class="name">Legendary</div></div>
     </div>
     <input type="hidden" name="rating" id="ratingInput" required>
 
@@ -263,7 +263,6 @@
       <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
     </div>
     <div class="footer-links">
-      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
       <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
     </div>
   </div>
@@ -578,19 +577,6 @@ document.getElementById('reviewForm').addEventListener('submit', e => {
   if (!state.agreedAt) { document.getElementById('guidelinesModal').classList.add('show'); return; }
   postReview();
 });
-
-// Surface a sign-in failure returned from /auth/start or /oauth/callback —
-// previously this landed back here silently with no visible error at all.
-(function showReturnedAuthError() {
-  const params = new URLSearchParams(location.search);
-  const err = params.get('auth_error');
-  if (!err) return;
-  const el = document.getElementById('gateErr');
-  if (el) { el.textContent = 'Sign-in failed: ' + decodeURIComponent(err); el.style.display = 'block'; }
-  params.delete('auth_error');
-  const clean = location.pathname + (params.toString() ? '?' + params.toString() : '');
-  history.replaceState(null, '', clean);
-})();
 
 boot();
 </script>
