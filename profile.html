@@ -34,7 +34,9 @@
   .pf-id-text { min-width:0; }
   .pf-name { font-family:var(--font-display); font-size:40px; letter-spacing:0.5px; color:var(--text); line-height:1; }
   .pf-handle { font-size:13px; color:var(--bsky); margin-top:5px; word-break:break-all; }
-  .pf-rank { display:inline-flex; align-items:center; gap:8px; margin-top:9px; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); }
+  .pf-rank { display:inline-flex; align-items:center; gap:8px; margin-top:9px; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); text-decoration:none; transition:color .12s; }
+  .pf-rank:hover { color:var(--text-2); }
+  .pf-rank:hover b { color:var(--red-hover); }
   .pf-rank-emoji { font-size:15px; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
   .pf-rank b { color:var(--red); font-weight:400; }
 
@@ -140,7 +142,7 @@
       <div class="pf-id-text">
         <div class="pf-name" id="pfName">—</div>
         <div class="pf-handle" id="pfHandle">—</div>
-        <div class="pf-rank"><span class="pf-rank-emoji" id="pfRankEmoji"></span><span id="pfRank">—</span></div>
+        <a class="pf-rank" href="/ranks.html"><span class="pf-rank-emoji" id="pfRankEmoji"></span><span id="pfRank">—</span></a>
       </div>
     </div>
 
@@ -175,23 +177,9 @@
 <script type="module">
 import { initAuth, signIn, signOut } from '/auth.js';
 
-/* ============================================================
-   RANK LADDER
-   Same 5-tier structure and thresholds as CBDB's (0/1/10/25/50),
-   built around pizza instead of a burger: sauce → cheese → slice →
-   bolt. Middle-tier names (Reviewer/Regular/Editor) stay the exact
-   same words CBDB uses — shared vocabulary across Cheeseburger World
-   LLC brands. Only the top title and glyphs are pizza-specific.
-   Self-contained here rather than a shared drawer.js — see chat.
-   ============================================================ */
-const RANKS = [
-  { min:0,  name:'Guest',        badge:'🍽️', desc:'Signed in. Nothing posted yet.' },
-  { min:1,  name:'Reviewer',     badge:'🍅', desc:'One review live. You\u2019ve contributed to the database.' },
-  { min:10, name:'Regular',      badge:'🧀', desc:'Ten reviews. You\u2019re a regular here now.' },
-  { min:25, name:'Editor',       badge:'🍕', desc:'Twenty-five reviews in. Your palate is dialed.' },
-  { min:50, name:'Pizza Master', badge:'⚡', desc:'Fifty reviews. A true connoisseur — and the top of the ladder.' }
-];
-function rankFor(n){ let r=RANKS[0]; for(const x of RANKS) if(n>=x.min) r=x; return r; }
+/* RANKS/rankFor now live in pizza-config.js — single source of truth
+   shared with ranks.html, loaded via the <script src="pizza-config.js">
+   tag below, before this module script runs. */
 
 /* ============================================================
    BADGE ENGINE — pure function of the contributor's reviews.
