@@ -59,6 +59,12 @@
   --rate-skip-fill:  #6b4a2f;
   --rate-skip-text:  #d4a878;
 
+  /* ---- Badge apex tier (profile page badge case, top rung only) ----
+     Same value as CBDB's — this is a generic "how rare" signal like
+     --presence, not brand-specific. Large/display text only on dark
+     ground (4.6:1) — never small body text. */
+  --apex: #ff1f8f;
+
   /* ---- Type ---- */
   --font-display: 'Bebas Neue', sans-serif;    /* headings, logo — tall, condensed, loud */
   --font-body:    'IBM Plex Mono', monospace;  /* everything else */
