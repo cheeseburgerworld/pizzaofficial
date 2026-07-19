@@ -370,6 +370,16 @@ function renderReviews(mine){
 }
 
 (async()=>{
+  // Same fix as submit.html: paint from auth.js's synchronous cache
+  // restore before the first render, so a returning signed-in user
+  // doesn't see the signed-out gate flash before their profile loads.
+  const cached = window.__pzof_state;
+  if (cached?.signedIn) {
+    Object.assign(state, {
+      signedIn: true, did: cached.did, handle: cached.handle,
+      displayName: cached.displayName || cached.handle, avatar: cached.avatar,
+    });
+  }
   render();
   try {
     const auth = await initAuth();
@@ -378,6 +388,8 @@ function renderReviews(mine){
         signedIn: true, did: auth.user.did, handle: auth.user.handle,
         displayName: auth.user.display_name || auth.user.handle, avatar: auth.user.avatar_url,
       });
+    } else {
+      Object.assign(state, { signedIn: false, did: null, handle: null, displayName: null, avatar: null });
     }
   } catch(e) { console.warn('profile: auth check failed', e); }
   render();
