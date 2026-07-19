@@ -86,17 +86,6 @@
   .submit-btn { width:100%; background:var(--red); color:var(--text-on-red); border:none; font-family:var(--font-display); font-size:26px; letter-spacing:2px; padding:14px; cursor:pointer; margin-top:8px; }
   .submit-btn:hover { background:var(--red-hover); }
   .submit-btn:disabled { opacity:.5; cursor:not-allowed; }
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(8,6,3,0.9); z-index:100; align-items:center; justify-content:center; padding:20px; }
-  .modal-bg.show { display:flex; }
-  .modal { background:var(--surface); border:2px solid var(--red); max-width:520px; width:100%; max-height:86vh; overflow-y:auto; padding:28px; }
-  .modal h2 { font-family:var(--font-display); font-size:30px; letter-spacing:1px; color:var(--red); margin-bottom:16px; }
-  .guideline { display:flex; gap:12px; margin-bottom:14px; }
-  .guideline .mark { color:var(--presence); font-weight:600; flex-shrink:0; }
-  .guideline .body { font-size:13px; color:var(--text-2); }
-  .guideline .body strong { color:var(--text); }
-  .coc { font-size:12px; color:var(--text-3); border-top:1px solid var(--border); padding-top:14px; margin-top:18px; line-height:1.65; }
-  .agree-btn { width:100%; background:var(--presence); color:var(--text-on-red); border:none; font-family:var(--font-display); font-size:22px; letter-spacing:1.5px; padding:12px; cursor:pointer; margin-top:18px; }
-  .agree-btn:hover { background:var(--presence-hover); }
   .field-help { background:var(--inset); border:1px solid var(--border); padding:12px 14px; margin-bottom:12px; }
   .fh-row { font-size:12px; color:var(--text-2); line-height:1.5; padding:3px 0; }
   .fh-row b { color:var(--text); }
@@ -133,7 +122,7 @@
 
 <div class="submit-wrap">
   <h1>Post a Review</h1>
-  <p class="intro">Two paragraphs. First the pizza — crust, sauce, cheese, toppings, what's made in-house. Then the take — value, the visit, why this rating. Be specific. Note what it cost the day you went.</p>
+  <p class="intro">Two paragraphs. First the pizza — crust, sauce, cheese, toppings, how it's prepared. Then the take — value, the visit, why this rating. Be specific. Note what it cost the day you went.</p>
 
   <div class="gate" id="gate">
     <div class="gate-title">Sign in to contribute</div>
@@ -243,18 +232,6 @@
   </div>
 </div>
 
-<div class="modal-bg" id="guidelinesModal">
-  <div class="modal">
-    <h2>Before your first review</h2>
-    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Report, don't sell.</strong> "Wood-fired, blistered crust, good char" tells more than "amazing." The goal is to be helpful.</div></div>
-    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Price it honestly.</strong> Pick the tier that matches what you actually paid.</div></div>
-    <div class="guideline"><span class="mark">→</span><div class="body"><strong>That pizza, that visit.</strong> Review what you actually ordered the day you went. Don't post a photo you found online.</div></div>
-    <div class="guideline"><span class="mark">→</span><div class="body"><strong>Don't be a jerk.</strong> Be fair — don't tank a great pizza over a slammed kitchen.</div></div>
-    <div class="coc">Your review lives on your own Bluesky profile under your DID. You can delete it anytime. By posting you agree to keep it honest.</div>
-    <button class="agree-btn" onclick="acceptGuidelines()">I agree — let me post</button>
-  </div>
-</div>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-links">
@@ -274,7 +251,7 @@ import { initAuth, signIn, proxyAction } from '/auth.js';
 const PZOF_SUPABASE_URL  = 'https://nchgwskvhbvsistqrdst.supabase.co';
 const PZOF_SUPABASE_ANON = 'sb_publishable_7nIM5JBTjoYE3Gq4jUwUGA_Ne_yXGj7';
 
-const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null, agreedAt:null, rating:null, ratingGlyph:null, photoURL:null };
+const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null, rating:null, ratingGlyph:null, photoURL:null };
 
 window.doSignIn = async () => {
   const input = document.getElementById('gateHandle');
@@ -334,7 +311,6 @@ async function boot() {
     });
     renderNavUser({ handle: state.handle });
   }
-  await restoreAgreement();
   paintSignedIn();
 }
 
@@ -417,33 +393,6 @@ function renderPreview() {
   } catch (err) { console.error('renderPreview error:', err); }
 }
 
-window.acceptGuidelines = function () {
-  state.agreedAt = new Date().toISOString();
-  try { if (state.did) localStorage.setItem('pzof_agreed_' + state.did, state.agreedAt); } catch (e) {}
-  if (state.did) {
-    fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors', {
-      method: 'POST',
-      headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
-      body: JSON.stringify({ did: state.did, handle: state.handle, display_name: state.displayName, avatar: state.avatar || null, agreed_at: state.agreedAt }),
-    }).catch(e => console.warn('Could not persist agreement:', e));
-  }
-  document.getElementById('guidelinesModal').classList.remove('show');
-  postReview();
-};
-
-async function restoreAgreement() {
-  if (!state.did) return;
-  try { const a = localStorage.getItem('pzof_agreed_' + state.did); if (a) state.agreedAt = a; } catch (e) {}
-  try {
-    const res = await fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors?select=agreed_at&did=eq.' + encodeURIComponent(state.did),
-      { headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON } });
-    if (res.ok) {
-      const rows = await res.json();
-      if (rows?.[0]?.agreed_at) { state.agreedAt = rows[0].agreed_at; try { localStorage.setItem('pzof_agreed_' + state.did, state.agreedAt); } catch (e) {} }
-    }
-  } catch (e) {}
-}
-
 async function postReview() {
   const f = document.getElementById('reviewForm');
   const get = n => f.elements[n] ? f.elements[n].value.trim() : '';
@@ -510,7 +459,7 @@ async function postReview() {
       restaurant, location: loc, lat, lng,
       style: get('style'), price_tier: tier, rating: state.rating,
       pizza: get('pizza'), value_experience: get('value'),
-      photo_url: photoUrl, photo_alt: get('alt'), agreed_at: state.agreedAt,
+      photo_url: photoUrl, photo_alt: get('alt'),
     };
     await fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors', {
       method: 'POST',
@@ -574,7 +523,6 @@ document.getElementById('reviewForm').addEventListener('submit', e => {
     if (el && !el.value.trim()) { flagMissing(el); return; }
   }
   if (!state.rating) { alert('Pick a rating.'); return; }
-  if (!state.agreedAt) { document.getElementById('guidelinesModal').classList.add('show'); return; }
   postReview();
 });
 
