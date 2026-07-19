@@ -182,7 +182,7 @@ const RANKS = [
   { min:1,  name:'Reviewer',     badge:'🍅', desc:'One review live. You\u2019ve contributed to the database.' },
   { min:10, name:'Regular',      badge:'🧀', desc:'Ten reviews. You\u2019re a regular here now.' },
   { min:25, name:'Editor',       badge:'🍕', desc:'Twenty-five reviews in. Your palate is dialed.' },
-  { min:50, name:'Pizza Master', badge:'⚡', desc:'Fifty reviews. A true connoisseur.' }
+  { min:50, name:'Pizza Master', badge:'⚡', desc:'Fifty reviews. A true connoisseur — and the top of the ladder.' }
 ];
 function rankFor(n){ let r=RANKS[0]; for(const x of RANKS) if(n>=x.min) r=x; return r; }
 function nextRank(n){ for(const x of RANKS) if(n<x.min) return x; return null; }
