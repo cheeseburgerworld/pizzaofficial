@@ -75,7 +75,7 @@
       <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
+  <a href="/profile.html" style="text-decoration:none;"><div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div></a>
 </div>
 
 <div class="doc-wrap">
@@ -110,14 +110,17 @@
 
 <script src="pizza-config.js"></script>
 <script type="module">
-  import { initAuth } from '/auth.js';
-  (async () => {
-    try {
-      const auth = await initAuth();
-      if (auth?.user) {
-        document.getElementById('navId').innerHTML = '<span class="dot"></span>@' + auth.user.handle;
-      }
-    } catch {}
+  import '/auth.js';
+  (function () {
+    const el = document.getElementById('navId');
+    function paint() {
+      const st = window.__pzof_state;
+      el.innerHTML = st?.signedIn
+        ? '<span class="dot"></span>@' + st.handle
+        : '<span class="dot out"></span>Not signed in';
+    }
+    paint();
+    window.addEventListener('pzof-auth', paint);
   })();
 </script>
 <script>
