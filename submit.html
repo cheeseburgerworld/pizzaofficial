@@ -117,7 +117,7 @@
       <a class="tab active" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <div id="navUser"></div>
+  <a href="/profile.html" style="text-decoration:none;"><div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div></a>
 </div>
 
 <div class="submit-wrap">
@@ -272,11 +272,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
 });
 
-function renderNavUser(u) {
-  const el = document.getElementById('navUser');
-  if (!u) { el.innerHTML = ''; return; }
-  el.innerHTML = `<a href="/profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
-    <span style="font-size:12px;font-weight:600;color:var(--text);">@${u.handle}</span></a>`;
+function paintNav() {
+  const el = document.getElementById('navId');
+  if (!el) return;
+  el.innerHTML = state.signedIn
+    ? '<span class="dot"></span>@' + state.handle
+    : '<span class="dot out"></span>Not signed in';
 }
 
 function paintSignedIn() {
@@ -303,14 +304,33 @@ function paintSignedIn() {
 }
 
 async function boot() {
+  // Paint from auth.js's synchronously cache-restored state first — the
+  // static "import { initAuth } ..." above already ran auth.js's
+  // localStorage restore before this function is ever called, so
+  // window.__pzof_state already reflects a returning session if there
+  // is one. Painting from that now, instead of waiting on the network
+  // round-trip below, is what avoids the gate/form flashing "signed
+  // out" for a beat on every page load.
+  const cached = window.__pzof_state;
+  if (cached?.signedIn) {
+    Object.assign(state, {
+      signedIn: true, did: cached.did, handle: cached.handle,
+      displayName: cached.displayName || cached.handle, avatar: cached.avatar,
+    });
+    paintNav();
+    paintSignedIn();
+  }
+
   const auth = await initAuth();
   if (auth?.user) {
     Object.assign(state, {
       signedIn: true, did: auth.user.did, handle: auth.user.handle,
       displayName: auth.user.display_name || auth.user.handle, avatar: auth.user.avatar_url,
     });
-    renderNavUser({ handle: state.handle });
+  } else {
+    Object.assign(state, { signedIn: false, did: null, handle: null, displayName: null, avatar: null });
   }
+  paintNav();
   paintSignedIn();
 }
 
