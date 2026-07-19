@@ -1,503 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile — PIZZA⚡OFFICIAL</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      background: #0d0800; color: #FFFFFF; min-height: 100vh;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 900;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.04) 3px, rgba(0,0,0,.04) 4px);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Pizza Official</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%95%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pizza-theme.css">
+<style>
+  a.logo { text-decoration:none; } a.tab { text-decoration:none; display:inline-block; }
 
-    /* NAV */
-    .nav {
-      height: 54px; background: #0d0800; border-bottom: 1px solid #2E1C00;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo { font-size: 14px; font-weight: 700; color: #FFFFFF; text-decoration: none; }
-    .nav-logo .r { color: #FF3B30; }
-    .nav-right { display: flex; gap: 2px; }
-    .nav-link {
-      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: #E0D5C5; text-decoration: none; padding: 6px 10px; transition: color .15s;
-      background: none; border: none; cursor: pointer; font-family: inherit;
-    }
-    .nav-link:hover { color: #FFB800; }
-    .nav-out:hover { color: #FF3B30 !important; }
+  /* ── Profile page ── */
+  .pf-wrap { max-width:760px; margin:0 auto; padding:40px 20px 90px; }
 
-    .wrap { max-width: 660px; margin: 0 auto; padding: 40px 20px 64px; }
+  .pf-gate { display:none; text-align:center; padding:80px 20px; }
+  .pf-gate.show { display:block; }
+  .pf-gate-title { font-family:var(--font-display); font-size:42px; letter-spacing:1.5px; color:var(--red); line-height:1; margin-bottom:14px; }
+  .pf-gate-text { font-size:15px; color:var(--text-2); line-height:1.7; max-width:440px; margin:0 auto 26px; }
+  .pf-gate-signin { display:flex; gap:8px; max-width:340px; margin:0 auto; }
+  .pf-gate-input { flex:1; min-width:0; background:var(--inset); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:14px; padding:11px 13px; }
+  .pf-gate-btn { font-family:var(--font-body); font-weight:600; font-size:14px; letter-spacing:0.5px; padding:11px 20px; cursor:pointer; background:var(--bsky); color:#fff; border:none; flex-shrink:0; }
+  .pf-gate-btn:hover { background:var(--bsky-hover); }
+  .pf-gate-err { color:var(--error); font-size:12px; margin-top:10px; display:none; }
 
-    /* GATE */
-    .gate { text-align: center; padding: 80px 20px; }
-    .gate-title { font-size: 20px; font-weight: 700; color: #FFB800; margin-bottom: 10px; }
-    .gate-sub { font-size: 14px; color: #E0D5C5; line-height: 1.7; margin-bottom: 24px; }
-    .btn-red {
-      display: inline-block; font-family: inherit; font-size: 12px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 12px 28px;
-      background: #FF3B30; color: #FFFFFF; text-decoration: none; border: none;
-      cursor: pointer; transition: background .15s;
-    }
-    .btn-red:hover { background: #CC2F25; }
+  .pf-body { display:none; }
+  .pf-body.show { display:block; }
 
-    /* HERO */
-    .hero {
-      display: flex; align-items: center; gap: 18px;
-      padding-bottom: 28px; margin-bottom: 24px;
-      border-bottom: 1px solid #2E1C00;
-    }
-    .avatar {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: #1E1400; border: 2px solid #3a2400;
-      overflow: hidden; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; font-weight: 700; color: #CC9200;
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-info { flex: 1; min-width: 0; }
-    .hero-handle { font-size: 22px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; line-height: 1; }
-    .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-    .badge {
-      font-size: 9px; font-weight: 700; letter-spacing: .14em;
-      text-transform: uppercase; padding: 4px 10px;
-    }
-    .badge-admin       { background: #001a00; color: #39FF14; border: 1px solid #003300; }
-    .badge-contributor { background: #1a1400; color: #FFB800; border: 1px solid #3a2800; }
-    .badge-member      { background: #1a0800; color: #FF8C00; border: 1px solid #3a1500; }
-    .badge-anniv       { background: #1a1000; color: #FFB800; border: 1px solid #3a2000; }
+  .pf-id { display:flex; align-items:center; gap:18px; margin-bottom:30px; }
+  .pf-avatar { width:72px; height:72px; border-radius:50%; flex-shrink:0; background:var(--raised); border:1px solid var(--border); overflow:hidden; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:34px; color:var(--red); }
+  .pf-avatar img { width:100%; height:100%; object-fit:cover; }
+  .pf-id-text { min-width:0; }
+  .pf-name { font-family:var(--font-display); font-size:40px; letter-spacing:0.5px; color:var(--text); line-height:1; }
+  .pf-handle { font-size:13px; color:var(--bsky); margin-top:5px; word-break:break-all; }
+  .pf-rank { display:inline-flex; align-items:center; gap:8px; margin-top:9px; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); }
+  .pf-rank-emoji { font-size:15px; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .pf-rank b { color:var(--red); font-weight:400; }
 
-    /* STATS — just 2 numbers */
-    .stats {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 10px; margin-bottom: 24px;
-    }
-    .stat {
-      background: #1a1000; border: 1px solid #3a2000;
-      padding: 18px 20px;
-    }
-    .stat-val {
-      font-size: 34px; font-weight: 700; color: #FFB800;
-      line-height: 1; margin-bottom: 6px; letter-spacing: -.02em;
-    }
-    .stat-val.orange { color: #FF8C00; }
-    .stat-lbl {
-      font-size: 10px; font-weight: 700; letter-spacing: .15em;
-      text-transform: uppercase; color: #C8B090;
-    }
+  .pf-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:42px; }
+  .pf-stat { background:var(--surface); border:1px solid var(--border); padding:18px 10px; text-align:center; }
+  .pf-num { font-family:var(--font-display); font-size:40px; line-height:1; color:var(--text); }
+  .pf-lab { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-top:7px; }
 
-    /* CONTRIBUTOR CTA */
-    .contrib-cta {
-      background: #1a1000; border: 1px solid #3a2000; border-left: 3px solid #FFB800;
-      padding: 18px 20px; margin-bottom: 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 14px; flex-wrap: wrap;
-    }
-    .contrib-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
-    .contrib-sub { font-size: 12px; color: #E0D5C5; line-height: 1.5; }
-    .btn-gold {
-      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px;
-      background: #FFB800; color: #0d0800; text-decoration: none; border: none;
-      cursor: pointer; transition: background .15s; flex-shrink: 0;
-    }
-    .btn-gold:hover { background: #CC9200; }
+  .pf-sec { margin-bottom:42px; }
+  .pf-sec-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px; }
+  .pf-eyebrow { font-family:var(--font-display); font-size:26px; letter-spacing:1.5px; color:var(--red); }
+  .pf-sec-note { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-3); }
 
-    /* SUBMIT CTA */
-    .submit-cta {
-      background: #1a1000; border: 1px solid #3a2000; border-left: 3px solid #FF3B30;
-      padding: 18px 20px; margin-bottom: 28px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 14px; flex-wrap: wrap;
-    }
-    .submit-cta-title { font-size: 14px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
-    .submit-cta-sub { font-size: 12px; color: #E0D5C5; line-height: 1.5; }
-    .btn-red-sm {
-      display: inline-block; font-family: inherit; font-size: 11px; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; padding: 10px 20px;
-      background: #FF3B30; color: #FFFFFF; text-decoration: none; border: none;
-      cursor: pointer; transition: background .15s; flex-shrink: 0;
-    }
-    .btn-red-sm:hover { background: #CC2F25; }
+  /* ── BADGE CASE ── */
+  .pf-badges { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+  .badge { background:var(--surface); border:1px solid var(--border); padding:18px 16px; display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; }
+  .badge::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--tier,var(--border)); }
+  .badge.locked { opacity:0.55; }
+  .badge-tile { width:56px; height:56px; border-radius:10px; background:var(--inset); border:2px solid var(--tier,var(--border)); display:flex; align-items:center; justify-content:center; font-size:30px; line-height:1; margin-bottom:12px; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .badge.locked .badge-tile { filter:grayscale(1) brightness(0.7); border-color:var(--border); }
+  .badge-name { font-family:var(--font-display); font-size:18px; letter-spacing:0.8px; color:var(--text); line-height:1.1; }
+  .badge-tier { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; margin-top:5px; color:var(--tier,var(--text-3)); font-weight:600; }
+  .badge.locked .badge-tier { color:var(--text-3); }
+  .badge-prog { font-size:11px; color:var(--text-3); margin-top:8px; line-height:1.4; }
+  .badge-count { color:var(--text); }
 
-    /* SECTION HEAD */
-    .section-head {
-      font-size: 10px; font-weight: 700; letter-spacing: .2em;
-      text-transform: uppercase; color: #CC9200;
-      margin-bottom: 12px; padding-top: 24px;
-      border-top: 1px solid #2E1C00;
-    }
+  .pf-badges-empty { grid-column:1/-1; text-align:center; padding:30px 20px; color:var(--text-3); font-size:13px; line-height:1.6; }
+  .pf-badge-divider { grid-column:1/-1; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--border-interactive); margin:14px 0 2px; padding-top:14px; border-top:1px solid var(--raised); }
 
-    /* PENDING NOTE */
-    .pending-note {
-      background: #1a1000; border: 1px solid #4a3010; border-left: 3px solid #FFB800;
-      padding: 12px 16px; font-size: 12px; color: #FFFFFF; line-height: 1.6;
-      margin-bottom: 10px;
-    }
+  .pf-reviews { display:flex; flex-direction:column; gap:8px; }
+  .pf-rv { display:flex; align-items:center; gap:13px; padding:14px 15px; background:var(--surface); border:1px solid var(--raised); border-radius:9px; cursor:pointer; transition:border-color .12s, background .12s, transform .12s; text-decoration:none; }
+  .pf-rv:hover { border-color:var(--red); background:var(--surface); transform:translateX(2px); }
+  .pf-rv.leg { border-color:rgba(255,214,10,0.35); }
+  .pf-rv.leg:hover { border-color:var(--rate-legendary); }
+  .pf-rv-date { flex-shrink:0; width:58px; text-align:center; font-size:10px; letter-spacing:0.5px; text-transform:uppercase; color:var(--text-3); line-height:1.35; }
+  .pf-rv-body { flex:1; min-width:0; }
+  .pf-rv-name { font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pf-rv-name.legendary { color:var(--rate-legendary); }
+  .pf-rv-meta { font-size:11px; color:var(--text-3); margin-top:2px; }
+  .pf-rv-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .pf-rv-chip { font-size:16px; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .pf-rv-arrow { color:var(--text-3); font-size:13px; transition:color .12s; }
+  .pf-rv:hover .pf-rv-arrow { color:var(--red); }
+  .pf-rv-empty { text-align:center; padding:34px 20px; color:var(--text-3); font-size:13px; line-height:1.7; }
+  .pf-rv-empty a { color:var(--red); text-decoration:none; }
+  .pf-more { width:100%; margin-top:4px; background:none; border:1px solid var(--border); color:var(--text-2); font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; padding:12px; cursor:pointer; transition:border-color .12s, color .12s; }
+  .pf-more:hover { border-color:var(--red); color:var(--red); }
 
-    /* REVIEW LIST */
-    .review-item {
-      background: #1a1000; border: 1px solid #3a2000;
-      padding: 14px 16px; margin-bottom: 8px;
-      transition: border-color .15s;
-    }
-    .review-item:hover { border-color: #6a5030; }
+  .pf-signout { margin-top:10px; text-align:center; }
+  .signout-link { background:none; border:1px solid var(--border); color:var(--text-3); font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; padding:9px 18px; cursor:pointer; }
+  .signout-link:hover { border-color:var(--error); color:var(--error); }
 
-    /* Top row: name + rating */
-    .ri-top {
-      display: flex; align-items: flex-start; gap: 10px;
-      margin-bottom: 6px;
-    }
-    .ri-name { font-size: 14px; font-weight: 700; color: #FFFFFF; flex: 1; min-width: 0; line-height: 1.3; }
-    .ri-rating { font-size: 13px; flex-shrink: 0; }
+  .site-footer { border-top:1px solid var(--border); background:var(--surface); margin-top:40px; padding:22px 20px; }
+  .footer-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .footer-links { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .footer-links a { font-family:var(--font-body); font-size:12px; letter-spacing:0.5px; color:var(--text-2); text-decoration:none; }
+  .footer-links a:hover { color:var(--red); }
+  .footer-copy { font-size:11px; color:var(--text-3); }
 
-    /* Meta: location · style · date */
-    .ri-meta { font-size: 11px; color: #E0D5C5; margin-bottom: 8px; }
-    .ri-meta span + span::before { content: ' · '; color: #6a5030; }
-
-    /* Excerpt */
-    .ri-excerpt {
-      font-size: 12px; color: #E0D5C5; line-height: 1.65;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    /* Actions row */
-    .ri-actions {
-      display: flex; align-items: center; gap: 8px;
-      padding-top: 8px; border-top: 1px solid #1E1000;
-      flex-wrap: wrap;
-    }
-    .ri-pending-note { font-size: 10px; color: #A89878; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-    .ri-rejected-note { font-size: 10px; color: #CC4444; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-
-    .ri-link {
-      font-size: 10px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; text-decoration: none;
-      padding: 3px 10px; border: 1px solid #2E1C00;
-      transition: all .15s;
-    }
-    .ri-link-bsky { color: #E0D5C5; }
-    .ri-link-bsky:hover { color: #FFB800; border-color: #FFB800; }
-    .ri-link-db { color: #E0D5C5; }
-    .ri-link-db:hover { color: #E0D5C5; border-color: #E0D5C5; }
-
-    .ri-delete {
-      font-family: inherit; font-size: 10px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: #A89878; padding: 3px 10px;
-      border: 1px solid #2E1C00; background: none; cursor: pointer;
-      transition: all .15s; margin-left: auto;
-    }
-    .ri-delete:hover { color: #FF3B30; border-color: #FF3B30; }
-
-    .review-empty {
-      padding: 24px 0; font-size: 13px; color: #A89878; line-height: 1.7;
-    }
-    .review-empty a { color: #FFB800; text-decoration: none; }
-
-    /* PRIVACY */
-    .privacy {
-      margin-top: 32px; padding: 16px 0;
-      border-top: 1px solid #2E1C00;
-      font-size: 12px; color: #E0D5C5; line-height: 1.9;
-    }
-    .privacy strong { color: #FFFFFF; font-weight: 700; }
-    .privacy a { color: #FFB800; text-decoration: none; }
-    .privacy a:hover { color: #FFFFFF; }
-
-    /* CONFIRM DIALOG */
-    .confirm-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.8); z-index: 400;
-      align-items: center; justify-content: center; padding: 20px;
-    }
-    .confirm-overlay.open { display: flex; }
-    .confirm-box { background: #1a1000; border: 1px solid #3a2000; padding: 28px; max-width: 380px; width: 100%; }
-    .confirm-title { font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
-    .confirm-sub { font-size: 13px; color: #E0D5C5; line-height: 1.65; margin-bottom: 22px; }
-    .confirm-btns { display: flex; gap: 8px; }
-    .confirm-cancel {
-      font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; padding: 10px 20px; background: transparent;
-      border: 1px solid #3a2400; color: #E0D5C5; cursor: pointer; transition: all .15s;
-    }
-    .confirm-cancel:hover { border-color: #E0D5C5; color: #FFFFFF; }
-    .confirm-delete {
-      font-family: inherit; font-size: 11px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; padding: 10px 20px; background: #FF3B30;
-      color: #FFFFFF; border: none; cursor: pointer; transition: background .15s;
-    }
-    .confirm-delete:hover { background: #CC2F25; }
-
-    @media (max-width: 480px) {
-      .hero { flex-direction: column; align-items: flex-start; }
-      .stats { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
+  @media (max-width:760px) {
+    .nav { gap:12px; } .nav-left { gap:14px; min-width:0; flex:1; }
+    .tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; gap:2px; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar { display:none; }
+    .tab { flex:0 0 auto; white-space:nowrap; padding:8px 11px; }
+    .pf-name { font-size:32px; }
+    .pf-stats { gap:8px; }
+    .pf-num { font-size:32px; }
+    .pf-badges { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+    .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+    .pf-gate-signin { flex-direction:column; }
+  }
+</style>
 </head>
 <body>
-
-  <nav class="nav">
-    <a href="/" class="nav-logo">PIZZA<span class="r">⚡</span>OFFICIAL</a>
-    <div class="nav-right">
-      <a href="/database.html" class="nav-link">Database</a>
-      <a href="/stats.html" class="nav-link">Stats</a>
-      <button class="nav-link nav-out" onclick="doSignOut()">Sign out</button>
+<div class="nav">
+  <div class="nav-left">
+    <a class="logo" href="/">PIZZA<span class="bolt">⚡</span>OFFICIAL</a>
+    <div class="tabs">
+      <a class="tab" href="/database.html">Database</a>
+      <a class="tab" href="/map.html">Map</a>
+      <a class="tab" href="/submit.html">Post a Review</a>
     </div>
-  </nav>
+  </div>
+  <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
+</div>
 
-  <div class="wrap" id="wrap">
-    <div style="text-align:center;padding:60px 0;font-size:12px;color:#A89878">Loading…</div>
+<div class="pf-wrap">
+
+  <div class="pf-gate" id="pfGate">
+    <div class="pf-gate-title">Your profile</div>
+    <p class="pf-gate-text">Sign in with Bluesky to see your stats, your badge case, and every review you've submitted.</p>
+    <div class="pf-gate-signin">
+      <input type="text" class="pf-gate-input" id="pfHandleInput" placeholder="you.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="pf-gate-btn" onclick="doSignIn()">Sign in</button>
+    </div>
+    <div class="pf-gate-err" id="pfGateErr"></div>
   </div>
 
-  <!-- Confirm delete -->
-  <div class="confirm-overlay" id="confirmOverlay">
-    <div class="confirm-box">
-      <div class="confirm-title">Delete this review?</div>
-      <div class="confirm-sub">Removes it from the public database permanently. This cannot be undone.</div>
-      <div class="confirm-btns">
-        <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
-        <button class="confirm-delete" id="confirmBtn">Delete</button>
+  <div class="pf-body" id="pfBody">
+
+    <div class="pf-id">
+      <div class="pf-avatar" id="pfAvatar"></div>
+      <div class="pf-id-text">
+        <div class="pf-name" id="pfName">—</div>
+        <div class="pf-handle" id="pfHandle">—</div>
+        <div class="pf-rank"><span class="pf-rank-emoji" id="pfRankEmoji"></span><span id="pfRank">—</span></div>
       </div>
     </div>
+
+    <div class="pf-stats">
+      <div class="pf-stat"><div class="pf-num" id="pfCount">0</div><div class="pf-lab">Reviews</div></div>
+      <div class="pf-stat"><div class="pf-num" id="pfCities">0</div><div class="pf-lab">Cities</div></div>
+      <div class="pf-stat"><div class="pf-num" id="pfBadgeCount">0</div><div class="pf-lab">Badges</div></div>
+    </div>
+
+    <div class="pf-sec">
+      <div class="pf-sec-head">
+        <span class="pf-eyebrow">Badge case</span>
+        <span class="pf-sec-note">Earned by posting</span>
+      </div>
+      <div class="pf-badges" id="pfBadges"></div>
+    </div>
+
+    <div class="pf-sec">
+      <div class="pf-sec-head">
+        <span class="pf-eyebrow">Your reviews</span>
+        <span class="pf-sec-note" id="pfRvNote"></span>
+      </div>
+      <div class="pf-reviews" id="pfReviews"></div>
+    </div>
+
+    <div class="pf-signout"><button class="signout-link" onclick="doSignOut()">Sign out</button></div>
+
   </div>
+</div>
 
-  <script type="module">
-    import { initAuth, getMyReviews } from '/auth.js';
+<script src="pizza-config.js"></script>
+<script type="module">
+import { initAuth, signIn, signOut } from '/auth.js';
 
-    const RATINGS  = { 3: '⭐⭐⭐', 2: '⭐⭐', 1: '⭐', 0: 'ㄨ' };
-    const BSKY_APP = 'https://bsky.app';
+/* ============================================================
+   RANK LADDER
+   Same 5-tier structure and thresholds as CBDB's (0/1/10/25/50),
+   built around pizza instead of a burger: sauce → cheese → slice →
+   bolt. Middle-tier names (Reviewer/Regular/Editor) stay the exact
+   same words CBDB uses — shared vocabulary across Cheeseburger World
+   LLC brands. Only the top title and glyphs are pizza-specific.
+   Self-contained here rather than a shared drawer.js — see chat.
+   ============================================================ */
+const RANKS = [
+  { min:0,  name:'Guest',        badge:'🍽️', desc:'Signed in. Nothing posted yet.' },
+  { min:1,  name:'Reviewer',     badge:'🍅', desc:'One review live. You\u2019ve contributed to the database.' },
+  { min:10, name:'Regular',      badge:'🧀', desc:'Ten reviews. You\u2019re a regular here now.' },
+  { min:25, name:'Editor',       badge:'🍕', desc:'Twenty-five reviews in. Your palate is dialed.' },
+  { min:50, name:'Pizza Master', badge:'⚡', desc:'Fifty reviews. A true connoisseur — and the top of the ladder.' }
+];
+function rankFor(n){ let r=RANKS[0]; for(const x of RANKS) if(n>=x.min) r=x; return r; }
 
-    let currentDid   = null;
-    let pendingDelete = null;
+/* ============================================================
+   BADGE ENGINE — pure function of the contributor's reviews.
+   Same shape as CBDB's: one style-exploration badge, one badge per
+   style, plus price/tone/range badges. Swapped Burger Explorer's
+   5 styles for pizza's 7; "Skip It" honesty badge, spend badges,
+   and Globetrotter are protocol-level, unchanged.
+   ============================================================ */
+const TIER_COLORS = ['var(--rate-skip-fill)','var(--rate-worth)','var(--gold)','var(--apex)'];
+const LABELS = {
+  expertise: ['Rookie','Regular','Seasoned','Expert'],
+  range:     ['Local','Traveler','Voyager','Worldly']
+};
+const STYLES = ['NY Style','Neapolitan','Roman','Detroit / Sicilian','Deep Dish','Tavern','Fast / Counter'];
+const LADDERS = { count: [1, 5, 10, 25], city: [3, 7, 12, 20] };
 
-    window.doSignOut = async () => {
-      try { const { signOut } = await import('/auth.js'); await signOut(); }
-      catch { location.href = '/'; }
-    };
+function tierFor(n, ladder, labelSet){
+  let idx=-1;
+  ladder.forEach((min,i)=>{ if(n>=min) idx=i; });
+  if(idx<0) return null;
+  return { idx, color:TIER_COLORS[idx], label:labelSet[idx] };
+}
 
-    function monthYear(s) {
-      return new Date(s).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+function computeBadges(mine){
+  const badges=[];
+
+  const cityCount = new Set(mine.map(r=>(r.loc||'').trim()).filter(Boolean)).size;
+  badges.push({ key:'globetrotter', name:'Globetrotter', glyph:'🌍',
+    count:cityCount, tier:tierFor(cityCount, LADDERS.city, LABELS.range), unit:'cities' });
+
+  const stylesHit = new Set(mine.map(r=>(r.style||'').trim()).filter(s=>STYLES.includes(s)));
+  badges.push({ key:'explorer', name:'Pizza Explorer', glyph:'✨',
+    count:stylesHit.size, unit:'styles', single:true, target:STYLES.length,
+    tier: stylesHit.size>=STYLES.length ? { idx:3, color:TIER_COLORS[3], label:'Complete' } : null });
+
+  const bigSpend = mine.filter(r=>(r.tier||'')==='$$$').length;
+  badges.push({ key:'bigspender', name:'Big Spender', glyph:'💸',
+    count:bigSpend, tier:tierFor(bigSpend, LADDERS.count, LABELS.expertise), unit:'$$$ spots' });
+
+  const bigValue = mine.filter(r=>(r.tier||'')==='$').length;
+  badges.push({ key:'bigvalue', name:'Big on Value', glyph:'🏷️',
+    count:bigValue, tier:tierFor(bigValue, LADDERS.count, LABELS.expertise), unit:'$ spots' });
+
+  const honest = mine.filter(r=>(r.rating||'')==='skip').length;
+  badges.push({ key:'honest', name:'Tough Crowd', glyph:'🧂',
+    count:honest, tier:tierFor(honest, LADDERS.count, LABELS.expertise), unit:'Skip Its' });
+
+  const styleCounts={};
+  mine.forEach(r=>{ const s=(r.style||'').trim(); if(s){ styleCounts[s]=(styleCounts[s]||0)+1; } });
+  STYLES.forEach(style=>{
+    const n=styleCounts[style]||0;
+    badges.push({ key:'style:'+style, name:style+' Pizza', glyph:'🍕',
+      count:n, tier:tierFor(n, LADDERS.count, LABELS.expertise), unit:style });
+  });
+
+  return badges;
+}
+
+/* ============================================================
+   AUTH — mirrors submit.html's inline gate pattern.
+   ============================================================ */
+const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null };
+
+window.doSignIn = async function(){
+  const input = document.getElementById('pfHandleInput');
+  const err = document.getElementById('pfGateErr');
+  const handle = (input.value || '').trim();
+  if (!handle) { err.textContent = 'Enter your Bluesky handle'; err.style.display = 'block'; input.focus(); return; }
+  err.style.display = 'none';
+  try { await signIn(handle); }
+  catch (e) { err.textContent = e.message || 'Sign-in failed'; err.style.display = 'block'; }
+};
+document.getElementById('pfHandleInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
+
+window.doSignOut = function(){ signOut(); };
+
+// Surface a returned auth_error the same way index.html/submit.html do.
+(function showReturnedAuthError(){
+  const params = new URLSearchParams(location.search);
+  const err = params.get('auth_error');
+  if (!err) return;
+  const el = document.getElementById('pfGateErr');
+  if (el) { el.textContent = 'Sign-in failed: ' + decodeURIComponent(err); el.style.display = 'block'; }
+  params.delete('auth_error');
+  history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params.toString() : ''));
+})();
+
+function avatarInitial(){ return (state.displayName || state.handle || '?').charAt(0).toUpperCase(); }
+
+function renderBadge(b){
+  const earned = !!b.tier;
+  const tierColor = earned ? b.tier.color : 'var(--border)';
+  const tierLabel = earned ? b.tier.label : 'Locked';
+  const prog = b.single
+    ? '<span class="badge-count">'+b.count+'</span> / '+b.target+' '+b.unit
+    : '<span class="badge-count">'+b.count+'</span> '+b.unit;
+  return '<div class="badge'+(earned?'':' locked')+'" style="--tier:'+tierColor+'">'+
+    '<div class="badge-tile">'+b.glyph+'</div>'+
+    '<div class="badge-name">'+b.name+'</div>'+
+    '<div class="badge-tier">'+tierLabel+'</div>'+
+    '<div class="badge-prog">'+prog+'</div>'+
+  '</div>';
+}
+
+function render(){
+  const signedIn = !!state.signedIn;
+  document.getElementById('pfGate').classList.toggle('show', !signedIn);
+  document.getElementById('pfBody').classList.toggle('show', signedIn);
+  const navId = document.getElementById('navId');
+  navId.innerHTML = signedIn ? '<span class="dot"></span>@'+state.handle : '<span class="dot out"></span>Not signed in';
+  if(!signedIn) return;
+
+  const mine = (typeof myReviews==='function') ? myReviews(state) : [];
+  const cities = new Set(mine.map(r=>(r.loc||'').trim()).filter(Boolean)).size;
+  const rk = rankFor(mine.length);
+
+  const av=document.getElementById('pfAvatar');
+  if(state.avatar){
+    av.innerHTML='<img src="'+state.avatar+'" alt="" onerror="this.parentNode.textContent=\''+avatarInitial()+'\'">';
+  } else { av.textContent=avatarInitial(); }
+  document.getElementById('pfName').textContent = state.displayName || state.handle || '—';
+  document.getElementById('pfHandle').textContent = state.handle ? '@'+state.handle : '';
+  document.getElementById('pfRankEmoji').textContent = rk.badge || '•';
+  document.getElementById('pfRank').innerHTML = 'Rank · <b>'+rk.name+'</b>';
+
+  const badges = computeBadges(mine);
+  const earnedCount = badges.filter(b=>b.tier).length;
+  document.getElementById('pfCount').textContent = mine.length;
+  document.getElementById('pfCities').textContent = cities;
+  document.getElementById('pfBadgeCount').textContent = earnedCount;
+
+  const bWrap=document.getElementById('pfBadges');
+  if(!mine.length){
+    bWrap.innerHTML='<div class="pf-badges-empty">Post your first review to start earning badges. Each pizza style is its own badge to level up.</div>';
+  } else {
+    const earned = badges.filter(b=>b.tier).sort((a,b)=> (b.tier.idx||0) - (a.tier.idx||0));
+    const locked = badges.filter(b=>!b.tier);
+    let html = earned.map(renderBadge).join('');
+    if(earned.length && locked.length) html += '<div class="pf-badge-divider">Not yet earned</div>';
+    html += locked.map(renderBadge).join('');
+    bWrap.innerHTML = html;
+  }
+
+  document.getElementById('pfRvNote').textContent = mine.length ? mine.length+(mine.length===1?' review':' reviews') : '';
+  rvShown = PER_PAGE;
+  renderReviews(mine);
+}
+
+const PER_PAGE = 6;
+let rvShown = PER_PAGE;
+
+function reviewRow(r){
+  const rt = RATING[r.rating] || { glyph:'•', color:'var(--text-3)' };
+  const leg = r.legendaryCanonical === true;
+  const url = (typeof bskyWebUrl==='function') ? bskyWebUrl(r.bskyUri, r.by) : '';
+  const glyphColor = r.rating==='skip' ? 'var(--rate-skip-text)' : rt.color;
+  const meta = [r.loc, r.style].filter(Boolean).join(' · ');
+  const dateStr = (typeof shortDate==='function' && r.createdAt) ? shortDate(r.createdAt) : '';
+  const dateHtml = dateStr ? dateStr.replace(' ', '<br>') : '';
+  const tag = url ? 'a href="'+url+'" target="_blank" rel="noopener"' : 'div';
+  const close = url ? 'a' : 'div';
+  return '<'+tag+' class="pf-rv'+(leg?' leg':'')+'">'+
+    '<div class="pf-rv-date">'+dateHtml+'</div>'+
+    '<div class="pf-rv-body"><div class="pf-rv-name'+(leg?' legendary':'')+'">'+r.name+'</div>'+
+    '<div class="pf-rv-meta">'+meta+'</div></div>'+
+    '<div class="pf-rv-right">'+
+      '<span class="pf-rv-chip" style="color:'+glyphColor+'">'+rt.glyph+'</span>'+
+      (url?'<span class="pf-rv-arrow">↗</span>':'')+
+    '</div>'+
+  '</'+close+'>';
+}
+
+function renderReviews(mine){
+  const rvWrap=document.getElementById('pfReviews');
+  if(!mine.length){
+    rvWrap.innerHTML='<div class="pf-rv-empty">No reviews yet.<br><a href="/submit.html">Post your first one →</a></div>';
+    return;
+  }
+  const shown = mine.slice(0, rvShown);
+  let html = shown.map(reviewRow).join('');
+  if(mine.length > rvShown){
+    const remaining = mine.length - rvShown;
+    html += '<button class="pf-more" id="pfMore">Show more · '+remaining+' left</button>';
+  }
+  rvWrap.innerHTML = html;
+  const more=document.getElementById('pfMore');
+  if(more){ more.addEventListener('click', ()=>{ rvShown += PER_PAGE; renderReviews(mine); }); }
+}
+
+(async()=>{
+  render();
+  try {
+    const auth = await initAuth();
+    if (auth?.user) {
+      Object.assign(state, {
+        signedIn: true, did: auth.user.did, handle: auth.user.handle,
+        displayName: auth.user.display_name || auth.user.handle, avatar: auth.user.avatar_url,
+      });
     }
+  } catch(e) { console.warn('profile: auth check failed', e); }
+  render();
+  try { await loadReviews(); } catch(e){ console.warn('profile: loadReviews failed', e); }
+  render();
+})();
+</script>
 
-    function isAnniversary(s) {
-      const d = new Date(s), n = new Date();
-      return n.getFullYear() > d.getFullYear() &&
-             d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
-    }
-
-    function yearsOld(s) {
-      return new Date().getFullYear() - new Date(s).getFullYear();
-    }
-
-    function bskyUrl(uri, handle) {
-      if (!uri) return null;
-      const parts = uri.split('/');
-      const rkey  = parts[parts.length - 1];
-      return `${BSKY_APP}/profile/${handle || 'bsky.social'}/post/${rkey}`;
-    }
-
-    async function main() {
-      const auth = await initAuth();
-      const wrap = document.getElementById('wrap');
-
-      if (!auth?.user) {
-        wrap.innerHTML = `
-          <div class="gate">
-            <div class="gate-title">Sign in to view your profile</div>
-            <div class="gate-sub">Your profile shows your reviews and badges.</div>
-            <a href="/" class="btn-red">Sign in with Bluesky</a>
-          </div>`;
-        return;
-      }
-
-      const u = auth.user;
-      currentDid = u.did;
-
-      // Fetch reviews with bluesky_uri included
-      const { getDb } = await import('/auth.js');
-      const db = await getDb();
-      const { data: reviews } = await db
-        .from('pizza_reviews')
-        .select('id, name, location, rating, style, status, notes, created_at, bluesky_uri')
-        .eq('contributor_did', u.did)
-        .order('created_at', { ascending: false });
-
-      const allReviews = reviews || [];
-      const pending    = allReviews.filter(r => r.status === 'pending').length;
-      const joinedStr  = u.created_at || new Date().toISOString();
-      const ann        = isAnniversary(joinedStr);
-      const yrs        = yearsOld(joinedStr);
-
-      // Avatar
-      const avatarHtml = u.avatar_url
-        ? `<img src="${u.avatar_url}" alt="${u.handle}">`
-        : u.handle[0].toUpperCase();
-
-      // Role badge
-      const roleBadge = u.role === 'admin'
-        ? `<span class="badge badge-admin">Admin</span>`
-        : u.role === 'contributor'
-          ? `<span class="badge badge-contributor">Contributor</span>`
-          : `<span class="badge badge-member">Member</span>`;
-
-      const annBadge = ann
-        ? `<span class="badge badge-anniv">🎂 ${yrs}-Year Member</span>` : '';
-
-      const annMsg = ann
-        ? `<div style="font-size:12px;color:#FFB800;font-weight:700;margin-top:6px">🎂 Happy ${yrs}-year anniversary!</div>` : '';
-
-      // Stats: just Reviews + Pending
-      const statsHtml = `
-        <div class="stat">
-          <div class="stat-val">${allReviews.length}</div>
-          <div class="stat-lbl">Reviews</div>
-        </div>
-        <div class="stat">
-          <div class="stat-val ${pending > 0 ? 'orange' : ''}">${pending}</div>
-          <div class="stat-lbl">Pending</div>
-        </div>`;
-
-      // Contributor / submit CTA
-      const ctaHtml = u.role === 'guest' ? `
-        <div class="contrib-cta">
-          <div>
-            <div class="contrib-title">Become a Contributor</div>
-            <div class="contrib-sub">Read the code of conduct, sign your name — instant access.</div>
-          </div>
-          <a href="/contributor.html" class="btn-gold">Get started</a>
-        </div>` :
-        `<div class="submit-cta">
-          <div>
-            <div class="submit-cta-title">${allReviews.length === 0 ? 'Submit your first review' : 'Submit another review'}</div>
-            <div class="submit-cta-sub">Every approved review is permanent and public.</div>
-          </div>
-          <a href="/submit.html" class="btn-red-sm">Submit</a>
-        </div>`;
-
-      // Pending note
-      const pendingNote = pending > 0 ? `
-        <div class="pending-note">
-          ${pending} review${pending !== 1 ? 's are' : ' is'} awaiting approval and will appear in the database once approved.
-        </div>` : '';
-
-      // Review list — no status pill, contextual links instead
-      const reviewsHtml = allReviews.length === 0
-        ? `<div class="review-empty">No reviews yet.${
-            u.role === 'contributor' || u.role === 'admin'
-              ? ' <a href="/submit.html">Submit your first →</a>' : ''
-          }</div>`
-        : allReviews.map(r => {
-            const bsky = bskyUrl(r.bluesky_uri, u.handle);
-            const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            // Contextual action: approved = database link, pending = waiting note, rejected = note
-            let statusLine = '';
-            if (r.status === 'pending') {
-              statusLine = `<span class="ri-pending-note">Awaiting approval</span>`;
-            } else if (r.status === 'rejected') {
-              statusLine = `<span class="ri-rejected-note">Not approved</span>`;
-            }
-            return `
-              <div class="review-item" id="ri-${r.id}">
-                <div class="ri-top">
-                  <div class="ri-name">${r.name}</div>
-                  <span class="ri-rating">${RATINGS[r.rating] || ''}</span>
-                </div>
-                <div class="ri-meta">
-                  <span>${r.location}</span>
-                  <span>${r.style}</span>
-                  <span>${date}</span>
-                </div>
-                ${r.notes ? `<div class="ri-excerpt">${r.notes}</div>` : ''}
-                <div class="ri-actions">
-                  ${statusLine}
-                  ${bsky ? `<a class="ri-link ri-link-bsky" href="${bsky}" target="_blank" rel="noopener">Bluesky ↗</a>` : ''}
-                  <button class="ri-delete" onclick="confirmDelete('${r.id}')">Delete</button>
-                </div>
-              </div>`;
-          }).join('');
-
-      wrap.innerHTML = `
-        <div class="hero">
-          <div class="avatar">${avatarHtml}</div>
-          <div class="hero-info">
-            <div class="hero-handle">@${u.handle}</div>
-            <div class="badges">${roleBadge}${annBadge}</div>
-            ${annMsg}
-            <div style="font-size:12px;color:#E0D5C5;margin-top:6px">Member since ${monthYear(joinedStr)}</div>
-          </div>
-        </div>
-
-        <div class="stats">${statsHtml}</div>
-
-        ${ctaHtml}
-
-        <div class="section-head">Your reviews</div>
-        ${pendingNote}
-        <div id="reviewList">${reviewsHtml}</div>
-
-        <div class="privacy">
-          <strong>Your reviews are yours.</strong> Delete any review at any time — it's removed from the public database immediately. If you've cross-posted to Bluesky, the post stays on your Bluesky profile unless you delete it there too.<br><br>
-          Pizza Official stores only your Bluesky handle and DID. &nbsp;
-          <a href="https://bsky.app" target="_blank" rel="noopener">Manage your Bluesky account →</a>
-        </div>`;
-    }
-
-    // Delete flow
-    window.confirmDelete = function(id) {
-      pendingDelete = id;
-      document.getElementById('confirmOverlay').classList.add('open');
-    };
-
-    window.closeConfirm = function() {
-      pendingDelete = null;
-      document.getElementById('confirmOverlay').classList.remove('open');
-    };
-
-    document.getElementById('confirmBtn').addEventListener('click', async () => {
-      if (!pendingDelete) return;
-      const btn = document.getElementById('confirmBtn');
-      btn.disabled = true;
-      btn.textContent = 'Deleting…';
-
-      try {
-        const res = await fetch('/.netlify/functions/delete-review', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ did: currentDid, review_id: pendingDelete }),
-        });
-
-        const text = await res.text();
-        if (!res.ok) throw new Error(text || `Server error ${res.status}`);
-
-        // Animate out
-        const el = document.getElementById(`ri-${pendingDelete}`);
-        if (el) {
-          el.style.transition = 'opacity .25s, transform .25s';
-          el.style.opacity = '0';
-          el.style.transform = 'translateX(16px)';
-          setTimeout(() => el.remove(), 260);
-        }
-        closeConfirm();
-      } catch (err) {
-        btn.disabled = false;
-        btn.textContent = 'Delete';
-        alert('Delete failed: ' + err.message);
-      }
-    });
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(); });
-
-    main();
-  </script>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="/stats.html">Stats</a>
+      <a href="/about.html">About</a>
+      <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
+  </div>
+</footer>
 </body>
 </html>
