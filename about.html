@@ -60,7 +60,7 @@
       <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <div id="navUser"></div>
+  <a href="/profile.html" style="text-decoration:none;"><div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div></a>
 </div>
 
 <div class="doc-wrap">
@@ -124,20 +124,17 @@
 </footer>
 
 <script type="module">
-  const $ = id => document.getElementById(id);
-  function renderNavUser(u) {
-    if (!u) { $('navUser').innerHTML = ''; return; }
-    $('navUser').innerHTML = `
-      <a href="/profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:20px;">
-        <span style="font-size:12px;font-weight:600;color:var(--text);">@${u.handle}</span>
-      </a>`;
-  }
-  (async () => {
-    try {
-      const { initAuth } = await import('/auth.js');
-      const auth = await initAuth();
-      if (auth?.user) renderNavUser(auth.user);
-    } catch {}
+  import '/auth.js';
+  (function () {
+    const el = document.getElementById('navId');
+    function paint() {
+      const st = window.__pzof_state;
+      el.innerHTML = st?.signedIn
+        ? '<span class="dot"></span>@' + st.handle
+        : '<span class="dot out"></span>Not signed in';
+    }
+    paint();
+    window.addEventListener('pzof-auth', paint);
   })();
 </script>
 </body>
