@@ -70,7 +70,7 @@
       <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
+  <a href="/profile.html" style="text-decoration:none;"><div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div></a>
 </div>
 
 <div class="rk-wrap">
@@ -126,14 +126,31 @@ function renderLadder(){
   }).join('');
 }
 
+function paintNav(){
+  const el = document.getElementById('navId');
+  if (!el) return;
+  el.innerHTML = state.signedIn
+    ? '<span class="dot"></span>@' + state.handle
+    : '<span class="dot out"></span>Not signed in';
+}
+
 (async()=>{
+  // Paint immediately from whatever auth.js's synchronous cache-restore
+  // already put in window.__pzof_state — avoids the ladder rendering
+  // "signed out" for a beat before flipping once the network check lands.
+  const cached = window.__pzof_state;
+  if (cached?.signedIn) Object.assign(state, { signedIn:true, did:cached.did, handle:cached.handle });
+  paintNav();
   renderLadder();
+
   try {
     const auth = await initAuth();
     if (auth?.user) {
       Object.assign(state, { signedIn:true, did:auth.user.did, handle:auth.user.handle });
-      document.getElementById('navId').innerHTML = '<span class="dot"></span>@' + auth.user.handle;
+    } else {
+      Object.assign(state, { signedIn:false, did:null, handle:null });
     }
+    paintNav();
   } catch(e) { console.warn('ranks: auth check failed', e); }
   await loadReviews();
   renderLadder();
