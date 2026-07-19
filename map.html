@@ -233,7 +233,7 @@
       card.classList.remove('multi');
     }
     const isLeg = r.legendaryCanonical === true;
-    rName.innerHTML = r.name + (isLeg?'<span class="rv-name-bolt">⭐</span>':'');
+    rName.innerHTML = r.name + (isLeg?'<span class="rv-name-bolt">⚡</span>':'');
     rLoc.textContent=r.loc; rGlyph.textContent=rt.glyph; rLabel.textContent=rt.label;
     const chip=document.querySelector('.rv-rating');
     if(chip){ chip.style.background=rt.color; chip.style.color=(rt.text||'var(--inset)'); }
@@ -267,7 +267,7 @@
       const rt=RATING[best.rating];
       const canonicalLeg=group.some(r=>r.legendaryCanonical===true);
       const count=group.length;
-      const boltHtml = (canonicalLeg) ? '<span class="pin-bolt">⭐</span>' : '';
+      const boltHtml = (canonicalLeg) ? '<span class="pin-bolt">⚡</span>' : '';
       const countHtml = count>1 ? '<span class="pin-count">'+count+'</span>' : '';
       const size = best.rating==='legendary'?30:best.rating==='trip'?22:best.rating==='solid'?18:14;
       const icon=L.divIcon({
@@ -279,7 +279,7 @@
       });
       const r0=group[0];
       const m=L.marker([r0.lat,r0.lng],{icon}).addTo(map);
-      const popName = r0.name + (canonicalLeg?' ⭐':'');
+      const popName = r0.name + (canonicalLeg?' ⚡':'');
       const popSub = count>1 ? (count+' reviews · best: '+rt.label) : (rt.glyph+' '+rt.label);
       const popPrice = count>1 ? '' : ('<div class="pop-price">'+r0.tier+'</div>');
       m.bindPopup('<div class="pop-name">'+popName+'</div><div class="pop-rating">'+popSub+'</div>'+popPrice);
@@ -356,7 +356,6 @@
       <a href="https://github.com/cheeseburgerworld/pizzaofficial" target="_blank" rel="noopener">GitHub</a>
     </div>
     <div class="footer-links">
-      <a href="https://cheeseburger.world" target="_blank" rel="noopener">CB⚡DB</a>
       <span class="footer-copy">© 2026 Cheeseburger World LLC</span>
     </div>
   </div>
