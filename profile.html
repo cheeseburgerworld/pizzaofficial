@@ -19,10 +19,8 @@
   .pf-gate.show { display:block; }
   .pf-gate-title { font-family:var(--font-display); font-size:42px; letter-spacing:1.5px; color:var(--red); line-height:1; margin-bottom:14px; }
   .pf-gate-text { font-size:15px; color:var(--text-2); line-height:1.7; max-width:440px; margin:0 auto 26px; }
-  .pf-gate-signin { display:flex; gap:8px; max-width:340px; margin:0 auto; }
-  .pf-gate-input { flex:1; min-width:0; background:var(--inset); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:14px; padding:11px 13px; }
-  .pf-gate-btn { font-family:var(--font-body); font-weight:600; font-size:14px; letter-spacing:0.5px; padding:11px 20px; cursor:pointer; background:var(--bsky); color:#fff; border:none; flex-shrink:0; }
-  .pf-gate-btn:hover { background:var(--bsky-hover); }
+  .pf-gate-cta { display:inline-block; background:var(--red); color:var(--text-on-red); font-family:var(--font-body); font-weight:600; font-size:14px; letter-spacing:0.5px; text-decoration:none; padding:13px 24px; cursor:pointer; border:none; }
+  .pf-gate-cta:hover { background:var(--red-hover); }
   .pf-gate-err { color:var(--error); font-size:12px; margin-top:10px; display:none; }
 
   .pf-body { display:none; }
@@ -106,7 +104,6 @@
     .pf-num { font-size:32px; }
     .pf-badges { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
     .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
-    .pf-gate-signin { flex-direction:column; }
   }
 </style>
 </head>
@@ -128,10 +125,7 @@
   <div class="pf-gate" id="pfGate">
     <div class="pf-gate-title">Your profile</div>
     <p class="pf-gate-text">Sign in with Bluesky to see your stats, your badge case, and every review you've submitted.</p>
-    <div class="pf-gate-signin">
-      <input type="text" class="pf-gate-input" id="pfHandleInput" placeholder="you.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <button class="pf-gate-btn" onclick="doSignIn()">Sign in</button>
-    </div>
+    <button class="pf-gate-cta" onclick="signIn()">Sign in →</button>
     <div class="pf-gate-err" id="pfGateErr"></div>
   </div>
 
@@ -174,8 +168,9 @@
 </div>
 
 <script src="pizza-config.js"></script>
+<script type="module" src="/auth-bridge.js"></script>
 <script type="module">
-import { initAuth, signIn, signOut } from '/auth.js';
+import { initAuth, signOut } from '/auth.js';
 
 /* RANKS/rankFor now live in pizza-config.js — single source of truth
    shared with ranks.html, loaded via the <script src="pizza-config.js">
@@ -242,17 +237,6 @@ function computeBadges(mine){
    AUTH — mirrors submit.html's inline gate pattern.
    ============================================================ */
 const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null };
-
-window.doSignIn = async function(){
-  const input = document.getElementById('pfHandleInput');
-  const err = document.getElementById('pfGateErr');
-  const handle = (input.value || '').trim();
-  if (!handle) { err.textContent = 'Enter your Bluesky handle'; err.style.display = 'block'; input.focus(); return; }
-  err.style.display = 'none';
-  try { await signIn(handle); }
-  catch (e) { err.textContent = e.message || 'Sign-in failed'; err.style.display = 'block'; }
-};
-document.getElementById('pfHandleInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
 
 window.doSignOut = function(){ signOut(); };
 
