@@ -142,23 +142,12 @@ async function doCreateReview(sessionId, session, payload) {
   const pds = await resolvePDS(session.did);
   const createUrl = `${pds}/xrpc/com.atproto.repo.createRecord`;
 
-  // Normalize the form's display style ("Detroit / Sicilian") to the
-  // lexicon's knownValues ("detroitSicilian") for the PDS record. The raw
-  // display string is kept for the Supabase index so existing rows stay
-  // consistent with what's already there.
-  const styleMap = {
-    'ny style': 'nyStyle', 'neapolitan': 'neapolitan', 'roman': 'roman',
-    'detroit / sicilian': 'detroitSicilian', 'deep dish': 'deepDish',
-    'tavern': 'tavern', 'fast / counter': 'fastCounter',
-  };
-  const lexStyle = styleMap[String(style).toLowerCase()] || style;
-
   // ── Build the review record ──────────────────────────────────────────
   const record = {
     $type:      'pizza.official.review',
     restaurant,
     location,
-    style:      lexStyle,
+    style,
     rating,
     price,
     pizza,
@@ -220,7 +209,7 @@ async function doCreateReview(sessionId, session, payload) {
       const tagStart = enc.encode(header + body + '\n\n').length;
       const tagEnd   = enc.encode(text).length;
       const facets = [{
-        index:    { byteStart: tagStart + 1, byteEnd: tagEnd },
+        index:    { byteStart: tagStart, byteEnd: tagEnd },
         features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }],
       }];
 
