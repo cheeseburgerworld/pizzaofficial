@@ -43,7 +43,7 @@ export default async function handler(req) {
         response_type:         'code',
         client_id:             CLIENT_ID,
         redirect_uri:          REDIRECT_URI,
-        scope:                 'atproto transition:generic',
+        scope:                 'atproto repo:pizza.official.review repo:app.bsky.feed.post blob:*/*',
         state,
         code_challenge:        challenge,
         code_challenge_method: 'S256',
