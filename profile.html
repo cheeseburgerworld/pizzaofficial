@@ -117,7 +117,7 @@
       <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
+  <div class="nav-id" id="navId" onclick="openProfile()"><span class="dot out"></span>Not signed in</div>
 </div>
 
 <div class="pf-wrap">
@@ -169,6 +169,7 @@
 
 <script src="pizza-config.js"></script>
 <script type="module" src="/auth-bridge.js"></script>
+<script src="/drawer.js"></script>
 <script type="module">
 import { initAuth, signOut } from '/auth.js';
 
@@ -272,8 +273,6 @@ function render(){
   const signedIn = !!state.signedIn;
   document.getElementById('pfGate').classList.toggle('show', !signedIn);
   document.getElementById('pfBody').classList.toggle('show', signedIn);
-  const navId = document.getElementById('navId');
-  navId.innerHTML = signedIn ? '<span class="dot"></span>@'+state.handle : '<span class="dot out"></span>Not signed in';
   if(!signedIn) return;
 
   const mine = (typeof myReviews==='function') ? myReviews(state) : [];
