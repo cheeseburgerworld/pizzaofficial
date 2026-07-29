@@ -1,0 +1,122 @@
+{
+  "lexicon": 1,
+  "id": "pizza.official.review",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A pizza review. Authored and owned by the reviewer, stored on their own PDS. Pizza Official indexes these records; it does not own them.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "restaurant",
+          "location",
+          "style",
+          "rating",
+          "price",
+          "pizza",
+          "take",
+          "photo",
+          "photoAlt",
+          "createdAt"
+        ],
+        "properties": {
+          "restaurant": {
+            "type": "string",
+            "maxGraphemes": 200,
+            "maxLength": 800,
+            "description": "Official name of the pizzeria, e.g. 'Ken's Artisan Pizza'.",
+            "minGraphemes": 1,
+            "minLength": 1
+          },
+          "location": {
+            "type": "string",
+            "maxGraphemes": 100,
+            "maxLength": 400,
+            "description": "Human-readable city and region as written by the reviewer, e.g. 'Portland, OR'.",
+            "minGraphemes": 1,
+            "minLength": 1
+          },
+
+          "geo": {
+            "type": "ref",
+            "ref": "community.lexicon.location.geo",
+            "description": "Optional coordinates. Uses the shared community lexicon for ATGeo interoperability."
+          },
+
+          "address": {
+            "type": "ref",
+            "ref": "community.lexicon.location.address",
+            "description": "Optional structured address. Uses the shared community lexicon."
+          },
+
+          "placeId": {
+            "type": "string",
+            "maxGraphemes": 100,
+            "maxLength": 400,
+            "description": "Optional. Canonical place identifier, e.g. a Foursquare Open Source Place ID ('FSQ:...'), used to cluster reviews of the same pizzeria across reviewers."
+          },
+
+          "style": {
+            "type": "string",
+            "knownValues": ["nyStyle", "neapolitan", "roman", "detroitSicilian", "deepDish", "tavern", "fastCounter"],
+            "description": "Pizza style."
+          },
+
+          "rating": {
+            "type": "string",
+            "knownValues": ["legendary", "trip", "solid", "skip"],
+            "description": "Editorial verdict. legendary = Legendary, trip = Worth A Trip, solid = Solid, skip = Skip It. Not averaged: one reviewer's judgment stands as written."
+          },
+
+          "price": {
+            "type": "string",
+            "knownValues": ["$", "$$", "$$$"],
+            "description": "Price tier for the visit. $ = under $15, $$ = $15-30, $$$ = $30 and up."
+          },
+
+          "pizza": {
+            "type": "string",
+            "maxGraphemes": 2000,
+            "maxLength": 8000,
+            "description": "The Pizza. What's on it, the crust, how it was cooked.",
+            "minGraphemes": 1,
+            "minLength": 1
+          },
+          "take": {
+            "type": "string",
+            "maxGraphemes": 2000,
+            "maxLength": 8000,
+            "description": "The Take. Why it earned the rating: value, sides, the visit.",
+            "minGraphemes": 1,
+            "minLength": 1
+          },
+          "bskyPost": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "Optional. AT-URI of a Bluesky post crossposted from this review. The review is canonical; the post is a share of it."
+          },
+          "photo": {
+            "type": "blob",
+            "accept": ["image/jpeg", "image/png", "image/webp"],
+            "maxSize": 2000000,
+            "description": "Photo of the pizza from that visit."
+          },
+          "photoAlt": {
+            "type": "string",
+            "maxGraphemes": 1000,
+            "maxLength": 4000,
+            "description": "Alt text describing the photo.",
+            "minGraphemes": 1,
+            "minLength": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Client-declared timestamp of when the review was written."
+          }
+        }
+      }
+    }
+  }
+}
