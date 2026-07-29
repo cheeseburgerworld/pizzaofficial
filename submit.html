@@ -122,7 +122,7 @@
 
 <div class="submit-wrap">
   <h1>Post a Review</h1>
-  <p class="intro">Two paragraphs. First the pizza — crust, sauce, cheese, toppings, how it's prepared. Then the take — value, the visit, why this rating. Be specific. Note what it cost the day you went.</p>
+  <p class="intro">Two paragraphs. First the pizza — crust, sauce, toppings, how it's prepared. Then the take — value, the visit, why this rating. Be specific. Note what it cost the day you went.</p>
 
   <div class="gate" id="gate">
     <div class="gate-title">Sign in to contribute</div>
@@ -166,14 +166,14 @@
 
     <div class="bucket">
       <div class="bucket-head"><span class="bucket-num">1</span><span class="bucket-label">The Pizza</span></div>
-      <p class="bucket-hint">Crust, sauce, cheese, toppings, how it's prepared. Describe the pie you ate, tell us what stood out.</p>
-      <textarea id="f_pizza" name="pizza" aria-label="The Pizza — crust, sauce, cheese, toppings" required></textarea>
+      <p class="bucket-hint">Crust, sauce, toppings, how it's prepared. Be specific.</p>
+      <textarea id="f_pizza" name="pizza" aria-label="The Pizza — crust, sauce, toppings, how it's prepared" required></textarea>
     </div>
 
     <div class="bucket">
       <div class="bucket-head"><span class="bucket-num">2</span><span class="bucket-label">The Take</span></div>
-      <p class="bucket-hint">Why'd you land on your rating? The value, the wait, the visit overall.</p>
-      <textarea id="f_value" name="value" aria-label="The Take — why you rated it, value, the visit" required></textarea>
+      <p class="bucket-hint">Value, the visit, why this rating. Note what it cost the day you went.</p>
+      <textarea id="f_value" name="value" aria-label="The Take — value, the visit, why this rating, what it cost" required></textarea>
     </div>
 
     <span class="fl" id="ratingLabel">Rating</span>
@@ -421,82 +421,72 @@ async function postReview() {
 
   const btn = f.querySelector('.submit-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Posting…'; }
-  let photoUrl = '', bskyUri = '';
   try {
     const restaurant = get('restaurant'), loc = get('location');
-    const tier = get('tier'), glyph = state.ratingGlyph || '';
-    const pizzaText = get('pizza'), valueText = get('value');
-    const header = restaurant + '\n' + loc + '\n' + glyph + '\n' + tier + '\n\n';
-    const tail = '\n\n#PizzaOfficial';
-    const fixed = graphemes(header) + graphemes(tail);
-    let body = pizzaText + (valueText ? '\n\n' + valueText : '');
-    const budget = 300 - fixed;
-    if (graphemes(body) > budget) body = [...body].slice(0, budget - 1).join('') + '…';
-    const text = header + body + tail;
-    const tagStart = new TextEncoder().encode(header + body + '\n\n').length;
-    const tagEnd = new TextEncoder().encode(text).length;
-    const facets = [{ index: { byteStart: tagStart + 1, byteEnd: tagEnd }, features: [{ $type: 'app.bsky.richtext.facet#tag', tag: 'PizzaOfficial' }] }];
 
-    let embed;
+    // ── Step 1: Photo is required (the review record requires it) ──
     const photoInput = f.elements['photo'];
-    if (photoInput && photoInput.files[0]) {
-      try {
-        const prepared = await prepareImage(photoInput.files[0]);
-        const base64 = bytesToBase64(prepared.bytes);
-        const up = await proxyAction('uploadBlob', { data: base64, mimeType: 'image/jpeg' });
-        const blob = up.blob;
-        const imageRecord = { image: blob, alt: get('alt') || restaurant };
-        if (prepared.width && prepared.height) imageRecord.aspectRatio = { width: prepared.width, height: prepared.height };
-        embed = { $type: 'app.bsky.embed.images', images: [imageRecord] };
-        const cid = (blob.ref && (blob.ref.$link || blob.ref.toString())) || '';
-        photoUrl = cid ? 'https://cdn.bsky.app/img/feed_fullsize/plain/' + state.did + '/' + cid + '@jpeg' : '';
-      } catch (upErr) {
-        console.error('Image upload failed — posting review without photo:', upErr);
-        embed = undefined; photoUrl = '';
-        alert('Heads up: the photo could not be uploaded, so your review will post without it. You can add a photo by editing the post on Bluesky.');
-      }
+    if (!photoInput || !photoInput.files[0]) {
+      alert('A photo of the pizza is required.');
+      return;
     }
+    const prepared = await prepareImage(photoInput.files[0]);
+    const base64   = bytesToBase64(prepared.bytes);
+    const up = await proxyAction('uploadBlob', {
+      data: base64,
+      mimeType: 'image/jpeg',
+    });
+    const blobRef = up.blob;
+    const aspectRatio = (prepared.width && prepared.height)
+      ? { width: prepared.width, height: prepared.height }
+      : null;
 
-    const postPayload = { text, facets, createdAt: new Date().toISOString() };
-    if (embed) postPayload.embed = embed;
-    const rt = await proxyAction('post', postPayload);
-    bskyUri = rt.uri;
-
-    let lat = null, lng = null;
-    async function geo(q) {
+    // ── Step 2: Optional geocode (same as before) ──
+    let geo = null;
+    async function geocode(q) {
       const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q), { headers: { Accept: 'application/json' } });
       const j = await r.json();
       return (j && j[0]) ? { lat: parseFloat(j[0].lat), lng: parseFloat(j[0].lon) } : null;
     }
     try {
-      let hit = await geo(restaurant + ', ' + loc);
-      if (!hit) hit = await geo(loc);
-      if (hit) { lat = hit.lat; lng = hit.lng; }
+      let hit = await geocode(restaurant + ', ' + loc);
+      if (!hit) hit = await geocode(loc);
+      if (hit) { geo = { latitude: String(hit.lat), longitude: String(hit.lng) }; }
     } catch (geoErr) { console.warn('Geocode failed (review still saves, no map pin):', geoErr); }
 
-    const row = {
-      author_did: state.did, bsky_uri: bskyUri, bsky_post_uri: bskyUri,
-      restaurant, location: loc, lat, lng,
-      style: get('style'), price_tier: tier, rating: state.rating,
-      pizza: get('pizza'), value_experience: get('value'),
-      photo_url: photoUrl, photo_alt: get('alt'),
-    };
+    // ── Step 3: One server call — record to PDS + crosspost + index ──
+    // The server writes the biz.pizzaofficial.review record to the
+    // reviewer's own PDS, crossposts to Bluesky, and indexes into
+    // Supabase. The review lives in the reviewer's repo; Pizza Official
+    // indexes it. We index it. We don't own it.
+    const result = await proxyAction('createReview', {
+      blobRef,
+      restaurant,
+      location:    loc,
+      style:       get('style'),
+      rating:      state.rating,
+      price:       get('tier'),
+      pizza:       get('pizza'),
+      take:        get('value'),
+      photoAlt:    get('alt') || restaurant,
+      aspectRatio,
+      geo,
+      crosspost:   true,
+    });
+
+    // Keep contributor profile fresh (handle/avatar can change)
     await fetch(PZOF_SUPABASE_URL + '/rest/v1/contributors', {
       method: 'POST',
       headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
       body: JSON.stringify({ did: state.did, handle: state.handle, display_name: state.displayName, avatar: state.avatar || null }),
-    });
-    const res = await fetch(PZOF_SUPABASE_URL + '/rest/v1/reviews', {
-      method: 'POST',
-      headers: { apikey: PZOF_SUPABASE_ANON, Authorization: 'Bearer ' + PZOF_SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify(row),
-    });
-    if (!res.ok) console.warn('Supabase insert failed', await res.text());
+    }).catch(() => {});
 
     f.reset();
     document.querySelectorAll('.rating-opt').forEach(o => { o.classList.remove('sel'); o.setAttribute('aria-checked', 'false'); });
     state.rating = null; state.ratingGlyph = null; state.photoURL = null;
-    const bskyUrl = bskyUri && bskyUri.startsWith('at://') ? 'https://bsky.app/profile/' + state.handle + '/post/' + bskyUri.split('/').pop() : '';
+    const bskyUrl = result.bskyPostUri && result.bskyPostUri.startsWith('at://')
+      ? 'https://bsky.app/profile/' + state.handle + '/post/' + result.bskyPostUri.split('/').pop()
+      : '';
     showPosted(restaurant, bskyUrl);
   } catch (e) {
     alert('Something went wrong posting your review: ' + (e.message || e));
