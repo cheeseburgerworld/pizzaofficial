@@ -188,11 +188,14 @@
       const date=(typeof shortDate==='function')?shortDate(r.createdAt):'';
       const isLeg = r.legendaryCanonical === true;
       const take = r.value ? r.value : '';
+      const glyphHtml = (r.rating==='legendary')
+        ? '<svg viewBox="0 0 24 24" width="13" height="13" style="vertical-align:-2px" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="#15130f"/></svg>'
+        : rt.glyph;
       return '<div class="card'+(isLeg?' legendary':'')+'" id="dbcard'+idx+'">'+
         '<div class="card-img" style="background:'+cardImage(r,rt)+'" onclick="goMap('+idx+')">'+
           (isLeg
-            ? '<div class="card-bolt" title="Legendary" aria-label="Legendary">⚡</div>'
-            : '<div class="card-rating" style="background:'+rt.color+';color:'+(rt.text||'var(--inset)')+'">'+rt.glyph+' '+rt.label+'</div>')+
+            ? '<div class="card-bolt" title="Legendary" aria-label="Legendary"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" fill="#15130f"/></svg></div>'
+            : '<div class="card-rating" style="background:'+rt.color+';color:'+(rt.text||'var(--inset)')+'">'+glyphHtml+' '+rt.label+'</div>')+
         '</div>'+
         '<div class="card-body" onclick="dbToggle('+idx+')">'+
           '<div class="card-name">'+r.name+'</div>'+
