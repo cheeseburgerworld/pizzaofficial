@@ -36,6 +36,14 @@
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=3600"
 
+# Serve lexicons as JSON at their canonical URL —
+# e.g. https://official.pizza/lexicons/pizza/official/review.json
+[[headers]]
+  for = "/lexicons/*"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"
+
 # Security headers
 [[headers]]
   for = "/*"
