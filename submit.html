@@ -127,12 +127,7 @@
   <div class="gate" id="gate">
     <div class="gate-title">Sign in to contribute</div>
     <div class="gate-text">Pizza Official runs on Bluesky. Your reviews live on your profile — <b>you own them, we just index them.</b></div>
-    <div style="display:flex; gap:8px; width:100%; max-width:340px;">
-      <input type="text" id="gateHandle" placeholder="you.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false"
-        style="flex:1; min-width:0; margin-bottom:0; background:var(--inset); border:1px solid var(--border-interactive); color:var(--text); font-family:var(--font-body); font-size:14px; padding:11px 13px;">
-      <button class="signin-btn" onclick="doSignIn()" style="flex-shrink:0;">Sign in</button>
-    </div>
-    <div class="gate-fine" id="gateErr" style="color:var(--error); display:none;"></div>
+    <button class="signin-btn" onclick="signIn()"><svg viewBox="0 0 568 501" xmlns="http://www.w3.org/2000/svg" fill="#fff"><path d="M123.121 33.664C188.241 82.553 258.281 181.68 284 234.873c25.719-53.193 95.759-152.32 160.879-201.21C491.866-1.611 568-28.906 568 57.947c0 17.346-9.945 145.713-15.778 166.555-20.275 72.453-94.155 90.933-159.875 79.748C507.222 323.8 536.444 388.56 473.333 453.32c-119.86 122.992-172.272-30.859-185.702-70.281-2.462-7.227-3.614-10.608-3.631-7.733-.017-2.875-1.169.506-3.631 7.733-13.43 39.422-65.842 193.273-185.702 70.281-63.111-64.76-33.89-129.52 80.986-149.071-65.72 11.185-139.6-7.295-159.875-79.748C9.945 203.66 0 75.293 0 57.947 0-28.906 76.135-1.611 123.121 33.664Z"/></svg>Sign in</button>
   </div>
 
   <form id="reviewForm">
@@ -245,32 +240,14 @@
   </div>
 </footer>
 
+<script type="module" src="/auth-bridge.js"></script>
 <script type="module">
-import { initAuth, signIn, proxyAction } from '/auth.js';
+import { initAuth, proxyAction } from '/auth.js';
 
 const PZOF_SUPABASE_URL  = 'https://nchgwskvhbvsistqrdst.supabase.co';
 const PZOF_SUPABASE_ANON = 'sb_publishable_7nIM5JBTjoYE3Gq4jUwUGA_Ne_yXGj7';
 
 const state = { signedIn:false, did:null, handle:null, displayName:null, avatar:null, rating:null, ratingGlyph:null, photoURL:null };
-
-window.doSignIn = async () => {
-  const input = document.getElementById('gateHandle');
-  const err = document.getElementById('gateErr');
-  const handle = (input.value || '').trim();
-  if (!handle) {
-    err.textContent = 'Enter your Bluesky handle';
-    err.style.display = 'block';
-    input.focus();
-    return;
-  }
-  err.style.display = 'none';
-  try { await signIn(handle); }
-  catch (e) { err.textContent = e.message || 'Sign-in failed'; err.style.display = 'block'; }
-};
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('gateHandle');
-  if (input) input.addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
-});
 
 function paintNav() {
   const el = document.getElementById('navId');
