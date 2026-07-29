@@ -9,6 +9,23 @@
    ============================================================ */
 import { signIn, signOut } from '/auth.js';
 
+// ─── Nav pill ─────────────────────────────────────────────────────────────
+// Single source of truth for the "@handle / Not signed in" pill, instead of
+// every page re-implementing its own listener on the pzof-auth event.
+function paintNav() {
+  const nav = document.getElementById('navId');
+  if (!nav) return;
+  const state = window.__pzof_state || {};
+  nav.innerHTML = state.signedIn
+    ? '<span class="dot"></span>@' + state.handle
+    : '<span class="dot out"></span>Not signed in';
+}
+window.addEventListener('pzof-auth', paintNav);
+// auth.js's synchronous cache-restore has already run by the time this
+// module body executes (static import above guarantees ordering), so an
+// immediate paint here reflects a returning signed-in user right away.
+paintNav();
+
 const BSKY_LOGO = '<svg width="15" height="13" viewBox="0 0 568 501" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;" aria-hidden="true"><path fill="#3B9AF8" d="M123.121 33.664C188.241 82.553 258.281 181.68 284 234.873c25.719-53.193 95.759-152.32 160.879-201.21C491.866-1.611 568-28.906 568 57.947c0 17.346-9.945 145.713-15.778 166.555-20.275 72.453-94.155 90.933-159.875 79.748C507.222 323.8 536.444 388.56 473.333 453.32c-119.86 122.992-172.272-30.859-185.702-70.281-2.462-7.227-3.614-10.608-3.631-7.733-.017-2.875-1.169.506-3.631 7.733-13.43 39.422-65.842 193.273-185.702 70.281-63.111-64.76-33.89-129.52 80.986-149.071-65.72 11.185-139.6-7.295-159.875-79.748C9.945 203.66 0 75.293 0 57.947 0-28.906 76.135-1.611 123.121 33.664Z"/></svg>';
 
 // ─── Sign-in modal ────────────────────────────────────────────────────────
@@ -85,4 +102,10 @@ window.pzofSignInPrompt = function () {
 // submit.html/profile.html buttons (onclick="signIn()").
 window.signIn = window.pzofSignInPrompt;
 
-window.pzofSignOut = function () { signOut(); };
+window.pzofSignOut = function () {
+  const drawer = document.getElementById('drawer');
+  const dbg = document.getElementById('drawerBg');
+  if (drawer) drawer.classList.remove('show');
+  if (dbg) dbg.classList.remove('show');
+  signOut();
+};
