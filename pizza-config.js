@@ -16,7 +16,7 @@ const PZOF_SUPABASE_ANON = 'sb_publishable_7nIM5JBTjoYE3Gq4jUwUGA_Ne_yXGj7';
 // (not var() lookups) so this object works the same wherever it's used,
 // same tradeoff CBDB's cbdb-config.js makes.
 const RATING = {
-  legendary:{glyph:'⭐⭐⭐',label:'Legendary',cls:'pin-legendary',color:'#FFD60A',text:'#15130f'},
+  legendary:{glyph:'⚡',label:'Legendary',cls:'pin-legendary',color:'#FFD60A',text:'#15130f'},
   trip:{glyph:'⭐⭐',label:'Worth A Trip',cls:'pin-trip',color:'#FFB800',text:'#15130f'},
   solid:{glyph:'⭐',label:'Solid',cls:'pin-solid',color:'#E8843C',text:'#15130f'},
   skip:{glyph:'ㄨ',label:'Skip It',cls:'pin-skip',color:'#6B4A2F',text:'#F5F4F2'}
