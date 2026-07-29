@@ -9,13 +9,7 @@ import { createHmac, randomBytes, createHash } from 'node:crypto';
 import { SignJWT, importJWK, exportJWK, generateKeyPair } from 'https://esm.sh/jose@6.0.10';
 
 // ─── Secrets / env ──────────────────────────────────────────────────────────
-// Netlify.env is the documented API for edge functions; Deno.env is a
-// working fallback (confirmed via Netlify's own docs + forum reports),
-// process.env last for anywhere neither exists. Previously this only
-// tried Deno.env, and read every secret at module top level — meaning
-// a missing var didn't just fail a request, it could throw during the
-// bundler's own evaluation of the module, before a real request (or
-// its runtime env) was even involved. Everything below is now lazy:
+// Netlify.env is the documented API for edge functions; Everything below is now lazy:
 // nothing throws until the value is actually needed.
 function env(name) {
   try { if (typeof Netlify !== 'undefined' && Netlify.env) {
@@ -39,9 +33,9 @@ function required(name) {
 let _secret;
 function getSecret() { return _secret ??= required('PZOF_COOKIE_SECRET'); }
 
-const SUPABASE_URL = 'https://nchgwskvhbvsistqrdst.supabase.co';
+export const SUPABASE_URL = 'https://nchgwskvhbvsistqrdst.supabase.co';
 let _serviceKey;
-function getServiceKey() { return _serviceKey ??= required('SUPABASE_SERVICE_ROLE_KEY'); }
+export function getServiceKey() { return _serviceKey ??= required('SUPABASE_SERVICE_ROLE_KEY'); }
 
 // This app's own signing key (confidential client authentication) — one
 // static keypair for the whole app, distinct from the per-session DPoP
