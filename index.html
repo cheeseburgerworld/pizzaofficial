@@ -29,7 +29,6 @@
   @media (max-width:600px){ .hero-title{font-size:54px;} }
 
   /* ── NAV-ID ── */
-  .nav-id-link { text-decoration:none; }
 
   /* ── FOOTER ── */
   .site-footer { border-top:1px solid var(--border); background:var(--surface); margin-top:40px; padding:22px 20px; }
@@ -61,9 +60,7 @@
       <a class="tab" href="/submit.html">Post a Review</a>
     </div>
   </div>
-  <a class="nav-id-link" href="/profile.html">
-    <div class="nav-id" id="navId"><span class="dot out"></span>Not signed in</div>
-  </a>
+  <div class="nav-id" id="navId" onclick="openProfile()"><span class="dot out"></span>Not signed in</div>
 </div>
 
 <div class="hero">
@@ -89,25 +86,12 @@
   </div>
 </footer>
 
-<script type="module">
-  import '/auth.js';
-  (function () {
-    const el = document.getElementById('navId');
-    function paint() {
-      const st = window.__pzof_state;
-      el.innerHTML = st?.signedIn
-        ? '<span class="dot"></span>@' + st.handle
-        : '<span class="dot out"></span>Not signed in';
-    }
-    // auth.js's static import above has already run its synchronous
-    // localStorage cache-restore by this point (ES module import
-    // ordering guarantees it) — paint from that immediately instead of
-    // waiting on a network round trip, so a returning signed-in user
-    // never sees a "Not signed in" flash. pzof-auth re-fires once the
-    // session is confirmed against the server, correcting this if stale.
-    paint();
-    window.addEventListener('pzof-auth', paint);
-  })();
+<script src="pizza-config.js"></script>
+<script type="module" src="/auth-bridge.js"></script>
+<script src="/drawer.js"></script>
+<script>
+  // Load reviews so the profile drawer can show this contributor's history.
+  loadReviews();
 </script>
 </body>
 </html>
